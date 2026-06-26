@@ -273,6 +273,57 @@
       border-left: 5px solid var(--red);
     }
 
+    .notice {
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      background: rgba(185, 28, 28, 0.08);
+      padding: 24px;
+      margin-bottom: 22px;
+    }
+
+    .command-list,
+    .operation-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .command-card,
+    .operation-card {
+      border: 1px solid var(--line);
+      background: rgba(13, 17, 20, 0.86);
+      padding: 22px;
+    }
+
+    .codename {
+      display: inline-block;
+      margin-top: 8px;
+      color: var(--green);
+      font-family: "Courier New", monospace;
+      font-weight: 800;
+    }
+
+    .operation-meta {
+      color: var(--green);
+      font-family: "Courier New", monospace;
+      text-transform: uppercase;
+      font-size: 0.86rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      margin: 12px 0;
+      border: 1px solid var(--line);
+      background: #050607;
+    }
+
+    .progress-bar span {
+      display: block;
+      width: 73%;
+      height: 100%;
+      background: var(--gold);
+    }
+
     .redacted {
       display: inline-block;
       min-width: 150px;
@@ -404,8 +455,10 @@
     <nav>
       <a href="#origin">Origin</a>
       <a href="#about">About</a>
+      <a href="#command">Command</a>
       <a href="#divisions">Divisions</a>
       <a href="#structure">Structure</a>
+      <a href="#operations">Operations</a>
       <a href="#recruitment">Recruitment</a>
     </nav>
   </header>
@@ -493,9 +546,115 @@
       </div>
     </section>
 
+    <section id="command">
+      <div class="section-title reveal">
+        <p>File 03 / Chain of Command</p>
+        <h2>Chain of Command</h2>
+      </div>
+
+      <div class="notice reveal">
+        <h3>Personnel Notice</h3>
+        <p>
+          In accordance with CISR Operational Security Protocols, all personnel identities remain classified.
+        </p>
+        <p>
+          Only authorized operational codenames are permitted for public release.
+        </p>
+        <p>
+          Real names have been permanently redacted from all accessible records.
+        </p>
+      </div>
+
+      <div class="panel reveal">
+        <p>
+          The Center for Intelligence and Strategic Response operates through a carefully structured command hierarchy
+          designed to ensure operational security, strategic oversight, and mission effectiveness.
+        </p>
+        <p>
+          Every individual within CISR serves a purpose. Every position exists to maintain the balance between
+          intelligence gathering, strategic planning, and operational execution.
+        </p>
+      </div>
+
+      <div class="section-title reveal" style="margin-top: 42px;">
+        <p>Command Level / Supreme Command</p>
+        <h2>Supreme Command</h2>
+      </div>
+
+      <div class="command-list">
+        <article class="command-card reveal">
+          <h3>Founder of CISR</h3>
+          <p><span class="redacted"></span></p>
+          <span class="codename">"GRIM REAPER"</span>
+        </article>
+
+        <article class="command-card reveal">
+          <h3>President of CISR</h3>
+          <p><span class="redacted"></span></p>
+          <span class="codename">"DESYNC"</span>
+        </article>
+
+        <article class="command-card reveal">
+          <h3>Vice Presidents of CISR</h3>
+          <p><span class="redacted"></span></p>
+          <span class="codename">"GHOST"</span><br />
+          <span class="codename">"KILLER | SLAYER"</span>
+        </article>
+
+        <article class="command-card reveal">
+          <h3>Supreme Commander</h3>
+          <p><span class="redacted"></span></p>
+          <span class="codename">"THE FALLEN"</span>
+        </article>
+      </div>
+
+      <div class="section-title reveal" style="margin-top: 42px;">
+        <p>Command Level / Directorate</p>
+        <h2>Directorate</h2>
+      </div>
+
+      <div class="command-list">
+        <article class="command-card reveal">
+          <h3>Chief Director</h3>
+          <p><span class="redacted"></span></p>
+          <span class="codename">"SHADOW KING"</span>
+        </article>
+
+        <article class="command-card reveal">
+          <h3>Deputy Director</h3>
+          <p><span class="redacted"></span></p>
+          <span class="codename">"GHOST"</span>
+        </article>
+
+        <article class="command-card reveal">
+          <h3>Operations Directors</h3>
+          <p><span class="redacted"></span></p>
+          <span class="codename">"JAIT"</span><br />
+          <span class="codename">"DOLL"</span>
+        </article>
+
+        <article class="command-card reveal">
+          <h3>Strategic Director</h3>
+          <p><span class="redacted"></span></p>
+          <span class="codename">"LTF"</span>
+        </article>
+      </div>
+
+      <div class="panel strong reveal" style="margin-top: 22px;">
+        <h3>Command Philosophy</h3>
+        <p>Leadership within CISR is built upon responsibility rather than authority.</p>
+        <p>Every decision carries consequences. Every operation carries risk.</p>
+        <p>
+          Every leader is expected to place the mission, the organization, and its personnel above personal interests.
+        </p>
+        <p>Operational secrecy remains absolute. Strategic precision remains mandatory.</p>
+        <p>Failure is studied. Success is never celebrated. The mission continues.</p>
+      </div>
+    </section>
+
     <section id="divisions">
       <div class="section-title reveal">
-        <p>File 03 / Internal Divisions</p>
+        <p>File 04 / Internal Divisions</p>
         <h2>Internal Divisions</h2>
       </div>
 
@@ -503,12 +662,8 @@
         <article class="panel restricted reveal">
           <p class="access-denied">████████████████████████</p>
           <h3>[Restricted Access]</h3>
-          <p>
-            Responsible for <span class="redacted"></span>
-          </p>
-          <p>
-            Oversees <span class="redacted"></span>
-          </p>
+          <p>Responsible for <span class="redacted"></span></p>
+          <p>Oversees <span class="redacted"></span></p>
           <p>
             Their authority within CISR is absolute in matters concerning
             <span class="redacted"></span>.
@@ -525,9 +680,7 @@
             The operational face of CISR. Agents selected under criteria that
             exceed conventional military standards.
           </p>
-          <p>
-            Trained to execute, adapt, and disappear.
-          </p>
+          <p>Trained to execute, adapt, and disappear.</p>
 
           <h3>Specializations</h3>
           <ul>
@@ -546,7 +699,7 @@
 
     <section id="structure">
       <div class="section-title reveal">
-        <p>File 04 / Structure</p>
+        <p>File 05 / Structure</p>
         <h2>Not an Organization. A System.</h2>
       </div>
 
@@ -558,20 +711,69 @@
       </div>
     </section>
 
+    <section id="operations">
+      <div class="section-title reveal">
+        <p>File 06 / Operations Archive</p>
+        <h2>Operations Archive</h2>
+      </div>
+
+      <div class="panel reveal">
+        <p>
+          The following records have been partially declassified for authorized personnel.
+        </p>
+      </div>
+
+      <div class="operation-list">
+        <article class="operation-card reveal">
+          <p class="operation-meta">Status: Completed</p>
+          <h3>Operation Nightfall</h3>
+          <p>
+            Objective: Recover strategic intelligence from hostile elements operating within
+            <span class="redacted"></span>.
+          </p>
+          <p>
+            Result: Objective secured. No CISR casualties reported. All traces of involvement removed.
+          </p>
+        </article>
+
+        <article class="operation-card reveal">
+          <p class="operation-meta">Status: Completed</p>
+          <h3>Operation Black Tide</h3>
+          <p>
+            Objective: Neutralize an emerging threat before public identification.
+          </p>
+          <p>
+            Result: Threat eliminated. Assets recovered. Operation remains officially undocumented.
+          </p>
+        </article>
+
+        <article class="operation-card reveal">
+          <p class="operation-meta">Status: Active</p>
+          <h3>Operation Iron Veil</h3>
+          <p>
+            Objective: Establish operational influence within new strategic environments.
+          </p>
+          <p>Current Progress: 73%</p>
+          <div class="progress-bar"><span></span></div>
+          <p>Threat Level: Orange</p>
+        </article>
+      </div>
+
+      <div class="panel strong reveal" style="margin-top: 22px;">
+        <p>Further information requires Level ███████ clearance.</p>
+      </div>
+    </section>
+
     <section id="recruitment">
       <div class="section-title reveal">
-        <p>File 05 / Recruitment</p>
+        <p>File 07 / Recruitment</p>
         <h2>The Next Step Is Yours</h2>
       </div>
 
       <div class="grid">
         <article class="panel strong reveal">
-          <p>
-            We do not seek numbers. We seek precision.
-          </p>
-          <p>
-            We do not seek soldiers. We seek operators.
-          </p>
+          <p>We do not seek numbers. We seek precision.</p>
+          <p>We do not seek soldiers. We seek operators.</p>
         </article>
 
         <article class="panel reveal">
