@@ -1,1 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CISR | Center for Intelligence and Strategic Response</title>
 
+  <style>
+    :root {
+      --bg: #050607;
+      --panel: #0d1114;
+      --panel-light: #141a1f;
+      --text: #e8ecef;
+      --muted: #8d98a3;
+      --line: #26313a;
+      --red: #b91c1c;
+      --red-soft: #ef4444;
+      --green: #35ff9b;
+      --gold: #c9a227;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(5, 6, 7, 0.92), rgba(5, 6, 7, 0.96)),
+        url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1800&q=80");
+      background-size: cover;
+      background-attachment: fixed;
+      background-position: center;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.025),
+        rgba(255,255,255,0.025) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+      z-index: 50;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      padding: 16px clamp(18px, 5vw, 72px);
+      background: rgba(5, 6, 7, 0.88);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: grid;
+      gap: 2px;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand span {
+      color: var(--red-soft);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    nav a:hover {
+      color: var(--text);
+    }
+
+    .hero {
+      min-height: 92vh;
+      display: grid;
+      align-items: center;
+      padding: 80px clamp(18px, 5vw, 72px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero-inner {
+      max-width: 980px;
+    }
+
+    .classification {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+      color: var(--green);
+      font-family: "Courier New", monospace;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+
+    .tag {
+      padding: 6px 10px;
+      border: 1px solid rgba(53, 255, 155, 0.45);
+      background: rgba(53, 255, 155, 0.06);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 920px;
+      font-size: clamp(3rem, 11vw, 8.5rem);
+      line-height: 0.9;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .subtitle {
+      margin-top: 24px;
+      max-width: 720px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.28rem);
+    }
+
+    .motto {
+      margin-top: 34px;
+      padding-left: 18px;
+      border-left: 4px solid var(--red);
+      color: var(--text);
+      font-family: "Courier New", monospace;
+      font-size: 1.05rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      padding: 12px 18px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.84rem;
+    }
+
+    .button.primary {
+      border-color: var(--red);
+      background: var(--red);
+    }
+
+    section {
+      padding: 82px clamp(18px, 5vw, 72px);
+    }
+
+    .section-title {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 30px;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--red-soft);
+      font-family: "Courier New", monospace;
+      text-transform: uppercase;
+      font-size: 0.84rem;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: rgba(13, 17, 20, 0.86);
+      padding: 26px;
+    }
+
+    .panel.strong {
+      border-left: 5px solid var(--red);
+    }
+
+    .redacted {
+      display: inline-block;
+      min-width: 150px;
+      height: 1em;
+      background: #050607;
+      border: 1px solid #111;
+      vertical-align: -0.12em;
+    }
+
+    .division {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .restricted {
+      background:
+        linear-gradient(rgba(185, 28, 28, 0.12), rgba(185, 28, 28, 0.02)),
+        var(--panel);
+    }
+
+    .access-denied {
+      color: var(--red-soft);
+      font-family: "Courier New", monospace;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    ul {
+      margin: 14px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .structure-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .structure-item {
+      padding: 18px;
+      border-left: 3px solid var(--gold);
+      background: rgba(201, 162, 39, 0.06);
+      color: var(--text);
+      font-family: "Courier New", monospace;
+    }
+
+    .final {
+      min-height: 70vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background: rgba(5, 6, 7, 0.72);
+      border-top: 1px solid var(--line);
+    }
+
+    .final h2 {
+      max-width: 900px;
+      color: var(--text);
+    }
+
+    .final p {
+      max-width: 720px;
+      margin: 24px auto 0;
+      font-family: "Courier New", monospace;
+      color: var(--muted);
+    }
+
+    footer {
+      padding: 22px clamp(18px, 5vw, 72px);
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-family: "Courier New", monospace;
+      font-size: 0.85rem;
+      text-align: center;
+      background: #050607;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 820px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .grid,
+      .division {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        min-height: 84vh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="#home" class="brand">
+      CISR
+      <span>Center for Intelligence and Strategic Response</span>
+    </a>
+
+    <nav>
+      <a href="#origin">Origin</a>
+      <a href="#about">About</a>
+      <a href="#divisions">Divisions</a>
+      <a href="#structure">Structure</a>
+      <a href="#recruitment">Recruitment</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-inner reveal">
+        <div class="classification">
+          <span class="tag">Classification: Level ███████</span>
+          <span class="tag">Status: Active</span>
+        </div>
+
+        <h1>CISR</h1>
+
+        <p class="subtitle">
+          Center for Intelligence and Strategic Response
+        </p>
+
+        <p class="motto">
+          “We see before we act. We act before we are seen.”
+        </p>
+
+        <div class="hero-actions">
+          <a href="#origin" class="button primary">Open File</a>
+          <a href="#divisions" class="button">Restricted Access</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="origin">
+      <div class="section-title reveal">
+        <p>File 01 / Origin</p>
+        <h2>Origin</h2>
+      </div>
+
+      <div class="grid">
+        <article class="panel strong reveal">
+          <p>
+            Following an internal fracture within SOCOM, a group of high-ranking
+            officers vanished from official records.
+          </p>
+          <p>
+            There were no statements. No trials. No trace.
+          </p>
+        </article>
+
+        <article class="panel reveal">
+          <p>
+            Weeks later, multiple covert operations began to surface, executed
+            with a level of precision that surpassed any known standard within
+            the United States military structure.
+          </p>
+          <p>
+            That was the first indication of what is now known as CISR.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="about">
+      <div class="section-title reveal">
+        <p>File 02 / About Us</p>
+        <h2>A Parallel Structure</h2>
+      </div>
+
+      <div class="panel reveal">
+        <p>
+          CISR does not operate under traditional chains of command.
+        </p>
+        <p>
+          We function at the intersection of intelligence, tactical intervention,
+          and strategic control. Our existence is not officially recognized, yet
+          our results are undeniable.
+        </p>
+        <p>
+          Where others analyze, we have already acted. Where others arrive late,
+          we have already left.
+        </p>
+      </div>
+    </section>
+
+    <section id="divisions">
+      <div class="section-title reveal">
+        <p>File 03 / Internal Divisions</p>
+        <h2>Internal Divisions</h2>
+      </div>
+
+      <div class="division">
+        <article class="panel restricted reveal">
+          <p class="access-denied">████████████████████████</p>
+          <h3>[Restricted Access]</h3>
+          <p>
+            Responsible for <span class="redacted"></span>
+          </p>
+          <p>
+            Oversees <span class="redacted"></span>
+          </p>
+          <p>
+            Their authority within CISR is absolute in matters concerning
+            <span class="redacted"></span>.
+          </p>
+          <p>
+            They do not operate in the field. They do not appear in reports.
+            They do not exist in records.
+          </p>
+        </article>
+
+        <article class="panel reveal">
+          <h3>CASO — Central Agency for Strategic Operations</h3>
+          <p>
+            The operational face of CISR. Agents selected under criteria that
+            exceed conventional military standards.
+          </p>
+          <p>
+            Trained to execute, adapt, and disappear.
+          </p>
+
+          <h3>Specializations</h3>
+          <ul>
+            <li>High-precision covert operations</li>
+            <li>Interventions in hostile environments</li>
+            <li>Elimination of threats without record</li>
+            <li>Recovery of classified assets</li>
+          </ul>
+
+          <p class="motto">
+            Key Protocol: Never leave evidence. Never be detected.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="structure">
+      <div class="section-title reveal">
+        <p>File 04 / Structure</p>
+        <h2>Not an Organization. A System.</h2>
+      </div>
+
+      <div class="structure-list reveal">
+        <div class="structure-item">Each member knows only what is necessary.</div>
+        <div class="structure-item">Each operation is compartmentalized.</div>
+        <div class="structure-item">Each failure is isolated and eliminated.</div>
+        <div class="structure-item">Information flows from the top down. Never the other way around.</div>
+      </div>
+    </section>
+
+    <section id="recruitment">
+      <div class="section-title reveal">
+        <p>File 05 / Recruitment</p>
+        <h2>The Next Step Is Yours</h2>
+      </div>
+
+      <div class="grid">
+        <article class="panel strong reveal">
+          <p>
+            We do not seek numbers. We seek precision.
+          </p>
+          <p>
+            We do not seek soldiers. We seek operators.
+          </p>
+        </article>
+
+        <article class="panel reveal">
+          <h3>Unofficial Requirements</h3>
+          <ul>
+            <li>Ability to act without supervision</li>
+            <li>Absolute loyalty to the objective</li>
+            <li>Willingness to operate outside any legal framework</li>
+          </ul>
+          <p class="motto">
+            If you are reading this, you have already been observed.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="reveal">
+        <h2>True balance depends on us.</h2>
+        <p>
+          CISR does not appear on maps. CISR does not exist in reports.
+          CISR does not fail.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    CISR NETWORK // CLASSIFIED INTERFACE // ACCESS LOGGED
+  </footer>
+
+  <script>
+    const reveals = document.querySelectorAll(".reveal");
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { threshold: 0.15 });
+
+    reveals.forEach((element) => observer.observe(element));
+  </script>
+</body>
+</html>
