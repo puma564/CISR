@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CISR Classified Archive</title>
+
+  <style>
+    :root {
+      --bg: #030505;
+      --panel: #0b1110;
+      --line: #1f332d;
+      --text: #e8ecef;
+      --muted: #8d98a3;
+      --green: #35ff9b;
+      --yellow: #eab308;
+      --orange: #f97316;
+      --red: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top right, rgba(53, 255, 155, 0.08), transparent 32%),
+        #030505;
+      line-height: 1.7;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.025),
+        rgba(255,255,255,0.025) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+      z-index: 10;
+    }
+
+    header,
+    section,
+    footer {
+      padding: 56px clamp(18px, 5vw, 72px);
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      background: rgba(3, 5, 5, 0.92);
+    }
+
+    .access {
+      color: var(--green);
+      font-family: "Courier New", monospace;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    h1 {
+      margin: 12px 0 0;
+      font-size: clamp(2.6rem, 8vw, 6.6rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0 0 24px;
+      font-size: clamp(1.8rem, 4vw, 3.2rem);
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+    }
+
+    .database-grid,
+    .threat-grid,
+    .personnel-grid,
+    .operation-grid,
+    .stats-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .database-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-top: 28px;
+    }
+
+    .threat-grid,
+    .stats-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .personnel-grid,
+    .operation-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      background: rgba(11, 17, 16, 0.88);
+      padding: 22px;
+    }
+
+    .label {
+      color: var(--green);
+      font-family: "Courier New", monospace;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+    }
+
+    .value {
+      color: var(--text);
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .redacted {
+      display: inline-block;
+      min-width: 110px;
+      height: 1em;
+      background: #000;
+      border: 1px solid #101010;
+      vertical-align: -0.12em;
+    }
+
+    .threat-green { border-top: 4px solid var(--green); }
+    .threat-yellow { border-top: 4px solid var(--yellow); }
+    .threat-orange { border-top: 4px solid var(--orange); }
+    .threat-red { border-top: 4px solid var(--red); }
+    .threat-black { border-top: 4px solid #555; }
+
+    .status {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-family: "Courier New", monospace;
+      color: var(--green);
+      text-transform: uppercase;
+      font-size: 0.84rem;
+    }
+
+    .status.red { color: var(--red); }
+    .status.orange { color: var(--orange); }
+    .status.yellow { color: var(--yellow); }
+
+    .bar {
+      height: 10px;
+      margin: 12px 0 8px;
+      border: 1px solid var(--line);
+      background: #030505;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      background: var(--green);
+    }
+
+    .bar.amber span { background: var(--yellow); }
+    .bar.red span { background: var(--red); }
+
+    .final {
+      text-align: center;
+      border-top: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    footer {
+      padding-top: 24px;
+      padding-bottom: 24px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-family: "Courier New", monospace;
+      text-align: center;
+    }
+
+    @media (max-width: 980px) {
+      .database-grid,
+      .threat-grid,
+      .personnel-grid,
+      .operation-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <p class="access">Classified Access Granted</p>
+    <h1>CISR Internal Archive</h1>
+    <p>Clearance Level: ███████</p>
+    <p>Authorization verified. Unauthorized distribution is prohibited.</p>
+
+    <div class="database-grid">
+      <div class="card">
+        <p class="label">Last Database Synchronization</p>
+        <p class="value">27/06/2026</p>
+      </div>
+      <div class="card">
+        <p class="label">Status</p>
+        <p class="value">Online</p>
+      </div>
+      <div class="card">
+        <p class="label">Security Protocol</p>
+        <p class="value">Active</p>
+      </div>
+      <div class="card">
+        <p class="label">Monitoring</p>
+        <p class="value">Enabled</p>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Threat Level System</h2>
+
+    <div class="threat-grid">
+      <article class="card threat-green">
+        <h3>Green</h3>
+        <p>No immediate threat detected. Monitoring only.</p>
+      </article>
+
+      <article class="card threat-yellow">
+        <h3>Yellow</h3>
+        <p>Potential threat identified. Additional intelligence gathering required.</p>
+      </article>
+
+      <article class="card threat-orange">
+        <h3>Orange</h3>
+        <p>Confirmed threat. Operational intervention may be required.</p>
+      </article>
+
+      <article class="card threat-red">
+        <h3>Red</h3>
+        <p>High-priority threat. Immediate response authorization available.</p>
+      </article>
+
+      <article class="card threat-black">
+        <h3>Black</h3>
+        <p>Maximum threat classification. Full CISR deployment authorized.</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Directorate Personnel Files</h2>
+
+    <div class="personnel-grid">
+      <article class="card">
+        <p class="label">Personnel File 001</p>
+        <h3>GRIM REAPER</h3>
+        <p>Name: Harrison Kane</p>
+        <p>Position: Founder of CISR</p>
+        <p>Status: Active</p>
+        <p>Clearance: Level 10</p>
+        <p>Founder and original architect of CISR’s autonomous intelligence doctrine.</p>
+      </article>
+
+      <article class="card">
+        <p class="label">Personnel File 002</p>
+        <h3>DESYNC</h3>
+        <p>Name: Nicholas Walker</p>
+        <p>Position: President of CISR</p>
+        <p>Status: Active</p>
+        <p>Clearance: Level 10</p>
+        <p>Responsible for strategic planning and long-term operational continuity.</p>
+      </article>
+
+      <article class="card">
+        <p class="label">Personnel File 003</p>
+        <h3>GHOST</h3>
+        <p>Name: Marshal Clark</p>
+        <p>Position: Vice President / Deputy Director</p>
+        <p>Status: Active</p>
+        <p>Clearance: Level 9</p>
+        <p>Bridge between executive leadership and operational command.</p>
+      </article>
+
+      <article class="card">
+        <p class="label">Personnel File 004</p>
+        <h3>KILLER | SLAYER</h3>
+        <p>Name: Jamie Stones</p>
+        <p>Position: Vice President</p>
+        <p>Status: Active</p>
+        <p>Clearance: Level 9</p>
+        <p>Assigned to high-priority internal initiatives and oversight.</p>
+      </article>
+
+      <article class="card">
+        <p class="label">Personnel File 005</p>
+        <h3>THE FALLEN</h3>
+        <p>Name: <span class="redacted"></span></p>
+        <p>Position: Supreme Commander</p>
+        <p>Status: Active</p>
+        <p>Clearance: Level 9</p>
+        <p>Highest military authority within CISR. Real identity remains classified.</p>
+      </article>
+
+      <article class="card">
+        <p class="label">Personnel File 006</p>
+        <h3>SHADOW KING</h3>
+        <p>Name: Quentin Ashford</p>
+        <p>Position: Chief Director</p>
+        <p>Status: Active</p>
+        <p>Clearance: Level 8</p>
+        <p>Coordinates strategic objectives across all divisions.</p>
+      </article>
+
+      <article class="card">
+        <p class="label">Personnel File 007</p>
+        <h3>JAIT</h3>
+        <p>Name: Jake Smith</p>
+        <p>Position: Operations Director</p>
+        <p>Status: Active</p>
+        <p>Clearance: Level 8</p>
+        <p>Supervises active operational units and mission planning.</p>
+      </article>
+
+      <article class="card">
+        <p class="label">Personnel File 008</p>
+        <h3>DOLL</h3>
+        <p>Name: Zet Valker</p>
+        <p>Position: Operations Director</p>
+        <p>Status: Active</p>
+        <p>Clearance: Level 8</p>
+        <p>Oversees tactical coordination and field operation assessments.</p>
+      </article>
+
+      <article class="card">
+        <p class="label">Personnel File 009</p>
+        <h3>LTF</h3>
+        <p>Name: Ronan Blackwood</p>
+        <p>Position: Strategic Director</p>
+        <p>Status: Active</p>
+        <p>Clearance: Level 8</p>
+        <p>Responsible for expansion, diplomacy, and future planning.</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Classified Operations Archive</h2>
+
+    <div class="operation-grid">
+      <article class="card">
+        <p class="status orange">Threat Level: Orange</p>
+        <h3>Operation Nightfall</h3>
+        <p>Status: Completed</p>
+        <p>Location: <span class="redacted"></span></p>
+        <p>Objective: Recover intelligence assets from hostile elements.</p>
+        <p>Outcome: Success</p>
+        <p>Assets Recovered: 17</p>
+        <p>Personnel Lost: 0</p>
+        <p>Mission Efficiency: 98%</p>
+      </article>
+
+      <article class="card">
+        <p class="status red">Threat Level: Red</p>
+        <h3>Operation Black Tide</h3>
+        <p>Status: Completed</p>
+        <p>Location: <span class="redacted"></span></p>
+        <p>Objective: Neutralize an emerging strategic threat.</p>
+        <p>Outcome: Success</p>
+        <p>Threat Eliminated: Yes</p>
+        <p>Personnel Lost: 0</p>
+        <p>Mission Efficiency: 100%</p>
+      </article>
+
+      <article class="card">
+        <p class="status orange">Threat Level: Orange</p>
+        <h3>Operation Iron Veil</h3>
+        <p>Status: Active</p>
+        <p>Location: NRM6</p>
+        <p>Objective: Establish operational influence and infrastructure.</p>
+        <p>Current Progress: 73%</p>
+        <div class="bar amber"><span style="width: 73%;"></span></div>
+        <p>Active Personnel: 12</p>
+      </article>
+
+      <article class="card">
+        <p class="status red">Threat Level: Red</p>
+        <h3>Operation Dead Signal</h3>
+        <p>Status: Completed</p>
+        <p>Objective: Secure encrypted communications network.</p>
+        <p>Outcome: Success</p>
+        <p>Recovered Intelligence: 2.4 TB</p>
+        <p>Personnel Lost: 0</p>
+      </article>
+
+      <article class="card">
+        <p class="status yellow">Threat Level: Yellow</p>
+        <h3>Operation Glass Falcon</h3>
+        <p>Status: Completed</p>
+        <p>Objective: Conduct long-term surveillance operation.</p>
+        <p>Duration: 147 Days</p>
+        <p>Outcome: Success</p>
+      </article>
+
+      <article class="card">
+        <p class="status red">Threat Level: Red</p>
+        <h3>Operation Specter Dawn</h3>
+        <p>Status: Active</p>
+        <p>Objective: Investigate unknown hostile activity.</p>
+        <p>Current Status: Under Analysis</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Operational Statistics</h2>
+
+    <div class="stats-grid">
+      <article class="card">
+        <h3>Mission Success Rate</h3>
+        <div class="bar"><span style="width: 94%;"></span></div>
+        <p>94%</p>
+      </article>
+
+      <article class="card">
+        <h3>Operational Readiness</h3>
+        <div class="bar"><span style="width: 100%;"></span></div>
+        <p>100%</p>
+      </article>
+
+      <article class="card">
+        <h3>Personnel Survival Rate</h3>
+        <div class="bar"><span style="width: 96%;"></span></div>
+        <p>96%</p>
+      </article>
+
+      <article class="card">
+        <h3>Active Deployment Capacity</h3>
+        <div class="bar amber"><span style="width: 89%;"></span></div>
+        <p>89%</p>
+      </article>
+
+      <article class="card">
+        <h3>Active vs Completed</h3>
+        <div class="bar red"><span style="width: 33%;"></span></div>
+        <p>2 Active / 4 Completed</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="final">
+    <h2>Final Notice</h2>
+    <p>Information is power.</p>
+    <p>Power is control.</p>
+    <p>Control is survival.</p>
+    <p>The mission continues.</p>
+  </section>
+
+  <footer>
+    CISR CLASSIFIED DATABASE // ACCESS LOGGED // MONITORING ENABLED
+  </footer>
+</body>
+</html>
