@@ -16,6 +16,7 @@
       --red-soft: #ef4444;
       --green: #35ff9b;
       --gold: #c9a227;
+      --orange: #f97316;
     }
 
     * { box-sizing: border-box; }
@@ -106,10 +107,6 @@
       align-items: center;
     }
 
-    .hero-copy {
-      max-width: 900px;
-    }
-
     .classification {
       display: inline-flex;
       flex-wrap: wrap;
@@ -133,6 +130,23 @@
       font-size: clamp(3rem, 11vw, 8.5rem);
       line-height: 0.9;
       text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      text-transform: uppercase;
+    }
+
+    p {
+      margin: 0 0 16px;
+      color: var(--muted);
     }
 
     .subtitle {
@@ -178,32 +192,6 @@
       background: var(--red);
     }
 
-    .academy-action {
-      display: flex;
-      justify-content: center;
-      margin-top: 34px;
-    }
-
-    .academy-action a {
-      display: inline-flex;
-      min-height: 48px;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-      padding: 13px 22px;
-      border: 1px solid var(--red);
-      background: var(--red);
-      color: white;
-      font-weight: 800;
-      text-transform: uppercase;
-      font-size: 0.86rem;
-      box-shadow: 0 0 28px rgba(185, 28, 28, 0.26);
-    }
-
-    .academy-action a:hover {
-      background: #ef4444;
-    }
-
     .hero-logo {
       display: grid;
       place-items: center;
@@ -240,30 +228,15 @@
       font-size: 0.84rem;
     }
 
-    h2 {
-      margin: 0;
-      font-size: clamp(2rem, 5vw, 4rem);
-      line-height: 1;
-      text-transform: uppercase;
-    }
-
-    h3 {
-      margin: 0 0 12px;
-      text-transform: uppercase;
-    }
-
-    p {
-      margin: 0 0 16px;
-      color: var(--muted);
-    }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 18px;
     }
 
-    .panel {
+    .panel,
+    .command-card,
+    .operation-card {
       border: 1px solid var(--line);
       background: rgba(13, 17, 20, 0.86);
       padding: 26px;
@@ -280,6 +253,13 @@
       margin-bottom: 22px;
     }
 
+    .hidden-clue {
+      margin-top: 18px;
+      color: rgba(141, 152, 163, 0.55);
+      font-family: "Courier New", monospace;
+      font-size: 0.9rem;
+    }
+
     .command-list,
     .operation-list {
       display: grid;
@@ -287,26 +267,30 @@
       margin-top: 18px;
     }
 
-    .command-card,
-    .operation-card {
-      border: 1px solid var(--line);
-      background: rgba(13, 17, 20, 0.86);
-      padding: 22px;
-    }
-
-    .codename {
-      display: inline-block;
-      margin-top: 8px;
-      color: var(--green);
-      font-family: "Courier New", monospace;
-      font-weight: 800;
-    }
-
+    .codename,
     .operation-meta {
       color: var(--green);
       font-family: "Courier New", monospace;
+      font-weight: 800;
       text-transform: uppercase;
-      font-size: 0.86rem;
+    }
+
+    .redacted {
+      display: inline-block;
+      min-width: 150px;
+      height: 1em;
+      background: #050607;
+      border: 1px solid #111;
+      vertical-align: -0.12em;
+    }
+
+    .authorization-line {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px dashed rgba(53, 255, 155, 0.3);
+      background: rgba(53, 255, 155, 0.04);
+      font-family: "Courier New", monospace;
+      color: var(--green);
     }
 
     .progress-bar {
@@ -322,15 +306,6 @@
       width: 73%;
       height: 100%;
       background: var(--gold);
-    }
-
-    .redacted {
-      display: inline-block;
-      min-width: 150px;
-      height: 1em;
-      background: #050607;
-      border: 1px solid #111;
-      vertical-align: -0.12em;
     }
 
     .division {
@@ -375,6 +350,75 @@
       font-family: "Courier New", monospace;
     }
 
+    .clearance-terminal {
+      margin-top: 28px;
+      border: 1px solid rgba(53, 255, 155, 0.35);
+      background: rgba(2, 8, 7, 0.92);
+      padding: 24px;
+      font-family: "Courier New", monospace;
+    }
+
+    .clearance-terminal h3 {
+      color: var(--green);
+    }
+
+    .terminal-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .terminal-row input {
+      flex: 1;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      background: #050607;
+      color: var(--green);
+      padding: 10px 12px;
+      font: inherit;
+    }
+
+    .terminal-row button {
+      border: 1px solid var(--green);
+      background: rgba(53, 255, 155, 0.08);
+      color: var(--green);
+      padding: 10px 16px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .terminal-message {
+      margin-top: 12px;
+      color: var(--muted);
+    }
+
+    .academy-action {
+      display: flex;
+      justify-content: center;
+      margin-top: 34px;
+    }
+
+    .academy-action a {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      padding: 13px 22px;
+      border: 1px solid var(--red);
+      background: var(--red);
+      color: white;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.86rem;
+      box-shadow: 0 0 28px rgba(185, 28, 28, 0.26);
+    }
+
+    .academy-action a:hover {
+      background: #ef4444;
+    }
+
     .final {
       min-height: 70vh;
       display: grid;
@@ -387,13 +431,6 @@
     .final h2 {
       max-width: 900px;
       color: var(--text);
-    }
-
-    .final p {
-      max-width: 720px;
-      margin: 24px auto 0;
-      font-family: "Courier New", monospace;
-      color: var(--muted);
     }
 
     footer {
@@ -418,12 +455,18 @@
     }
 
     @media (max-width: 900px) {
-      .hero-inner {
+      .hero-inner,
+      .grid,
+      .division {
         grid-template-columns: 1fr;
       }
 
       .hero-logo {
         max-width: 680px;
+      }
+
+      .terminal-row {
+        flex-direction: column;
       }
     }
 
@@ -431,11 +474,6 @@
       .topbar {
         align-items: flex-start;
         flex-direction: column;
-      }
-
-      .grid,
-      .division {
-        grid-template-columns: 1fr;
       }
 
       .hero {
@@ -446,6 +484,18 @@
 </head>
 
 <body>
+  <!--
+  CLASSIFIED NOTICE
+
+  If you found this message, you are looking in the right place.
+
+  Authorization Code:
+
+  CISR-IRONVEIL73
+
+  Further access requires proper clearance.
+  -->
+
   <header class="topbar">
     <a href="#home" class="brand">
       CISR
@@ -466,7 +516,7 @@
   <main>
     <section id="home" class="hero">
       <div class="hero-inner reveal">
-        <div class="hero-copy">
+        <div>
           <div class="classification">
             <span class="tag">Classification: Level ███████</span>
             <span class="tag">Status: Active</span>
@@ -474,13 +524,9 @@
 
           <h1>CISR</h1>
 
-          <p class="subtitle">
-            Center for Intelligence and Strategic Response
-          </p>
+          <p class="subtitle">Center for Intelligence and Strategic Response</p>
 
-          <p class="motto">
-            “We see before we act. We act before we are seen.”
-          </p>
+          <p class="motto">“We see before we act. We act before we are seen.”</p>
 
           <div class="hero-actions">
             <a href="#origin" class="button primary">Open File</a>
@@ -502,24 +548,13 @@
 
       <div class="grid">
         <article class="panel strong reveal">
-          <p>
-            Following an internal fracture within SOCOM, a group of high-ranking
-            officers vanished from official records.
-          </p>
-          <p>
-            There were no statements. No trials. No trace.
-          </p>
+          <p>Following an internal fracture within SOCOM, a group of high-ranking officers vanished from official records.</p>
+          <p>There were no statements. No trials. No trace.</p>
         </article>
 
         <article class="panel reveal">
-          <p>
-            Weeks later, multiple covert operations began to surface, executed
-            with a level of precision that surpassed any known standard within
-            the United States military structure.
-          </p>
-          <p>
-            That was the first indication of what is now known as CISR.
-          </p>
+          <p>Weeks later, multiple covert operations began to surface, executed with a level of precision that surpassed any known standard within the United States military structure.</p>
+          <p>That was the first indication of what is now known as CISR.</p>
         </article>
       </div>
     </section>
@@ -531,18 +566,10 @@
       </div>
 
       <div class="panel reveal">
-        <p>
-          CISR does not operate under traditional chains of command.
-        </p>
-        <p>
-          We function at the intersection of intelligence, tactical intervention,
-          and strategic control. Our existence is not officially recognized, yet
-          our results are undeniable.
-        </p>
-        <p>
-          Where others analyze, we have already acted. Where others arrive late,
-          we have already left.
-        </p>
+        <p>CISR does not operate under traditional chains of command.</p>
+        <p>We function at the intersection of intelligence, tactical intervention, and strategic control. Our existence is not officially recognized, yet our results are undeniable.</p>
+        <p>Where others analyze, we have already acted. Where others arrive late, we have already left.</p>
+        <p class="hidden-clue">Not everything is redacted. Look closer.</p>
       </div>
     </section>
 
@@ -554,26 +581,14 @@
 
       <div class="notice reveal">
         <h3>Personnel Notice</h3>
-        <p>
-          In accordance with CISR Operational Security Protocols, all personnel identities remain classified.
-        </p>
-        <p>
-          Only authorized operational codenames are permitted for public release.
-        </p>
-        <p>
-          Real names have been permanently redacted from all accessible records.
-        </p>
+        <p>In accordance with CISR Operational Security Protocols, all personnel identities remain classified.</p>
+        <p>Only authorized operational codenames are permitted for public release.</p>
+        <p>Real names have been permanently redacted from all accessible records.</p>
       </div>
 
       <div class="panel reveal">
-        <p>
-          The Center for Intelligence and Strategic Response operates through a carefully structured command hierarchy
-          designed to ensure operational security, strategic oversight, and mission effectiveness.
-        </p>
-        <p>
-          Every individual within CISR serves a purpose. Every position exists to maintain the balance between
-          intelligence gathering, strategic planning, and operational execution.
-        </p>
+        <p>The Center for Intelligence and Strategic Response operates through a carefully structured command hierarchy designed to ensure operational security, strategic oversight, and mission effectiveness.</p>
+        <p>Every individual within CISR serves a purpose. Every position exists to maintain the balance between intelligence gathering, strategic planning, and operational execution.</p>
       </div>
 
       <div class="section-title reveal" style="margin-top: 42px;">
@@ -582,30 +597,10 @@
       </div>
 
       <div class="command-list">
-        <article class="command-card reveal">
-          <h3>Founder of CISR</h3>
-          <p><span class="redacted"></span></p>
-          <span class="codename">"GRIM REAPER"</span>
-        </article>
-
-        <article class="command-card reveal">
-          <h3>President of CISR</h3>
-          <p><span class="redacted"></span></p>
-          <span class="codename">"DESYNC"</span>
-        </article>
-
-        <article class="command-card reveal">
-          <h3>Vice Presidents of CISR</h3>
-          <p><span class="redacted"></span></p>
-          <span class="codename">"GHOST"</span><br />
-          <span class="codename">"KILLER | SLAYER"</span>
-        </article>
-
-        <article class="command-card reveal">
-          <h3>Supreme Commander</h3>
-          <p><span class="redacted"></span></p>
-          <span class="codename">"THE FALLEN"</span>
-        </article>
+        <article class="command-card reveal"><h3>Founder of CISR</h3><p><span class="redacted"></span></p><span class="codename">"GRIM REAPER"</span></article>
+        <article class="command-card reveal"><h3>President of CISR</h3><p><span class="redacted"></span></p><span class="codename">"DESYNC"</span></article>
+        <article class="command-card reveal"><h3>Vice Presidents of CISR</h3><p><span class="redacted"></span></p><span class="codename">"GHOST"</span><br /><span class="codename">"KILLER | SLAYER"</span></article>
+        <article class="command-card reveal"><h3>Supreme Commander</h3><p><span class="redacted"></span></p><span class="codename">"THE FALLEN"</span></article>
       </div>
 
       <div class="section-title reveal" style="margin-top: 42px;">
@@ -614,39 +609,17 @@
       </div>
 
       <div class="command-list">
-        <article class="command-card reveal">
-          <h3>Chief Director</h3>
-          <p><span class="redacted"></span></p>
-          <span class="codename">"SHADOW KING"</span>
-        </article>
-
-        <article class="command-card reveal">
-          <h3>Deputy Director</h3>
-          <p><span class="redacted"></span></p>
-          <span class="codename">"GHOST"</span>
-        </article>
-
-        <article class="command-card reveal">
-          <h3>Operations Directors</h3>
-          <p><span class="redacted"></span></p>
-          <span class="codename">"JAIT"</span><br />
-          <span class="codename">"DOLL"</span>
-        </article>
-
-        <article class="command-card reveal">
-          <h3>Strategic Director</h3>
-          <p><span class="redacted"></span></p>
-          <span class="codename">"LTF"</span>
-        </article>
+        <article class="command-card reveal"><h3>Chief Director</h3><p><span class="redacted"></span></p><span class="codename">"SHADOW KING"</span></article>
+        <article class="command-card reveal"><h3>Deputy Director</h3><p><span class="redacted"></span></p><span class="codename">"GHOST"</span></article>
+        <article class="command-card reveal"><h3>Operations Directors</h3><p><span class="redacted"></span></p><span class="codename">"JAIT"</span><br /><span class="codename">"DOLL"</span></article>
+        <article class="command-card reveal"><h3>Strategic Director</h3><p><span class="redacted"></span></p><span class="codename">"LTF"</span></article>
       </div>
 
       <div class="panel strong reveal" style="margin-top: 22px;">
         <h3>Command Philosophy</h3>
         <p>Leadership within CISR is built upon responsibility rather than authority.</p>
         <p>Every decision carries consequences. Every operation carries risk.</p>
-        <p>
-          Every leader is expected to place the mission, the organization, and its personnel above personal interests.
-        </p>
+        <p>Every leader is expected to place the mission, the organization, and its personnel above personal interests.</p>
         <p>Operational secrecy remains absolute. Strategic precision remains mandatory.</p>
         <p>Failure is studied. Success is never celebrated. The mission continues.</p>
       </div>
@@ -664,24 +637,14 @@
           <h3>[Restricted Access]</h3>
           <p>Responsible for <span class="redacted"></span></p>
           <p>Oversees <span class="redacted"></span></p>
-          <p>
-            Their authority within CISR is absolute in matters concerning
-            <span class="redacted"></span>.
-          </p>
-          <p>
-            They do not operate in the field. They do not appear in reports.
-            They do not exist in records.
-          </p>
+          <p>Their authority within CISR is absolute in matters concerning <span class="redacted"></span>.</p>
+          <p>They do not operate in the field. They do not appear in reports. They do not exist in records.</p>
         </article>
 
         <article class="panel reveal">
           <h3>CASO — Central Agency for Strategic Operations</h3>
-          <p>
-            The operational face of CISR. Agents selected under criteria that
-            exceed conventional military standards.
-          </p>
+          <p>The operational face of CISR. Agents selected under criteria that exceed conventional military standards.</p>
           <p>Trained to execute, adapt, and disappear.</p>
-
           <h3>Specializations</h3>
           <ul>
             <li>High-precision covert operations</li>
@@ -689,10 +652,7 @@
             <li>Elimination of threats without record</li>
             <li>Recovery of classified assets</li>
           </ul>
-
-          <p class="motto">
-            Key Protocol: Never leave evidence. Never be detected.
-          </p>
+          <p class="motto">Key Protocol: Never leave evidence. Never be detected.</p>
         </article>
       </div>
     </section>
@@ -718,45 +678,48 @@
       </div>
 
       <div class="panel reveal">
-        <p>
-          The following records have been partially declassified for authorized personnel.
-        </p>
+        <p>The following records have been partially declassified for authorized personnel.</p>
       </div>
 
       <div class="operation-list">
         <article class="operation-card reveal">
           <p class="operation-meta">Status: Completed</p>
           <h3>Operation Nightfall</h3>
-          <p>
-            Objective: Recover strategic intelligence from hostile elements operating within
-            <span class="redacted"></span>.
-          </p>
-          <p>
-            Result: Objective secured. No CISR casualties reported. All traces of involvement removed.
-          </p>
+          <p>Objective: Recover strategic intelligence from hostile elements operating within <span class="redacted"></span>.</p>
+          <p>Result: Objective secured. No CISR casualties reported. All traces of involvement removed.</p>
         </article>
 
         <article class="operation-card reveal">
           <p class="operation-meta">Status: Completed</p>
           <h3>Operation Black Tide</h3>
-          <p>
-            Objective: Neutralize an emerging threat before public identification.
-          </p>
-          <p>
-            Result: Threat eliminated. Assets recovered. Operation remains officially undocumented.
-          </p>
+          <p>Objective: Neutralize an emerging threat before public identification.</p>
+          <p>Result: Threat eliminated. Assets recovered. Operation remains officially undocumented.</p>
         </article>
 
         <article class="operation-card reveal">
           <p class="operation-meta">Status: Active</p>
           <h3>Operation Iron Veil</h3>
-          <p>
-            Objective: Establish operational influence within new strategic environments.
-          </p>
+          <p>Objective: Establish operational influence within new strategic environments.</p>
           <p>Current Progress: 73%</p>
           <div class="progress-bar"><span></span></div>
           <p>Threat Level: Orange</p>
+          <div class="authorization-line">
+            AUTHORIZATION REFERENCE:<br />
+            ████-CISR-██IRON██VEIL-██73
+          </div>
         </article>
+      </div>
+
+      <div class="clearance-terminal reveal">
+        <h3>Clearance Verification Terminal</h3>
+        <p>Input authorization reference to request restricted archive access.</p>
+
+        <div class="terminal-row">
+          <input id="clearanceCode" type="text" placeholder="ENTER AUTHORIZATION CODE" />
+          <button type="button" onclick="verifyClearance()">VERIFY</button>
+        </div>
+
+        <p id="terminalMessage" class="terminal-message">Awaiting clearance input...</p>
       </div>
 
       <div class="panel strong reveal" style="margin-top: 22px;">
@@ -784,9 +747,7 @@
             <li>Willingness to operate outside any legal framework</li>
           </ul>
 
-          <p class="motto">
-            If you are reading this, you have already been observed.
-          </p>
+          <p class="motto">If you are reading this, you have already been observed.</p>
 
           <div class="academy-action">
             <a href="https://discord.gg/W8JS33V6ef" target="_blank" rel="noopener noreferrer">
@@ -800,10 +761,7 @@
     <section class="final">
       <div class="reveal">
         <h2>True balance depends on us.</h2>
-        <p>
-          CISR does not appear on maps. CISR does not exist in reports.
-          CISR does not fail.
-        </p>
+        <p>CISR does not appear on maps. CISR does not exist in reports. CISR does not fail.</p>
       </div>
     </section>
   </main>
@@ -824,6 +782,23 @@
     }, { threshold: 0.15 });
 
     reveals.forEach((element) => observer.observe(element));
+
+    function verifyClearance() {
+      const input = document.getElementById("clearanceCode");
+      const message = document.getElementById("terminalMessage");
+      const code = input.value.trim().toUpperCase();
+
+      if (code === "CISR-IRONVEIL73") {
+        message.textContent = "AUTHORIZATION VERIFIED. REDIRECTING...";
+        message.style.color = "#35ff9b";
+        setTimeout(() => {
+          window.location.href = "classified/";
+        }, 900);
+      } else {
+        message.textContent = "ACCESS DENIED. INVALID CLEARANCE REFERENCE.";
+        message.style.color = "#ef4444";
+      }
+    }
   </script>
 </body>
 </html>
