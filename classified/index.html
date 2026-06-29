@@ -16,6 +16,7 @@
       --yellow: #eab308;
       --orange: #f97316;
       --red: #ef4444;
+      --blue: #3b82f6;
     }
 
     * { box-sizing: border-box; }
@@ -86,11 +87,21 @@
       color: var(--muted);
     }
 
+    ul {
+      margin: 10px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    li { margin-bottom: 7px; }
+
     .database-grid,
     .threat-grid,
     .personnel-grid,
     .operation-grid,
-    .stats-grid {
+    .stats-grid,
+    .command-grid,
+    .doctrine-grid {
       display: grid;
       gap: 16px;
     }
@@ -106,8 +117,13 @@
     }
 
     .personnel-grid,
-    .operation-grid {
+    .operation-grid,
+    .command-grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .doctrine-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .card {
@@ -142,6 +158,7 @@
     .threat-yellow { border-top: 4px solid var(--yellow); }
     .threat-orange { border-top: 4px solid var(--orange); }
     .threat-red { border-top: 4px solid var(--red); }
+    .threat-blue { border-top: 4px solid var(--blue); }
     .threat-black { border-top: 4px solid #555; }
 
     .status {
@@ -193,7 +210,9 @@
       .threat-grid,
       .personnel-grid,
       .operation-grid,
-      .stats-grid {
+      .stats-grid,
+      .command-grid,
+      .doctrine-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -204,7 +223,7 @@
   <header>
     <p class="access">Classified Access Granted</p>
     <h1>CISR Internal Archive</h1>
-    <p>Clearance Level: ███████</p>
+    <p>Clearance Level: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</p>
     <p>Authorization verified. Unauthorized distribution is prohibited.</p>
 
     <div class="database-grid">
@@ -259,97 +278,259 @@
   </section>
 
   <section>
-    <h2>Directorate Personnel Files</h2>
+    <h2>Supreme Command Hierarchy</h2>
 
-    <div class="personnel-grid">
+    <div class="command-grid">
+      <article class="card threat-red">
+        <p class="label">&#128736;&#65039; Creator</p>
+        <h3>Harrison Kane</h3>
+        <p>Codename: <span class="value">"Grim Reaper"</span></p>
+        <p>Callsign: <span class="value">ALPHA-0</span></p>
+        <p>Role: Founder and supreme authority of CISR.</p>
+        <p>Architect of the organization's doctrine, infrastructure and long-term vision.</p>
+        <p>Maintains complete ownership and unrestricted authority over every aspect of CISR.</p>
+        <p>Commands Alpha Command, the organization's primary Quick Reaction Force and elite assault division.</p>
+        <p class="label">Responsible For</p>
+        <ul>
+          <li>Organizational doctrine</li>
+          <li>Strategic oversight</li>
+          <li>Final operational authorization</li>
+          <li>Organizational expansion</li>
+          <li>High-level military doctrine</li>
+          <li>Supreme command decisions</li>
+        </ul>
+        <p style="margin-top: 14px;">Possesses absolute veto authority over every organizational decision.</p>
+        <p>No operational deployment or structural modification can occur without Creator authorization.</p>
+      </article>
+
+      <article class="card threat-green">
+        <p class="label">&#128081; President</p>
+        <h3>Nicholas Walker</h3>
+        <p>Codename: <span class="value">"Desync"</span></p>
+        <p>Callsign: <span class="value">OMEGA-0</span></p>
+        <p>Role: Highest executive authority of CISR.</p>
+        <p>Responsible for the day-to-day leadership of the organization.</p>
+        <p>Acts as the principal executive implementing the Creator's long-term vision.</p>
+        <p class="label">Responsible For</p>
+        <ul>
+          <li>Organizational leadership</li>
+          <li>Diplomacy</li>
+          <li>Internal regulations</li>
+          <li>Strategic planning</li>
+          <li>Administrative supervision</li>
+          <li>Expansion initiatives</li>
+        </ul>
+        <p style="margin-top: 14px;">Coordinates every CISR division but remains under the strategic authority of the Creator.</p>
+      </article>
+
+      <article class="card threat-blue">
+        <p class="label">&#129352; Vice President</p>
+        <h3>Quentin Ashford</h3>
+        <p>Codename: <span class="value">"Shadow King"</span></p>
+        <p>Callsign: <span class="value">BETA-0</span></p>
+        <p>Commander: <span class="value">Beta Command</span></p>
+        <p>Role: Executive second-in-command.</p>
+        <p class="label">Responsible For</p>
+        <ul>
+          <li>Intelligence operations</li>
+          <li>Reconnaissance</li>
+          <li>Internal administration</li>
+          <li>Personnel coordination</li>
+          <li>Tactical support</li>
+          <li>Executive leadership whenever the President is unavailable</li>
+        </ul>
+      </article>
+
+      <article class="card threat-orange">
+        <p class="label">&#9876;&#65039; Force Commander</p>
+        <h3><span class="redacted"></span></h3>
+        <p>Codename: <span class="value">"The Fallen"</span></p>
+        <p>Role: Highest battlefield authority.</p>
+        <p>Acts as the military bridge between Supreme Command and operational divisions.</p>
+        <p class="label">Responsible For</p>
+        <ul>
+          <li>Battlefield strategy</li>
+          <li>Tactical coordination</li>
+          <li>Combat readiness</li>
+          <li>Operational deployment</li>
+          <li>Mission execution</li>
+          <li>Force synchronization</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Directorate Administration</h2>
+
+    <div class="command-grid">
       <article class="card">
-        <p class="label">Personnel File 001</p>
-        <h3>GRIM REAPER</h3>
-        <p>Name: Harrison Kane</p>
-        <p>Position: Founder of CISR</p>
-        <p>Status: Active</p>
-        <p>Clearance: Level 10</p>
-        <p>Founder and original architect of CISR’s autonomous intelligence doctrine.</p>
+        <p class="label">Chief Director</p>
+        <h3>Jamie Stones</h3>
+        <p>Codename: <span class="value">"Killer | Slayer"</span></p>
       </article>
 
       <article class="card">
-        <p class="label">Personnel File 002</p>
-        <h3>DESYNC</h3>
-        <p>Name: Nicholas Walker</p>
-        <p>Position: President of CISR</p>
-        <p>Status: Active</p>
-        <p>Clearance: Level 10</p>
-        <p>Responsible for strategic planning and long-term operational continuity.</p>
+        <p class="label">Deputy Director</p>
+        <h3>Marshal Clark</h3>
+        <p>Codename: <span class="value">"Ghost"</span></p>
       </article>
 
       <article class="card">
-        <p class="label">Personnel File 003</p>
-        <h3>GHOST</h3>
-        <p>Name: Marshal Clark</p>
-        <p>Position: Vice President / Deputy Director</p>
-        <p>Status: Active</p>
-        <p>Clearance: Level 9</p>
-        <p>Bridge between executive leadership and operational command.</p>
+        <p class="label">Operations Director</p>
+        <h3>Jake Smith</h3>
+        <p>Codename: <span class="value">"Jait"</span></p>
       </article>
 
       <article class="card">
-        <p class="label">Personnel File 004</p>
-        <h3>KILLER | SLAYER</h3>
-        <p>Name: Jamie Stones</p>
-        <p>Position: Vice President</p>
-        <p>Status: Active</p>
-        <p>Clearance: Level 9</p>
-        <p>Assigned to high-priority internal initiatives and oversight.</p>
+        <p class="label">Operations Director</p>
+        <h3>Zet Valker</h3>
+        <p>Codename: <span class="value">"Doll"</span></p>
       </article>
 
       <article class="card">
-        <p class="label">Personnel File 005</p>
-        <h3>THE FALLEN</h3>
-        <p>Name: <span class="redacted"></span></p>
-        <p>Position: Supreme Commander</p>
-        <p>Status: Active</p>
-        <p>Clearance: Level 9</p>
-        <p>Highest military authority within CISR. Real identity remains classified.</p>
+        <p class="label">Strategic Director</p>
+        <h3>Ronan Blackwood</h3>
+        <p>Codename: <span class="value">"LTF"</span></p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Operational Command Structure</h2>
+
+    <div class="command-grid">
+      <article class="card threat-red">
+        <p class="label">&#128308; Alpha Command</p>
+        <h3>Quick Reaction Force</h3>
+        <p>Commander: Harrison Kane</p>
+        <p>Codename: <span class="value">"Grim Reaper"</span></p>
+        <p>Callsign: <span class="value">ALPHA-0</span></p>
+        <p>Primary Role: Quick Reaction Force / Direct Assault</p>
+        <p>Alpha Command represents the primary military force of CISR.</p>
+        <p>It serves as the organization's elite assault division and principal offensive element.</p>
+        <p class="label">Specialized In</p>
+        <ul>
+          <li>Rapid Response</li>
+          <li>CQB</li>
+          <li>Urban Warfare</li>
+          <li>Air Assault</li>
+          <li>Hostage Rescue</li>
+          <li>High Value Target Elimination</li>
+          <li>Critical Infrastructure Clearance</li>
+          <li>Direct Action Operations</li>
+        </ul>
+        <p style="margin-top: 14px;">Maximum Personnel: <span class="value">9 Operators</span></p>
+        <p>Alpha intentionally remains compact to maximize discipline, coordination, communication and battlefield efficiency.</p>
+        <p class="label">Operational Doctrine</p>
+        <p>"Speed creates surprise.</p>
+        <p>Surprise creates victory."</p>
+      </article>
+
+      <article class="card threat-green">
+        <p class="label">&#128309; Beta Command</p>
+        <h3>Intelligence / Reconnaissance / Strategic Support</h3>
+        <p>Commander: Quentin Ashford</p>
+        <p>Codename: <span class="value">"Shadow King"</span></p>
+        <p>Callsign: <span class="value">BETA-0</span></p>
+        <p>Beta Command prepares every battlefield before Alpha deploys.</p>
+        <p class="label">Responsible For</p>
+        <ul>
+          <li>Intelligence Gathering</li>
+          <li>Reconnaissance</li>
+          <li>Long Range Surveillance</li>
+          <li>Overwatch</li>
+          <li>Target Designation</li>
+          <li>Logistics</li>
+          <li>Extraction Coordination</li>
+          <li>Infiltration</li>
+          <li>Battlefield Analysis</li>
+        </ul>
+        <p class="label" style="margin-top: 14px;">Operational Doctrine</p>
+        <p>"The battle is won long before the first shot is fired."</p>
+      </article>
+
+      <article class="card threat-yellow">
+        <p class="label">&#128994; Omega Command</p>
+        <h3>Combat Support / Medical Response / Engineering / Logistics</h3>
+        <p>Commander: Nicholas Walker</p>
+        <p>Codename: <span class="value">"Desync"</span></p>
+        <p>Callsign: <span class="value">OMEGA-0</span></p>
+        <p>Omega Command serves as the backbone of CISR's operational capability.</p>
+        <p>While Alpha leads the assault and Beta controls intelligence, Omega ensures that every operation can continue regardless of battlefield conditions.</p>
+        <p>Its personnel specialize in sustaining combat effectiveness through medical support, engineering, fortification construction and battlefield logistics.</p>
+        <p class="label">Primary Responsibilities</p>
+        <ul>
+          <li>Combat Medical Response</li>
+          <li>Battlefield Casualty Evacuation (CASEVAC)</li>
+          <li>Tactical Combat Casualty Care (TCCC)</li>
+          <li>Construction of Defensive Positions</li>
+          <li>Rapid Fortification Deployment</li>
+          <li>Engineering Support</li>
+          <li>Ammunition Distribution</li>
+          <li>Vehicle Maintenance</li>
+          <li>Motor Pool Management</li>
+          <li>Battlefield Resupply</li>
+          <li>Transport Coordination</li>
+          <li>Equipment Recovery</li>
+          <li>Field Repairs</li>
+          <li>Forward Operating Base (FOB) Support</li>
+        </ul>
+        <p class="label" style="margin-top: 14px;">Combat Function</p>
+        <p>Omega Command keeps CISR operational under every circumstance.</p>
+        <p>Its operators stabilize wounded personnel under fire, construct defensive positions during active engagements, repair and maintain operational vehicles, and ensure ammunition, equipment and reinforcements reach the front line exactly where they are needed.</p>
+        <p>Without Omega Command, prolonged operations would rapidly lose combat effectiveness.</p>
+        <p class="label">Operational Doctrine</p>
+        <p>"Victory belongs to those who can continue fighting."</p>
+        <p class="label">Operational Philosophy</p>
+        <p>"Every bullet delivered.</p>
+        <p>Every life preserved.</p>
+        <p>Every mission sustained."</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tactical Doctrine</h2>
+
+    <div class="doctrine-grid">
+      <article class="card">
+        <p class="label">Phase I</p>
+        <h3>Infiltration</h3>
+        <p>Beta infiltrates.</p>
+        <p>Collects intelligence.</p>
+        <p>Secures insertion routes.</p>
+        <p>Identifies hostile assets.</p>
+        <p>Marks objectives.</p>
       </article>
 
       <article class="card">
-        <p class="label">Personnel File 006</p>
-        <h3>SHADOW KING</h3>
-        <p>Name: Quentin Ashford</p>
-        <p>Position: Chief Director</p>
-        <p>Status: Active</p>
-        <p>Clearance: Level 8</p>
-        <p>Coordinates strategic objectives across all divisions.</p>
+        <p class="label">Phase II</p>
+        <h3>Overwatch</h3>
+        <p>Beta establishes overwatch.</p>
+        <p>Provides live battlefield intelligence.</p>
+        <p>Coordinates tactical support.</p>
+        <p>Monitors hostile movement.</p>
       </article>
 
       <article class="card">
-        <p class="label">Personnel File 007</p>
-        <h3>JAIT</h3>
-        <p>Name: Jake Smith</p>
-        <p>Position: Operations Director</p>
-        <p>Status: Active</p>
-        <p>Clearance: Level 8</p>
-        <p>Supervises active operational units and mission planning.</p>
+        <p class="label">Phase III</p>
+        <h3>Assault</h3>
+        <p>Alpha deploys.</p>
+        <p>Conducts rapid assault.</p>
+        <p>Neutralizes hostile forces.</p>
+        <p>Secures objectives.</p>
+        <p>Recovers classified assets.</p>
       </article>
 
       <article class="card">
-        <p class="label">Personnel File 008</p>
-        <h3>DOLL</h3>
-        <p>Name: Zet Valker</p>
-        <p>Position: Operations Director</p>
-        <p>Status: Active</p>
-        <p>Clearance: Level 8</p>
-        <p>Oversees tactical coordination and field operation assessments.</p>
-      </article>
-
-      <article class="card">
-        <p class="label">Personnel File 009</p>
-        <h3>LTF</h3>
-        <p>Name: Ronan Blackwood</p>
-        <p>Position: Strategic Director</p>
-        <p>Status: Active</p>
-        <p>Clearance: Level 8</p>
-        <p>Responsible for expansion, diplomacy, and future planning.</p>
+        <p class="label">Phase IV</p>
+        <h3>Extraction</h3>
+        <p>Alpha and Beta coordinate extraction.</p>
+        <p>Recover personnel.</p>
+        <p>Erase operational evidence.</p>
+        <p>Mission classified.</p>
+        <p>Operation officially denied.</p>
       </article>
     </div>
   </section>
@@ -460,9 +641,11 @@
 
   <section class="final">
     <h2>Final Notice</h2>
-    <p>Information is power.</p>
-    <p>Power is control.</p>
-    <p>Control is survival.</p>
+    <p>The Creator is the supreme authority of CISR.</p>
+    <p>The President executes the Creator's strategic vision.</p>
+    <p>The Vice President commands Beta Command while managing executive administration.</p>
+    <p>The Force Commander commands battlefield operations.</p>
+    <p>Alpha strikes. Beta prepares. Omega sustains.</p>
     <p>The mission continues.</p>
   </section>
 
