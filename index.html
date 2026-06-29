@@ -480,6 +480,231 @@
         min-height: 84vh;
       }
     }
+
+    .operations-system {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.65fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .map-controls {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .map-controls label {
+      display: grid;
+      gap: 6px;
+      color: var(--green);
+      font-family: "Courier New", monospace;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    .map-controls select {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      background: #050607;
+      color: var(--text);
+      padding: 8px 10px;
+      font: inherit;
+    }
+
+    .map-shell {
+      position: relative;
+      min-height: 520px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(53, 255, 155, 0.06), transparent 40%),
+        rgba(13, 17, 20, 0.86);
+      overflow: hidden;
+    }
+
+    .map-shell::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 0deg, transparent 0deg, rgba(53, 255, 155, 0.14) 18deg, transparent 42deg);
+      animation: radarSweep 8s linear infinite;
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .world-map {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.52;
+    }
+
+    .world-map path,
+    .world-map ellipse {
+      fill: rgba(141, 152, 163, 0.18);
+      stroke: rgba(53, 255, 155, 0.16);
+      stroke-width: 1;
+    }
+
+    .map-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(53, 255, 155, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(53, 255, 155, 0.06) 1px, transparent 1px);
+      background-size: 10% 10%;
+      opacity: 0.38;
+    }
+
+    .op-marker {
+      position: absolute;
+      top: var(--y);
+      left: var(--x);
+      width: 18px;
+      height: 18px;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      background: rgba(5, 6, 7, 0.94);
+      color: var(--green);
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 18px currentColor;
+      cursor: pointer;
+      z-index: 2;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .op-marker::before {
+      content: "";
+      position: absolute;
+      inset: -9px;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      opacity: 0.35;
+      animation: markerPulse 2.5s ease-out infinite;
+    }
+
+    .op-marker[data-threat="yellow"] { color: var(--gold); }
+    .op-marker[data-threat="orange"] { color: var(--orange); }
+    .op-marker[data-threat="red"] { color: var(--red-soft); }
+    .op-marker[data-threat="black"] { color: #c7c7c7; }
+    .op-marker.hidden { opacity: 0; pointer-events: none; }
+    .op-marker.highlight { transform: translate(-50%, -50%) scale(1.45); }
+    .op-marker:hover { transform: translate(-50%, -50%) scale(1.6); }
+
+    .map-tooltip {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      width: min(360px, calc(100% - 36px));
+      border: 1px solid rgba(53, 255, 155, 0.3);
+      background: rgba(2, 8, 7, 0.92);
+      padding: 18px;
+      font-family: "Courier New", monospace;
+      z-index: 3;
+    }
+
+    .status-panel,
+    .activity-feed,
+    .interface-strip,
+    .timeline-shell,
+    .dossier-shell {
+      border: 1px solid var(--line);
+      background: rgba(13, 17, 20, 0.86);
+      padding: 20px;
+    }
+
+    .stats-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      font-family: "Courier New", monospace;
+    }
+
+    .stats-list div,
+    .interface-strip div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(38, 49, 58, 0.65);
+      padding-bottom: 6px;
+      color: var(--muted);
+    }
+
+    .stats-list strong,
+    .interface-strip strong {
+      color: var(--green);
+      text-align: right;
+    }
+
+    .activity-feed {
+      max-height: 230px;
+      overflow: hidden;
+      margin-top: 18px;
+      font-family: "Courier New", monospace;
+    }
+
+    .feed-track {
+      display: grid;
+      gap: 12px;
+      animation: feedLoop 18s linear infinite;
+    }
+
+    .feed-track p {
+      margin: 0;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed rgba(53, 255, 155, 0.2);
+      color: var(--muted);
+    }
+
+    .feed-track span {
+      color: var(--green);
+    }
+
+    .interface-strip,
+    .timeline-shell,
+    .dossier-shell {
+      margin-top: 18px;
+    }
+
+    .timeline-grid,
+    .dossier-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+      font-family: "Courier New", monospace;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .dossier-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @keyframes markerPulse {
+      from { transform: scale(0.55); opacity: 0.55; }
+      to { transform: scale(1.9); opacity: 0; }
+    }
+
+    @keyframes radarSweep {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes feedLoop {
+      from { transform: translateY(0); }
+      to { transform: translateY(-50%); }
+    }
+
+    @media (max-width: 900px) {
+      .operations-system,
+      .map-controls,
+      .timeline-grid,
+      .dossier-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
@@ -509,6 +734,7 @@
       <a href="#divisions">Divisions</a>
       <a href="#structure">Structure</a>
       <a href="#operations">Operations</a>
+      <a href="#global-map">Global Map</a>
       <a href="#recruitment">Recruitment</a>
     </nav>
   </header>
@@ -781,6 +1007,137 @@
       </div>
     </section>
 
+    <section id="global-map">
+      <div class="section-title reveal">
+        <p>File 06-B / Global Operations System</p>
+        <h2>Global Operations Map</h2>
+      </div>
+
+      <div class="notice reveal">
+        <h3>Public Interface Notice</h3>
+        <p>This map displays limited operational metadata approved for external viewing.</p>
+        <p>Marker intelligence expands dynamically according to selected clearance level.</p>
+      </div>
+
+      <div class="map-controls reveal" data-map-controls>
+        <label>Clearance
+          <select data-clearance-filter>
+            <option value="1">LEVEL I</option>
+            <option value="3">LEVEL III</option>
+            <option value="5">LEVEL V</option>
+            <option value="7">LEVEL VII</option>
+            <option value="omega">OMEGA</option>
+          </select>
+        </label>
+
+        <label>Command
+          <select data-command-filter>
+            <option value="all">ALL COMMANDS</option>
+            <option value="alpha">ALPHA COMMAND</option>
+            <option value="beta">BETA COMMAND</option>
+            <option value="omega">OMEGA COMMAND</option>
+          </select>
+        </label>
+
+        <label>Threat
+          <select data-threat-filter>
+            <option value="all">ALL THREATS</option>
+            <option value="green">GREEN</option>
+            <option value="yellow">YELLOW</option>
+            <option value="orange">ORANGE</option>
+            <option value="red">RED</option>
+            <option value="black">BLACK</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="operations-system reveal">
+        <div>
+          <div class="map-shell" data-map>
+            <svg class="world-map" viewBox="0 0 1000 520" aria-hidden="true">
+              <path d="M145 170L210 120L305 145L330 215L255 255L165 238Z"></path>
+              <path d="M265 295L335 310L355 395L300 475L240 410Z"></path>
+              <path d="M455 155L555 105L660 140L635 215L520 230L430 205Z"></path>
+              <path d="M610 245L710 235L780 300L745 390L645 370L585 305Z"></path>
+              <path d="M775 175L880 185L930 250L900 315L795 295L745 230Z"></path>
+              <ellipse cx="820" cy="420" rx="70" ry="38"></ellipse>
+            </svg>
+            <div class="map-grid"></div>
+
+            <button class="op-marker" style="--x: 49%; --y: 43%;" data-id="OP-CISR-073" data-operation="Operation Iron Veil" data-status="Active" data-threat="orange" data-clearance="1" data-region="NRM6" data-coordinates="43.263N / 2.935W" data-sync="14:03 UTC" data-command="alpha" data-commander="CLASSIFIED" data-ref="/operations/iron-veil" aria-label="Operation Iron Veil"></button>
+            <button class="op-marker" style="--x: 57%; --y: 34%;" data-id="OP-CISR-014" data-operation="Operation Nightfall" data-status="Completed" data-threat="orange" data-clearance="3" data-region="Eastern Corridor" data-coordinates="CLASSIFIED" data-sync="13:08 UTC" data-command="beta" data-commander="CLASSIFIED" data-ref="/operations/nightfall" aria-label="Operation Nightfall"></button>
+            <button class="op-marker" style="--x: 38%; --y: 55%;" data-id="OP-CISR-022" data-operation="Operation Black Tide" data-status="Completed" data-threat="red" data-clearance="5" data-region="Atlantic Grid" data-coordinates="CLASSIFIED" data-sync="12:41 UTC" data-command="alpha" data-commander="CLASSIFIED" data-ref="/operations/black-tide" aria-label="Operation Black Tide"></button>
+            <button class="op-marker" style="--x: 68%; --y: 50%;" data-id="OP-CISR-041" data-operation="Operation Dead Signal" data-status="Completed" data-threat="red" data-clearance="7" data-region="Black Relay" data-coordinates="CLASSIFIED" data-sync="13:42 UTC" data-command="omega" data-commander="CLASSIFIED" data-ref="/operations/dead-signal" aria-label="Operation Dead Signal"></button>
+            <button class="op-marker" style="--x: 74%; --y: 39%;" data-id="OP-CISR-058" data-operation="Operation Glass Falcon" data-status="Completed" data-threat="yellow" data-clearance="omega" data-region="Pacific Watchline" data-coordinates="CLASSIFIED" data-sync="13:17 UTC" data-command="beta" data-commander="CLASSIFIED" data-ref="/operations/glass-falcon" aria-label="Operation Glass Falcon"></button>
+
+            <div class="map-tooltip" data-map-info>
+              <p class="codename">SELECT OPERATION MARKER</p>
+              <p>Awaiting tactical selection...</p>
+            </div>
+          </div>
+
+          <div class="timeline-shell">
+            <h3>Operation Timeline Preparation</h3>
+            <div class="timeline-grid">
+              <div>Creation Date<br /><span data-timeline="creation">Pending selection</span></div>
+              <div>Activation Date<br /><span data-timeline="activation">Pending selection</span></div>
+              <div>Last Update<br /><span data-timeline="update">Pending selection</span></div>
+              <div>Current Status<br /><span data-timeline="status">Pending selection</span></div>
+              <div>Completion Date<br /><span data-timeline="completion">Pending selection</span></div>
+            </div>
+          </div>
+
+          <div class="dossier-shell">
+            <h3>Expandable Dossier Framework</h3>
+            <div class="dossier-grid">
+              <div>Mission Summary: Prepared</div>
+              <div>Objectives: Prepared</div>
+              <div>Personnel: Restricted</div>
+              <div>Threat Analysis: Prepared</div>
+            </div>
+          </div>
+        </div>
+
+        <aside>
+          <div class="status-panel">
+            <h3>Live Status Panel</h3>
+            <div class="stats-list">
+              <div>Total Operations <strong>6</strong></div>
+              <div>Completed Operations <strong>4</strong></div>
+              <div>Active Operations <strong>2</strong></div>
+              <div>Personnel Deployed <strong>12</strong></div>
+              <div>Mission Success Rate <strong>94%</strong></div>
+              <div>Average Threat Level <strong>Orange</strong></div>
+              <div>Operational Readiness <strong>100%</strong></div>
+            </div>
+          </div>
+
+          <div class="activity-feed">
+            <h3>World Activity Feed</h3>
+            <div class="feed-track">
+              <p><span>[12:41 UTC]</span><br />Satellite connection established.</p>
+              <p><span>[13:08 UTC]</span><br />Operation Iron Veil updated.</p>
+              <p><span>[13:17 UTC]</span><br />Recon Drone Online.</p>
+              <p><span>[13:42 UTC]</span><br />Encrypted transmission received.</p>
+              <p><span>[14:03 UTC]</span><br />Alpha Command deployed.</p>
+              <p><span>[12:41 UTC]</span><br />Satellite connection established.</p>
+              <p><span>[13:08 UTC]</span><br />Operation Iron Veil updated.</p>
+            </div>
+          </div>
+
+          <div class="interface-strip">
+            <h3>Interface Status</h3>
+            <div>GPS Signal <strong>LOCKED</strong></div>
+            <div>Satellite Link <strong>ONLINE</strong></div>
+            <div>Encrypted Channel <strong>ACTIVE</strong></div>
+            <div>Database Integrity <strong>VERIFIED</strong></div>
+            <div>Authentication Token <strong>VALID</strong></div>
+            <div>UTC Clock <strong data-utc-clock>SYNCING</strong></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
     <section id="recruitment">
       <div class="section-title reveal">
         <p>File 07 / Recruitment</p>
@@ -837,6 +1194,99 @@
 
     reveals.forEach((element) => observer.observe(element));
 
+    function initOperationsMap() {
+      const map = document.querySelector("[data-map]");
+      if (!map) return;
+
+      const markers = Array.from(map.querySelectorAll(".op-marker"));
+      const clearanceFilter = document.querySelector("[data-clearance-filter]");
+      const commandFilter = document.querySelector("[data-command-filter]");
+      const threatFilter = document.querySelector("[data-threat-filter]");
+      const info = document.querySelector("[data-map-info]");
+      const clearanceRank = { "1": 1, "3": 3, "5": 5, "7": 7, omega: 10 };
+
+      const timeline = {
+        "OP-CISR-073": ["14/06/2026", "19/06/2026", "27/06/2026", "Active", "Pending"],
+        "OP-CISR-014": ["02/03/2026", "08/03/2026", "17/03/2026", "Completed", "17/03/2026"],
+        "OP-CISR-022": ["11/04/2026", "14/04/2026", "15/04/2026", "Completed", "15/04/2026"],
+        "OP-CISR-041": ["21/05/2026", "23/05/2026", "24/05/2026", "Completed", "24/05/2026"],
+        "OP-CISR-058": ["01/01/2026", "05/01/2026", "31/05/2026", "Completed", "31/05/2026"]
+      };
+
+      function selectedClearanceValue() {
+        return clearanceRank[clearanceFilter.value] || 1;
+      }
+
+      function markerClearanceValue(marker) {
+        return clearanceRank[marker.dataset.clearance] || Number(marker.dataset.clearance) || 1;
+      }
+
+      function renderInfo(marker) {
+        info.innerHTML = `
+          <p class="codename">${marker.dataset.id}</p>
+          <h3>${marker.dataset.operation}</h3>
+          <p>Status: ${marker.dataset.status}</p>
+          <p>Threat Level: ${marker.dataset.threat.toUpperCase()}</p>
+          <p>Clearance Level: ${marker.dataset.clearance.toUpperCase()}</p>
+          <p>Region: ${marker.dataset.region}</p>
+          <p>Coordinates: ${marker.dataset.coordinates}</p>
+          <p>Last Sync: ${marker.dataset.sync}</p>
+          <p>Assigned Command: ${marker.dataset.command.toUpperCase()}</p>
+          <p>Assigned Commander: ${marker.dataset.commander}</p>
+          <p>Future File: ${marker.dataset.ref}</p>
+        `;
+
+        const entry = timeline[marker.dataset.id] || ["Prepared", "Prepared", marker.dataset.sync, marker.dataset.status, "Pending"];
+        document.querySelector('[data-timeline="creation"]').textContent = entry[0];
+        document.querySelector('[data-timeline="activation"]').textContent = entry[1];
+        document.querySelector('[data-timeline="update"]').textContent = entry[2];
+        document.querySelector('[data-timeline="status"]').textContent = entry[3];
+        document.querySelector('[data-timeline="completion"]').textContent = entry[4];
+      }
+
+      function applyFilters() {
+        const command = commandFilter.value;
+        const threat = threatFilter.value;
+        const clearance = selectedClearanceValue();
+
+        markers.forEach((marker) => {
+          const visibleByClearance = markerClearanceValue(marker) <= clearance;
+          const visibleByCommand = command === "all" || marker.dataset.command === command;
+          marker.classList.toggle("hidden", !(visibleByClearance && visibleByCommand));
+          marker.classList.toggle("highlight", threat !== "all" && marker.dataset.threat === threat);
+        });
+      }
+
+      markers.forEach((marker) => {
+        marker.addEventListener("mouseenter", () => renderInfo(marker));
+        marker.addEventListener("focus", () => renderInfo(marker));
+        marker.addEventListener("click", () => renderInfo(marker));
+      });
+
+      [clearanceFilter, commandFilter, threatFilter].forEach((filter) => {
+        filter.addEventListener("change", applyFilters);
+      });
+
+      applyFilters();
+      if (markers[0]) renderInfo(markers[0]);
+    }
+
+    function syncUtcClock() {
+      const clocks = document.querySelectorAll("[data-utc-clock]");
+      if (!clocks.length) return;
+      const update = () => {
+        const value = new Date().toISOString().slice(11, 19) + " UTC";
+        clocks.forEach((clock) => {
+          clock.textContent = value;
+        });
+      };
+      update();
+      setInterval(update, 1000);
+    }
+
+    initOperationsMap();
+    syncUtcClock();
+
     function verifyClearance() {
       const input = document.getElementById("clearanceCode");
       const message = document.getElementById("terminalMessage");
@@ -846,7 +1296,7 @@
         message.textContent = "AUTHORIZATION VERIFIED. REDIRECTING...";
         message.style.color = "#35ff9b";
         setTimeout(() => {
-          window.location.href = "https://puma564.github.io/CISR/classified/";
+          window.location.href = "./classified/";
         }, 900);
       } else {
         message.textContent = "ACCESS DENIED. INVALID CLEARANCE REFERENCE.";
