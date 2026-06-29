@@ -1292,13 +1292,16 @@
       const message = document.getElementById("terminalMessage");
       const code = input.value.trim().toUpperCase();
 
-      if (code === "CISR-IRONVEIL73") {
-        message.textContent = "AUTHORIZATION VERIFIED. REDIRECTING...";
-        message.style.color = "#35ff9b";
-        setTimeout(() => {
-          window.location.href = "https://puma564.github.io/CISR/classified/";
-        }, 900);
-      } else {
+     if (code === "CISR-IRONVEIL73") {
+  message.textContent = "AUTHORIZATION VERIFIED. REDIRECTING...";
+  message.style.color = "#35ff9b";
+
+  sessionStorage.removeItem("cisrAccessSequenceComplete");
+
+  setTimeout(() => {
+    window.location.href = "classified/";
+  }, 900);
+} else {
         message.textContent = "ACCESS DENIED. INVALID CLEARANCE REFERENCE.";
         message.style.color = "#ef4444";
       }
