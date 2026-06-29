@@ -216,6 +216,231 @@
         grid-template-columns: 1fr;
       }
     }
+
+    .operations-system {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.7fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .map-controls {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .map-controls label {
+      display: grid;
+      gap: 6px;
+      color: var(--green);
+      font-family: "Courier New", monospace;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+    }
+
+    .map-controls select {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      background: #030505;
+      color: var(--text);
+      padding: 8px 10px;
+      font: inherit;
+    }
+
+    .map-shell {
+      position: relative;
+      min-height: 540px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(53, 255, 155, 0.07), transparent 42%),
+        rgba(11, 17, 16, 0.88);
+      overflow: hidden;
+    }
+
+    .map-shell::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 0deg, transparent 0deg, rgba(53, 255, 155, 0.16) 16deg, transparent 40deg);
+      animation: radarSweep 8s linear infinite;
+      opacity: 0.48;
+      pointer-events: none;
+    }
+
+    .world-map {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.54;
+    }
+
+    .world-map path,
+    .world-map ellipse {
+      fill: rgba(141, 152, 163, 0.18);
+      stroke: rgba(53, 255, 155, 0.16);
+      stroke-width: 1;
+    }
+
+    .map-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(53, 255, 155, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(53, 255, 155, 0.06) 1px, transparent 1px);
+      background-size: 10% 10%;
+      opacity: 0.38;
+    }
+
+    .op-marker {
+      position: absolute;
+      top: var(--y);
+      left: var(--x);
+      width: 18px;
+      height: 18px;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      background: rgba(3, 5, 5, 0.94);
+      color: var(--green);
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 18px currentColor;
+      cursor: pointer;
+      z-index: 2;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+
+    .op-marker::before {
+      content: "";
+      position: absolute;
+      inset: -9px;
+      border: 1px solid currentColor;
+      border-radius: 50%;
+      opacity: 0.35;
+      animation: markerPulse 2.5s ease-out infinite;
+    }
+
+    .op-marker[data-threat="yellow"] { color: var(--yellow); }
+    .op-marker[data-threat="orange"] { color: var(--orange); }
+    .op-marker[data-threat="red"] { color: var(--red); }
+    .op-marker[data-threat="black"] { color: #c7c7c7; }
+    .op-marker.hidden { opacity: 0; pointer-events: none; }
+    .op-marker.highlight { transform: translate(-50%, -50%) scale(1.45); }
+    .op-marker:hover { transform: translate(-50%, -50%) scale(1.6); }
+
+    .map-tooltip,
+    .status-panel,
+    .activity-feed,
+    .interface-strip,
+    .timeline-shell,
+    .dossier-shell {
+      border: 1px solid var(--line);
+      background: rgba(11, 17, 16, 0.88);
+      padding: 20px;
+    }
+
+    .map-tooltip {
+      position: absolute;
+      right: 18px;
+      bottom: 18px;
+      width: min(390px, calc(100% - 36px));
+      border-color: rgba(53, 255, 155, 0.3);
+      background: rgba(2, 8, 7, 0.94);
+      font-family: "Courier New", monospace;
+      z-index: 3;
+    }
+
+    .stats-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      font-family: "Courier New", monospace;
+    }
+
+    .stats-list div,
+    .interface-strip div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(31, 51, 45, 0.8);
+      padding-bottom: 6px;
+      color: var(--muted);
+    }
+
+    .stats-list strong,
+    .interface-strip strong {
+      color: var(--green);
+      text-align: right;
+    }
+
+    .activity-feed {
+      max-height: 238px;
+      overflow: hidden;
+      margin-top: 16px;
+      font-family: "Courier New", monospace;
+    }
+
+    .feed-track {
+      display: grid;
+      gap: 12px;
+      animation: feedLoop 18s linear infinite;
+    }
+
+    .feed-track p {
+      margin: 0;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed rgba(53, 255, 155, 0.2);
+      color: var(--muted);
+    }
+
+    .feed-track span {
+      color: var(--green);
+    }
+
+    .interface-strip,
+    .timeline-shell,
+    .dossier-shell {
+      margin-top: 16px;
+    }
+
+    .timeline-grid,
+    .dossier-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+      font-family: "Courier New", monospace;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .dossier-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    @keyframes markerPulse {
+      from { transform: scale(0.55); opacity: 0.55; }
+      to { transform: scale(1.9); opacity: 0; }
+    }
+
+    @keyframes radarSweep {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes feedLoop {
+      from { transform: translateY(0); }
+      to { transform: translateY(-50%); }
+    }
+
+    @media (max-width: 980px) {
+      .operations-system,
+      .map-controls,
+      .timeline-grid,
+      .dossier-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
@@ -536,6 +761,136 @@
   </section>
 
   <section>
+    <h2>Global Operations Map</h2>
+
+    <div class="map-controls" data-map-controls>
+      <label>Clearance
+        <select data-clearance-filter>
+          <option value="1">LEVEL I</option>
+          <option value="3">LEVEL III</option>
+          <option value="5">LEVEL V</option>
+          <option value="7">LEVEL VII</option>
+          <option value="omega" selected>OMEGA</option>
+        </select>
+      </label>
+
+      <label>Command
+        <select data-command-filter>
+          <option value="all">ALL COMMANDS</option>
+          <option value="alpha">ALPHA COMMAND</option>
+          <option value="beta">BETA COMMAND</option>
+          <option value="omega">OMEGA COMMAND</option>
+        </select>
+      </label>
+
+      <label>Threat
+        <select data-threat-filter>
+          <option value="all">ALL THREATS</option>
+          <option value="green">GREEN</option>
+          <option value="yellow">YELLOW</option>
+          <option value="orange">ORANGE</option>
+          <option value="red">RED</option>
+          <option value="black">BLACK</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="operations-system">
+      <div>
+        <div class="map-shell" data-map>
+          <svg class="world-map" viewBox="0 0 1000 520" aria-hidden="true">
+            <path d="M145 170L210 120L305 145L330 215L255 255L165 238Z"></path>
+            <path d="M265 295L335 310L355 395L300 475L240 410Z"></path>
+            <path d="M455 155L555 105L660 140L635 215L520 230L430 205Z"></path>
+            <path d="M610 245L710 235L780 300L745 390L645 370L585 305Z"></path>
+            <path d="M775 175L880 185L930 250L900 315L795 295L745 230Z"></path>
+            <ellipse cx="820" cy="420" rx="70" ry="38"></ellipse>
+          </svg>
+          <div class="map-grid"></div>
+
+          <button class="op-marker" style="--x: 49%; --y: 43%;" data-id="OP-CISR-073" data-operation="Operation Iron Veil" data-status="Active" data-threat="orange" data-clearance="1" data-region="NRM6" data-coordinates="43.263N / 2.935W" data-sync="14:03 UTC" data-command="alpha" data-commander="Harrison Kane / ALPHA-0" data-ref="/operations/iron-veil" aria-label="Operation Iron Veil"></button>
+          <button class="op-marker" style="--x: 57%; --y: 34%;" data-id="OP-CISR-014" data-operation="Operation Nightfall" data-status="Completed" data-threat="orange" data-clearance="3" data-region="Eastern Corridor" data-coordinates="46.227N / 2.213E" data-sync="13:08 UTC" data-command="beta" data-commander="Quentin Ashford / BETA-0" data-ref="/operations/nightfall" aria-label="Operation Nightfall"></button>
+          <button class="op-marker" style="--x: 38%; --y: 55%;" data-id="OP-CISR-022" data-operation="Operation Black Tide" data-status="Completed" data-threat="red" data-clearance="5" data-region="Atlantic Grid" data-coordinates="24.713N / 46.675W" data-sync="12:41 UTC" data-command="alpha" data-commander="Harrison Kane / ALPHA-0" data-ref="/operations/black-tide" aria-label="Operation Black Tide"></button>
+          <button class="op-marker" style="--x: 68%; --y: 50%;" data-id="OP-CISR-041" data-operation="Operation Dead Signal" data-status="Completed" data-threat="red" data-clearance="7" data-region="Black Relay" data-coordinates="35.689N / 139.691E" data-sync="13:42 UTC" data-command="omega" data-commander="Nicholas Walker / OMEGA-0" data-ref="/operations/dead-signal" aria-label="Operation Dead Signal"></button>
+          <button class="op-marker" style="--x: 74%; --y: 39%;" data-id="OP-CISR-058" data-operation="Operation Glass Falcon" data-status="Completed" data-threat="yellow" data-clearance="omega" data-region="Pacific Watchline" data-coordinates="21.306N / 157.858W" data-sync="13:17 UTC" data-command="beta" data-commander="Quentin Ashford / BETA-0" data-ref="/operations/glass-falcon" aria-label="Operation Glass Falcon"></button>
+          <button class="op-marker" style="--x: 62%; --y: 29%;" data-id="OP-CISR-066" data-operation="Operation Specter Dawn" data-status="Active" data-threat="red" data-clearance="omega" data-region="Northern Blacksite" data-coordinates="60.169N / 24.938E" data-sync="14:18 UTC" data-command="beta" data-commander="Quentin Ashford / BETA-0" data-ref="/operations/specter-dawn" aria-label="Operation Specter Dawn"></button>
+          <button class="op-marker" style="--x: 52%; --y: 58%;" data-id="OP-CISR-081" data-operation="Operation Stone Harbor" data-status="Prepared" data-threat="black" data-clearance="omega" data-region="Redacted Maritime Zone" data-coordinates="CLASSIFIED" data-sync="14:22 UTC" data-command="omega" data-commander="Nicholas Walker / OMEGA-0" data-ref="/operations/stone-harbor" aria-label="Operation Stone Harbor"></button>
+
+          <div class="map-tooltip" data-map-info>
+            <p class="label">SELECT OPERATION MARKER</p>
+            <p>Awaiting classified tactical selection...</p>
+          </div>
+        </div>
+
+        <div class="timeline-shell">
+          <h3>Operation Timeline</h3>
+          <div class="timeline-grid">
+            <div>Creation Date<br /><span data-timeline="creation">Pending selection</span></div>
+            <div>Activation Date<br /><span data-timeline="activation">Pending selection</span></div>
+            <div>Last Update<br /><span data-timeline="update">Pending selection</span></div>
+            <div>Current Status<br /><span data-timeline="status">Pending selection</span></div>
+            <div>Completion Date<br /><span data-timeline="completion">Pending selection</span></div>
+          </div>
+        </div>
+
+        <div class="dossier-shell">
+          <h3>Expandable Intelligence Dossier Framework</h3>
+          <div class="dossier-grid">
+            <div>Mission Summary<br /><span data-dossier="summary">Prepared</span></div>
+            <div>Objectives<br /><span data-dossier="objectives">Prepared</span></div>
+            <div>Personnel<br /><span data-dossier="personnel">Prepared</span></div>
+            <div>Recovered Assets<br /><span data-dossier="assets">Prepared</span></div>
+            <div>Casualties<br /><span data-dossier="casualties">Prepared</span></div>
+            <div>Mission Outcome<br /><span data-dossier="outcome">Prepared</span></div>
+            <div>Threat Analysis<br /><span data-dossier="threat">Prepared</span></div>
+            <div>Future File<br /><span data-dossier="file">Prepared</span></div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="status-panel">
+          <h3>Live Status Panel</h3>
+          <div class="stats-list">
+            <div>Total Operations <strong>7</strong></div>
+            <div>Completed Operations <strong>4</strong></div>
+            <div>Active Operations <strong>2</strong></div>
+            <div>Personnel Deployed <strong>12</strong></div>
+            <div>Mission Success Rate <strong>94%</strong></div>
+            <div>Average Threat Level <strong>Orange</strong></div>
+            <div>Operational Readiness <strong>100%</strong></div>
+          </div>
+        </div>
+
+        <div class="activity-feed">
+          <h3>World Activity Feed</h3>
+          <div class="feed-track">
+            <p><span>[12:41 UTC]</span><br />Satellite connection established.</p>
+            <p><span>[13:08 UTC]</span><br />Operation Iron Veil updated.</p>
+            <p><span>[13:17 UTC]</span><br />Recon Drone Online.</p>
+            <p><span>[13:42 UTC]</span><br />Encrypted transmission received.</p>
+            <p><span>[14:03 UTC]</span><br />Alpha Command deployed.</p>
+            <p><span>[14:18 UTC]</span><br />Beta overwatch package synchronized.</p>
+            <p><span>[14:22 UTC]</span><br />Omega resupply corridor validated.</p>
+            <p><span>[12:41 UTC]</span><br />Satellite connection established.</p>
+          </div>
+        </div>
+
+        <div class="interface-strip">
+          <h3>Command Center Integrity</h3>
+          <div>GPS Signal <strong>LOCKED</strong></div>
+          <div>Satellite Link <strong>ONLINE</strong></div>
+          <div>Encrypted Channel <strong>ACTIVE</strong></div>
+          <div>Database Integrity <strong>VERIFIED</strong></div>
+          <div>Authentication Token <strong>VALID</strong></div>
+          <div>Network Status <strong>SECURE</strong></div>
+          <div>UTC Clock <strong data-utc-clock>SYNCING</strong></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section>
     <h2>Classified Operations Archive</h2>
 
     <div class="operation-grid">
@@ -654,3 +1009,4 @@
   </footer>
 </body>
 </html>
+
