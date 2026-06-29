@@ -21,6 +21,8 @@
 
     * { box-sizing: border-box; }
 
+    html { scroll-behavior: smooth; }
+
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
@@ -44,12 +46,29 @@
         transparent 4px
       );
       z-index: 10;
+      animation: scanMove 7s linear infinite;
+    }
+
+    body::after {
+      content: "CISR // CLASSIFIED";
+      position: fixed;
+      right: 28px;
+      bottom: 24px;
+      z-index: 1;
+      color: rgba(53, 255, 155, 0.055);
+      font-family: "Courier New", monospace;
+      font-size: clamp(1.8rem, 6vw, 5rem);
+      font-weight: 800;
+      pointer-events: none;
+      text-transform: uppercase;
     }
 
     header,
     section,
     footer {
       padding: 56px clamp(18px, 5vw, 72px);
+      position: relative;
+      z-index: 2;
     }
 
     header {
@@ -62,6 +81,17 @@
       font-family: "Courier New", monospace;
       text-transform: uppercase;
       font-weight: 800;
+    }
+
+    .online-dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 14px var(--green);
+      animation: blink 1.4s infinite;
     }
 
     h1 {
@@ -179,12 +209,15 @@
       margin: 12px 0 8px;
       border: 1px solid var(--line);
       background: #030505;
+      overflow: hidden;
     }
 
     .bar span {
       display: block;
+      width: 0;
       height: 100%;
       background: var(--green);
+      transition: width 1.8s ease;
     }
 
     .bar.amber span { background: var(--yellow); }
@@ -203,18 +236,6 @@
       color: var(--muted);
       font-family: "Courier New", monospace;
       text-align: center;
-    }
-
-    @media (max-width: 980px) {
-      .database-grid,
-      .threat-grid,
-      .personnel-grid,
-      .operation-grid,
-      .stats-grid,
-      .command-grid,
-      .doctrine-grid {
-        grid-template-columns: 1fr;
-      }
     }
 
     .operations-system {
@@ -263,9 +284,9 @@
       content: "";
       position: absolute;
       inset: -40%;
-      background: conic-gradient(from 0deg, transparent 0deg, rgba(53, 255, 155, 0.16) 16deg, transparent 40deg);
-      animation: radarSweep 8s linear infinite;
-      opacity: 0.48;
+      background: conic-gradient(from 0deg, transparent 0deg, rgba(53, 255, 155, 0.2) 12deg, transparent 34deg);
+      animation: radarSweep 6.5s linear infinite;
+      opacity: 0.52;
       pointer-events: none;
     }
 
@@ -292,6 +313,7 @@
         linear-gradient(90deg, rgba(53, 255, 155, 0.06) 1px, transparent 1px);
       background-size: 10% 10%;
       opacity: 0.38;
+      animation: gridDrift 14s linear infinite;
     }
 
     .op-marker {
@@ -308,7 +330,7 @@
       box-shadow: 0 0 18px currentColor;
       cursor: pointer;
       z-index: 2;
-      transition: transform 0.25s ease, opacity 0.25s ease;
+      transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
     }
 
     .op-marker::before {
@@ -326,8 +348,11 @@
     .op-marker[data-threat="red"] { color: var(--red); }
     .op-marker[data-threat="black"] { color: #c7c7c7; }
     .op-marker.hidden { opacity: 0; pointer-events: none; }
-    .op-marker.highlight { transform: translate(-50%, -50%) scale(1.45); }
-    .op-marker:hover { transform: translate(-50%, -50%) scale(1.6); }
+    .op-marker.highlight {
+      transform: translate(-50%, -50%) scale(1.65);
+      box-shadow: 0 0 30px currentColor, 0 0 65px currentColor;
+    }
+    .op-marker:hover { transform: translate(-50%, -50%) scale(1.55); }
 
     .map-tooltip,
     .status-panel,
@@ -344,7 +369,7 @@
       position: absolute;
       right: 18px;
       bottom: 18px;
-      width: min(390px, calc(100% - 36px));
+      width: min(430px, calc(100% - 36px));
       border-color: rgba(53, 255, 155, 0.3);
       background: rgba(2, 8, 7, 0.94);
       font-family: "Courier New", monospace;
@@ -375,7 +400,7 @@
     }
 
     .activity-feed {
-      max-height: 238px;
+      max-height: 260px;
       overflow: hidden;
       margin-top: 16px;
       font-family: "Courier New", monospace;
@@ -384,7 +409,6 @@
     .feed-track {
       display: grid;
       gap: 12px;
-      animation: feedLoop 18s linear infinite;
     }
 
     .feed-track p {
@@ -392,6 +416,7 @@
       padding-bottom: 12px;
       border-bottom: 1px dashed rgba(53, 255, 155, 0.2);
       color: var(--muted);
+      animation: terminalFlicker 5s infinite;
     }
 
     .feed-track span {
@@ -419,6 +444,84 @@
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
+    .timeline-grid span,
+    .dossier-grid span {
+      color: var(--green);
+    }
+
+    .login-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      display: grid;
+      place-items: center;
+      padding: 26px;
+      background: #000;
+      color: var(--green);
+      font-family: "Courier New", monospace;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    .login-gate.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .login-gate::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(53, 255, 155, 0.08),
+        rgba(53, 255, 155, 0.08) 1px,
+        transparent 1px,
+        transparent 5px
+      );
+      opacity: 0.22;
+      animation: scanMove 5s linear infinite;
+    }
+
+    .login-box {
+      width: min(860px, 100%);
+      border: 1px solid rgba(53, 255, 155, 0.45);
+      background: rgba(0, 0, 0, 0.86);
+      padding: 28px;
+      box-shadow: 0 0 70px rgba(53, 255, 155, 0.12);
+      position: relative;
+      z-index: 1;
+    }
+
+    .terminal-output {
+      min-height: 310px;
+      white-space: pre-line;
+      text-transform: uppercase;
+    }
+
+    .boot-bar {
+      height: 12px;
+      border: 1px solid rgba(53, 255, 155, 0.5);
+      background: #030505;
+      margin-top: 18px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .boot-bar span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--green);
+    }
+
+    .boot-percent {
+      margin-top: 8px;
+      color: var(--green);
+      display: none;
+    }
+
     @keyframes markerPulse {
       from { transform: scale(0.55); opacity: 0.55; }
       to { transform: scale(1.9); opacity: 0; }
@@ -428,12 +531,36 @@
       to { transform: rotate(360deg); }
     }
 
-    @keyframes feedLoop {
-      from { transform: translateY(0); }
-      to { transform: translateY(-50%); }
+    @keyframes gridDrift {
+      from { background-position: 0 0; }
+      to { background-position: 80px 80px; }
+    }
+
+    @keyframes blink {
+      0%, 45%, 100% { opacity: 1; }
+      50%, 70% { opacity: 0.25; }
+    }
+
+    @keyframes scanMove {
+      from { background-position: 0 0; }
+      to { background-position: 0 80px; }
+    }
+
+    @keyframes terminalFlicker {
+      0%, 100% { opacity: 1; }
+      48% { opacity: 0.88; }
+      50% { opacity: 0.6; }
+      52% { opacity: 0.95; }
     }
 
     @media (max-width: 980px) {
+      .database-grid,
+      .threat-grid,
+      .personnel-grid,
+      .operation-grid,
+      .stats-grid,
+      .command-grid,
+      .doctrine-grid,
       .operations-system,
       .map-controls,
       .timeline-grid,
@@ -445,8 +572,16 @@
 </head>
 
 <body>
+  <div class="login-gate" data-login-gate>
+    <div class="login-box">
+      <div class="terminal-output" data-terminal-output></div>
+      <div class="boot-bar" data-boot-bar><span data-boot-fill></span></div>
+      <div class="boot-percent" data-boot-percent>0%</div>
+    </div>
+  </div>
+
   <header>
-    <p class="access">Classified Access Granted</p>
+    <p class="access"><span class="online-dot"></span>Classified Access Granted</p>
     <h1>CISR Internal Archive</h1>
     <p>Clearance Level: &#9608;&#9608;&#9608;&#9608;&#9608;&#9608;&#9608;</p>
     <p>Authorization verified. Unauthorized distribution is prohibited.</p>
@@ -479,22 +614,18 @@
         <h3>Green</h3>
         <p>No immediate threat detected. Monitoring only.</p>
       </article>
-
       <article class="card threat-yellow">
         <h3>Yellow</h3>
         <p>Potential threat identified. Additional intelligence gathering required.</p>
       </article>
-
       <article class="card threat-orange">
         <h3>Orange</h3>
         <p>Confirmed threat. Operational intervention may be required.</p>
       </article>
-
       <article class="card threat-red">
         <h3>Red</h3>
         <p>High-priority threat. Immediate response authorization available.</p>
       </article>
-
       <article class="card threat-black">
         <h3>Black</h3>
         <p>Maximum threat classification. Full CISR deployment authorized.</p>
@@ -507,80 +638,38 @@
 
     <div class="command-grid">
       <article class="card threat-red">
-        <p class="label">&#128736;&#65039; Creator</p>
+        <p class="label">Creator</p>
         <h3>Harrison Kane</h3>
         <p>Codename: <span class="value">"Grim Reaper"</span></p>
         <p>Callsign: <span class="value">ALPHA-0</span></p>
         <p>Role: Founder and supreme authority of CISR.</p>
-        <p>Architect of the organization's doctrine, infrastructure and long-term vision.</p>
-        <p>Maintains complete ownership and unrestricted authority over every aspect of CISR.</p>
         <p>Commands Alpha Command, the organization's primary Quick Reaction Force and elite assault division.</p>
-        <p class="label">Responsible For</p>
-        <ul>
-          <li>Organizational doctrine</li>
-          <li>Strategic oversight</li>
-          <li>Final operational authorization</li>
-          <li>Organizational expansion</li>
-          <li>High-level military doctrine</li>
-          <li>Supreme command decisions</li>
-        </ul>
-        <p style="margin-top: 14px;">Possesses absolute veto authority over every organizational decision.</p>
-        <p>No operational deployment or structural modification can occur without Creator authorization.</p>
       </article>
 
       <article class="card threat-green">
-        <p class="label">&#128081; President</p>
+        <p class="label">President</p>
         <h3>Nicholas Walker</h3>
         <p>Codename: <span class="value">"Desync"</span></p>
         <p>Callsign: <span class="value">OMEGA-0</span></p>
         <p>Role: Highest executive authority of CISR.</p>
-        <p>Responsible for the day-to-day leadership of the organization.</p>
-        <p>Acts as the principal executive implementing the Creator's long-term vision.</p>
-        <p class="label">Responsible For</p>
-        <ul>
-          <li>Organizational leadership</li>
-          <li>Diplomacy</li>
-          <li>Internal regulations</li>
-          <li>Strategic planning</li>
-          <li>Administrative supervision</li>
-          <li>Expansion initiatives</li>
-        </ul>
-        <p style="margin-top: 14px;">Coordinates every CISR division but remains under the strategic authority of the Creator.</p>
+        <p>Coordinates every CISR division under the strategic authority of the Creator.</p>
       </article>
 
       <article class="card threat-blue">
-        <p class="label">&#129352; Vice President</p>
+        <p class="label">Vice President</p>
         <h3>Quentin Ashford</h3>
         <p>Codename: <span class="value">"Shadow King"</span></p>
         <p>Callsign: <span class="value">BETA-0</span></p>
         <p>Commander: <span class="value">Beta Command</span></p>
-        <p>Role: Executive second-in-command.</p>
-        <p class="label">Responsible For</p>
-        <ul>
-          <li>Intelligence operations</li>
-          <li>Reconnaissance</li>
-          <li>Internal administration</li>
-          <li>Personnel coordination</li>
-          <li>Tactical support</li>
-          <li>Executive leadership whenever the President is unavailable</li>
-        </ul>
+        <p>Executive second-in-command and intelligence operations authority.</p>
       </article>
 
       <article class="card threat-orange">
-        <p class="label">&#9876;&#65039; Force Commander</p>
+        <p class="label">Force Commander</p>
         <h3><span class="redacted"></span></h3>
         <p>Codename: <span class="value">"The Fallen"</span></p>
         <p>Role: Highest battlefield authority.</p>
         <p>Acts as the military bridge between Supreme Command and operational divisions.</p>
-        <p class="label">Responsible For</p>
-        <ul>
-          <li>Battlefield strategy</li>
-          <li>Tactical coordination</li>
-          <li>Combat readiness</li>
-          <li>Operational deployment</li>
-          <li>Mission execution</li>
-          <li>Force synchronization</li>
-        </ul>
       </article>
     </div>
   </section>
@@ -594,25 +683,21 @@
         <h3>Jamie Stones</h3>
         <p>Codename: <span class="value">"Killer | Slayer"</span></p>
       </article>
-
       <article class="card">
         <p class="label">Deputy Director</p>
         <h3>Marshal Clark</h3>
         <p>Codename: <span class="value">"Ghost"</span></p>
       </article>
-
       <article class="card">
         <p class="label">Operations Director</p>
         <h3>Jake Smith</h3>
         <p>Codename: <span class="value">"Jait"</span></p>
       </article>
-
       <article class="card">
         <p class="label">Operations Director</p>
         <h3>Zet Valker</h3>
         <p>Codename: <span class="value">"Doll"</span></p>
       </article>
-
       <article class="card">
         <p class="label">Strategic Director</p>
         <h3>Ronan Blackwood</h3>
@@ -626,91 +711,46 @@
 
     <div class="command-grid">
       <article class="card threat-red">
-        <p class="label">&#128308; Alpha Command</p>
+        <p class="label">Alpha Command</p>
         <h3>Quick Reaction Force</h3>
         <p>Commander: Harrison Kane</p>
         <p>Codename: <span class="value">"Grim Reaper"</span></p>
-        <p>Callsign: <span class="value">ALPHA-0</span></p>
         <p>Primary Role: Quick Reaction Force / Direct Assault</p>
-        <p>Alpha Command represents the primary military force of CISR.</p>
-        <p>It serves as the organization's elite assault division and principal offensive element.</p>
-        <p class="label">Specialized In</p>
         <ul>
           <li>Rapid Response</li>
           <li>CQB</li>
           <li>Urban Warfare</li>
-          <li>Air Assault</li>
-          <li>Hostage Rescue</li>
           <li>High Value Target Elimination</li>
-          <li>Critical Infrastructure Clearance</li>
           <li>Direct Action Operations</li>
         </ul>
-        <p style="margin-top: 14px;">Maximum Personnel: <span class="value">9 Operators</span></p>
-        <p>Alpha intentionally remains compact to maximize discipline, coordination, communication and battlefield efficiency.</p>
-        <p class="label">Operational Doctrine</p>
-        <p>"Speed creates surprise.</p>
-        <p>Surprise creates victory."</p>
       </article>
 
       <article class="card threat-green">
-        <p class="label">&#128309; Beta Command</p>
-        <h3>Intelligence / Reconnaissance / Strategic Support</h3>
+        <p class="label">Beta Command</p>
+        <h3>Intelligence / Reconnaissance</h3>
         <p>Commander: Quentin Ashford</p>
         <p>Codename: <span class="value">"Shadow King"</span></p>
-        <p>Callsign: <span class="value">BETA-0</span></p>
-        <p>Beta Command prepares every battlefield before Alpha deploys.</p>
-        <p class="label">Responsible For</p>
         <ul>
           <li>Intelligence Gathering</li>
           <li>Reconnaissance</li>
-          <li>Long Range Surveillance</li>
           <li>Overwatch</li>
           <li>Target Designation</li>
-          <li>Logistics</li>
-          <li>Extraction Coordination</li>
-          <li>Infiltration</li>
           <li>Battlefield Analysis</li>
         </ul>
-        <p class="label" style="margin-top: 14px;">Operational Doctrine</p>
-        <p>"The battle is won long before the first shot is fired."</p>
       </article>
 
       <article class="card threat-yellow">
-        <p class="label">&#128994; Omega Command</p>
-        <h3>Combat Support / Medical Response / Engineering / Logistics</h3>
+        <p class="label">Omega Command</p>
+        <h3>Combat Support / Logistics</h3>
         <p>Commander: Nicholas Walker</p>
         <p>Codename: <span class="value">"Desync"</span></p>
-        <p>Callsign: <span class="value">OMEGA-0</span></p>
-        <p>Omega Command serves as the backbone of CISR's operational capability.</p>
-        <p>While Alpha leads the assault and Beta controls intelligence, Omega ensures that every operation can continue regardless of battlefield conditions.</p>
-        <p>Its personnel specialize in sustaining combat effectiveness through medical support, engineering, fortification construction and battlefield logistics.</p>
-        <p class="label">Primary Responsibilities</p>
         <ul>
           <li>Combat Medical Response</li>
-          <li>Battlefield Casualty Evacuation (CASEVAC)</li>
-          <li>Tactical Combat Casualty Care (TCCC)</li>
-          <li>Construction of Defensive Positions</li>
-          <li>Rapid Fortification Deployment</li>
           <li>Engineering Support</li>
-          <li>Ammunition Distribution</li>
-          <li>Vehicle Maintenance</li>
-          <li>Motor Pool Management</li>
           <li>Battlefield Resupply</li>
-          <li>Transport Coordination</li>
-          <li>Equipment Recovery</li>
-          <li>Field Repairs</li>
-          <li>Forward Operating Base (FOB) Support</li>
+          <li>Vehicle Maintenance</li>
+          <li>Forward Operating Base Support</li>
         </ul>
-        <p class="label" style="margin-top: 14px;">Combat Function</p>
-        <p>Omega Command keeps CISR operational under every circumstance.</p>
-        <p>Its operators stabilize wounded personnel under fire, construct defensive positions during active engagements, repair and maintain operational vehicles, and ensure ammunition, equipment and reinforcements reach the front line exactly where they are needed.</p>
-        <p>Without Omega Command, prolonged operations would rapidly lose combat effectiveness.</p>
-        <p class="label">Operational Doctrine</p>
-        <p>"Victory belongs to those who can continue fighting."</p>
-        <p class="label">Operational Philosophy</p>
-        <p>"Every bullet delivered.</p>
-        <p>Every life preserved.</p>
-        <p>Every mission sustained."</p>
       </article>
     </div>
   </section>
@@ -722,40 +762,22 @@
       <article class="card">
         <p class="label">Phase I</p>
         <h3>Infiltration</h3>
-        <p>Beta infiltrates.</p>
-        <p>Collects intelligence.</p>
-        <p>Secures insertion routes.</p>
-        <p>Identifies hostile assets.</p>
-        <p>Marks objectives.</p>
+        <p>Beta infiltrates, collects intelligence, secures insertion routes and marks objectives.</p>
       </article>
-
       <article class="card">
         <p class="label">Phase II</p>
         <h3>Overwatch</h3>
-        <p>Beta establishes overwatch.</p>
-        <p>Provides live battlefield intelligence.</p>
-        <p>Coordinates tactical support.</p>
-        <p>Monitors hostile movement.</p>
+        <p>Beta establishes overwatch, provides live battlefield intelligence and monitors hostile movement.</p>
       </article>
-
       <article class="card">
         <p class="label">Phase III</p>
         <h3>Assault</h3>
-        <p>Alpha deploys.</p>
-        <p>Conducts rapid assault.</p>
-        <p>Neutralizes hostile forces.</p>
-        <p>Secures objectives.</p>
-        <p>Recovers classified assets.</p>
+        <p>Alpha deploys, neutralizes hostile forces, secures objectives and recovers classified assets.</p>
       </article>
-
       <article class="card">
         <p class="label">Phase IV</p>
         <h3>Extraction</h3>
-        <p>Alpha and Beta coordinate extraction.</p>
-        <p>Recover personnel.</p>
-        <p>Erase operational evidence.</p>
-        <p>Mission classified.</p>
-        <p>Operation officially denied.</p>
+        <p>Alpha and Beta coordinate extraction, recover personnel and erase operational evidence.</p>
       </article>
     </div>
   </section>
@@ -808,13 +830,13 @@
           </svg>
           <div class="map-grid"></div>
 
-          <button class="op-marker" style="--x: 49%; --y: 43%;" data-id="OP-CISR-073" data-operation="Operation Iron Veil" data-status="Active" data-threat="orange" data-clearance="1" data-region="NRM6" data-coordinates="43.263N / 2.935W" data-sync="14:03 UTC" data-command="alpha" data-commander="Harrison Kane / ALPHA-0" data-ref="/operations/iron-veil" aria-label="Operation Iron Veil"></button>
-          <button class="op-marker" style="--x: 57%; --y: 34%;" data-id="OP-CISR-014" data-operation="Operation Nightfall" data-status="Completed" data-threat="orange" data-clearance="3" data-region="Eastern Corridor" data-coordinates="46.227N / 2.213E" data-sync="13:08 UTC" data-command="beta" data-commander="Quentin Ashford / BETA-0" data-ref="/operations/nightfall" aria-label="Operation Nightfall"></button>
-          <button class="op-marker" style="--x: 38%; --y: 55%;" data-id="OP-CISR-022" data-operation="Operation Black Tide" data-status="Completed" data-threat="red" data-clearance="5" data-region="Atlantic Grid" data-coordinates="24.713N / 46.675W" data-sync="12:41 UTC" data-command="alpha" data-commander="Harrison Kane / ALPHA-0" data-ref="/operations/black-tide" aria-label="Operation Black Tide"></button>
-          <button class="op-marker" style="--x: 68%; --y: 50%;" data-id="OP-CISR-041" data-operation="Operation Dead Signal" data-status="Completed" data-threat="red" data-clearance="7" data-region="Black Relay" data-coordinates="35.689N / 139.691E" data-sync="13:42 UTC" data-command="omega" data-commander="Nicholas Walker / OMEGA-0" data-ref="/operations/dead-signal" aria-label="Operation Dead Signal"></button>
-          <button class="op-marker" style="--x: 74%; --y: 39%;" data-id="OP-CISR-058" data-operation="Operation Glass Falcon" data-status="Completed" data-threat="yellow" data-clearance="omega" data-region="Pacific Watchline" data-coordinates="21.306N / 157.858W" data-sync="13:17 UTC" data-command="beta" data-commander="Quentin Ashford / BETA-0" data-ref="/operations/glass-falcon" aria-label="Operation Glass Falcon"></button>
-          <button class="op-marker" style="--x: 62%; --y: 29%;" data-id="OP-CISR-066" data-operation="Operation Specter Dawn" data-status="Active" data-threat="red" data-clearance="omega" data-region="Northern Blacksite" data-coordinates="60.169N / 24.938E" data-sync="14:18 UTC" data-command="beta" data-commander="Quentin Ashford / BETA-0" data-ref="/operations/specter-dawn" aria-label="Operation Specter Dawn"></button>
-          <button class="op-marker" style="--x: 52%; --y: 58%;" data-id="OP-CISR-081" data-operation="Operation Stone Harbor" data-status="Prepared" data-threat="black" data-clearance="omega" data-region="Redacted Maritime Zone" data-coordinates="CLASSIFIED" data-sync="14:22 UTC" data-command="omega" data-commander="Nicholas Walker / OMEGA-0" data-ref="/operations/stone-harbor" aria-label="Operation Stone Harbor"></button>
+          <button class="op-marker" style="--x: 49%; --y: 43%;" data-id="iron-veil" data-threat="orange" data-clearance="1" data-command="alpha" aria-label="Operation Iron Veil"></button>
+          <button class="op-marker" style="--x: 57%; --y: 34%;" data-id="nightfall" data-threat="orange" data-clearance="3" data-command="beta" aria-label="Operation Nightfall"></button>
+          <button class="op-marker" style="--x: 38%; --y: 55%;" data-id="black-tide" data-threat="red" data-clearance="5" data-command="alpha" aria-label="Operation Black Tide"></button>
+          <button class="op-marker" style="--x: 68%; --y: 50%;" data-id="dead-signal" data-threat="red" data-clearance="7" data-command="omega" aria-label="Operation Dead Signal"></button>
+          <button class="op-marker" style="--x: 74%; --y: 39%;" data-id="glass-falcon" data-threat="yellow" data-clearance="omega" data-command="beta" aria-label="Operation Glass Falcon"></button>
+          <button class="op-marker" style="--x: 62%; --y: 29%;" data-id="specter-dawn" data-threat="red" data-clearance="omega" data-command="beta" aria-label="Operation Specter Dawn"></button>
+          <button class="op-marker" style="--x: 52%; --y: 58%;" data-id="stone-harbor" data-threat="black" data-clearance="omega" data-command="omega" aria-label="Operation Stone Harbor"></button>
 
           <div class="map-tooltip" data-map-info>
             <p class="label">SELECT OPERATION MARKER</p>
@@ -822,7 +844,7 @@
           </div>
         </div>
 
-        <div class="timeline-shell">
+        <div class="timeline-shell" id="operation-timeline">
           <h3>Operation Timeline</h3>
           <div class="timeline-grid">
             <div>Creation Date<br /><span data-timeline="creation">Pending selection</span></div>
@@ -834,16 +856,16 @@
         </div>
 
         <div class="dossier-shell">
-          <h3>Expandable Intelligence Dossier Framework</h3>
+          <h3>Mission Intelligence Panel</h3>
           <div class="dossier-grid">
-            <div>Mission Summary<br /><span data-dossier="summary">Prepared</span></div>
-            <div>Objectives<br /><span data-dossier="objectives">Prepared</span></div>
-            <div>Personnel<br /><span data-dossier="personnel">Prepared</span></div>
-            <div>Recovered Assets<br /><span data-dossier="assets">Prepared</span></div>
-            <div>Casualties<br /><span data-dossier="casualties">Prepared</span></div>
-            <div>Mission Outcome<br /><span data-dossier="outcome">Prepared</span></div>
-            <div>Threat Analysis<br /><span data-dossier="threat">Prepared</span></div>
-            <div>Future File<br /><span data-dossier="file">Prepared</span></div>
+            <div>Mission Summary<br /><span data-dossier="summary">Pending selection</span></div>
+            <div>Objectives<br /><span data-dossier="objectives">Pending selection</span></div>
+            <div>Personnel<br /><span data-dossier="personnel">Pending selection</span></div>
+            <div>Recovered Assets<br /><span data-dossier="assets">Pending selection</span></div>
+            <div>Enemy Forces<br /><span data-dossier="enemy">Pending selection</span></div>
+            <div>Commander<br /><span data-dossier="commander">Pending selection</span></div>
+            <div>Threat Analysis<br /><span data-dossier="threat">Pending selection</span></div>
+            <div>Last Sync<br /><span data-dossier="sync">Pending selection</span></div>
           </div>
         </div>
       </div>
@@ -864,15 +886,13 @@
 
         <div class="activity-feed">
           <h3>World Activity Feed</h3>
-          <div class="feed-track">
+          <div class="feed-track" data-feed-track>
             <p><span>[12:41 UTC]</span><br />Satellite connection established.</p>
             <p><span>[13:08 UTC]</span><br />Operation Iron Veil updated.</p>
-            <p><span>[13:17 UTC]</span><br />Recon Drone Online.</p>
+            <p><span>[13:17 UTC]</span><br />Recon drone online.</p>
             <p><span>[13:42 UTC]</span><br />Encrypted transmission received.</p>
             <p><span>[14:03 UTC]</span><br />Alpha Command deployed.</p>
             <p><span>[14:18 UTC]</span><br />Beta overwatch package synchronized.</p>
-            <p><span>[14:22 UTC]</span><br />Omega resupply corridor validated.</p>
-            <p><span>[12:41 UTC]</span><br />Satellite connection established.</p>
           </div>
         </div>
 
@@ -894,65 +914,67 @@
     <h2>Classified Operations Archive</h2>
 
     <div class="operation-grid">
-      <article class="card">
+      <article class="card" data-operation-card="nightfall">
         <p class="status orange">Threat Level: Orange</p>
         <h3>Operation Nightfall</h3>
         <p>Status: Completed</p>
-        <p>Location: <span class="redacted"></span></p>
-        <p>Objective: Recover intelligence assets from hostile elements.</p>
-        <p>Outcome: Success</p>
-        <p>Assets Recovered: 17</p>
-        <p>Personnel Lost: 0</p>
-        <p>Mission Efficiency: 98%</p>
+        <p>Assigned Command: Beta Command</p>
+        <p>Assigned Commander: Quentin Ashford / BETA-0</p>
+        <p>Known Enemy Forces: Hostile intelligence cell.</p>
+        <p>Recovered Assets: 17 encrypted intelligence containers.</p>
+        <p>Operational Summary: Objective secured. No CISR casualties reported. All traces removed.</p>
       </article>
 
-      <article class="card">
+      <article class="card" data-operation-card="black-tide">
         <p class="status red">Threat Level: Red</p>
         <h3>Operation Black Tide</h3>
         <p>Status: Completed</p>
-        <p>Location: <span class="redacted"></span></p>
-        <p>Objective: Neutralize an emerging strategic threat.</p>
-        <p>Outcome: Success</p>
-        <p>Threat Eliminated: Yes</p>
-        <p>Personnel Lost: 0</p>
-        <p>Mission Efficiency: 100%</p>
+        <p>Assigned Command: Alpha Command</p>
+        <p>Assigned Commander: Harrison Kane / ALPHA-0</p>
+        <p>Known Enemy Forces: Emerging strategic threat group.</p>
+        <p>Recovered Assets: Strategic cache recovered.</p>
+        <p>Operational Summary: Threat eliminated. Operation remains officially undocumented.</p>
       </article>
 
-      <article class="card">
+      <article class="card" data-operation-card="iron-veil">
         <p class="status orange">Threat Level: Orange</p>
         <h3>Operation Iron Veil</h3>
         <p>Status: Active</p>
-        <p>Location: NRM6</p>
-        <p>Objective: Establish operational influence and infrastructure.</p>
+        <p>Assigned Command: Alpha Command</p>
+        <p>Assigned Commander: Harrison Kane / ALPHA-0</p>
+        <p>Operational Description: Establish operational influence and infrastructure within NRM6.</p>
+        <p>Known Enemy Forces: Unconfirmed organized resistance.</p>
+        <p>Recovered Assets: Infrastructure access keys pending.</p>
         <p>Current Progress: 73%</p>
-        <div class="bar amber"><span style="width: 73%;"></span></div>
-        <p>Active Personnel: 12</p>
+        <div class="bar amber"><span data-width="73"></span></div>
+        <p>Last Synchronization: 14:03 UTC</p>
       </article>
 
-      <article class="card">
+      <article class="card" data-operation-card="dead-signal">
         <p class="status red">Threat Level: Red</p>
         <h3>Operation Dead Signal</h3>
         <p>Status: Completed</p>
-        <p>Objective: Secure encrypted communications network.</p>
-        <p>Outcome: Success</p>
+        <p>Assigned Command: Omega Command</p>
+        <p>Assigned Commander: Nicholas Walker / OMEGA-0</p>
         <p>Recovered Intelligence: 2.4 TB</p>
         <p>Personnel Lost: 0</p>
       </article>
 
-      <article class="card">
+      <article class="card" data-operation-card="glass-falcon">
         <p class="status yellow">Threat Level: Yellow</p>
         <h3>Operation Glass Falcon</h3>
         <p>Status: Completed</p>
-        <p>Objective: Conduct long-term surveillance operation.</p>
+        <p>Assigned Command: Beta Command</p>
+        <p>Operational Description: Long-term surveillance operation.</p>
         <p>Duration: 147 Days</p>
-        <p>Outcome: Success</p>
       </article>
 
-      <article class="card">
+      <article class="card" data-operation-card="specter-dawn">
         <p class="status red">Threat Level: Red</p>
         <h3>Operation Specter Dawn</h3>
         <p>Status: Active</p>
-        <p>Objective: Investigate unknown hostile activity.</p>
+        <p>Assigned Command: Beta Command</p>
+        <p>Operational Description: Investigate unknown hostile activity.</p>
         <p>Current Status: Under Analysis</p>
       </article>
     </div>
@@ -964,31 +986,27 @@
     <div class="stats-grid">
       <article class="card">
         <h3>Mission Success Rate</h3>
-        <div class="bar"><span style="width: 94%;"></span></div>
+        <div class="bar"><span data-width="94"></span></div>
         <p>94%</p>
       </article>
-
       <article class="card">
         <h3>Operational Readiness</h3>
-        <div class="bar"><span style="width: 100%;"></span></div>
+        <div class="bar"><span data-width="100"></span></div>
         <p>100%</p>
       </article>
-
       <article class="card">
         <h3>Personnel Survival Rate</h3>
-        <div class="bar"><span style="width: 96%;"></span></div>
+        <div class="bar"><span data-width="96"></span></div>
         <p>96%</p>
       </article>
-
       <article class="card">
         <h3>Active Deployment Capacity</h3>
-        <div class="bar amber"><span style="width: 89%;"></span></div>
+        <div class="bar amber"><span data-width="89"></span></div>
         <p>89%</p>
       </article>
-
       <article class="card">
         <h3>Active vs Completed</h3>
-        <div class="bar red"><span style="width: 33%;"></span></div>
+        <div class="bar red"><span data-width="33"></span></div>
         <p>2 Active / 4 Completed</p>
       </article>
     </div>
@@ -1007,6 +1025,382 @@
   <footer>
     CISR CLASSIFIED DATABASE // ACCESS LOGGED // MONITORING ENABLED
   </footer>
+
+  <script>
+    (() => {
+      const operations = {
+        "iron-veil": {
+          name: "Operation Iron Veil",
+          status: "Active",
+          threat: "Orange",
+          command: "Alpha Command",
+          commander: "Harrison Kane / ALPHA-0",
+          description: "Establish operational influence and infrastructure within NRM6.",
+          enemy: "Unconfirmed organized resistance. Activity pattern remains under analysis.",
+          assets: "Infrastructure access keys pending. Local intelligence channels partially secured.",
+          summary: "Influence network deployment is progressing. Current operational completion remains at 73%.",
+          personnel: "12 active personnel",
+          sync: "14:03 UTC",
+          creation: "2026-05-12",
+          activation: "2026-06-04",
+          update: "2026-06-27 / 14:03 UTC",
+          completion: "Pending"
+        },
+        "nightfall": {
+          name: "Operation Nightfall",
+          status: "Completed",
+          threat: "Orange",
+          command: "Beta Command",
+          commander: "Quentin Ashford / BETA-0",
+          description: "Recover strategic intelligence from hostile elements operating inside a restricted corridor.",
+          enemy: "Hostile intelligence cell.",
+          assets: "17 encrypted intelligence containers.",
+          summary: "Objective secured. No CISR casualties reported. All traces of involvement removed.",
+          personnel: "6 deployed personnel",
+          sync: "13:08 UTC",
+          creation: "2026-03-18",
+          activation: "2026-04-02",
+          update: "2026-06-27 / 13:08 UTC",
+          completion: "2026-04-03"
+        },
+        "black-tide": {
+          name: "Operation Black Tide",
+          status: "Completed",
+          threat: "Red",
+          command: "Alpha Command",
+          commander: "Harrison Kane / ALPHA-0",
+          description: "Neutralize an emerging strategic threat before public identification.",
+          enemy: "Emerging hostile command network.",
+          assets: "Recovered strategic cache and hostile routing tables.",
+          summary: "Threat eliminated. Assets recovered. Operation remains officially undocumented.",
+          personnel: "9 deployed personnel",
+          sync: "12:41 UTC",
+          creation: "2026-02-09",
+          activation: "2026-02-22",
+          update: "2026-06-27 / 12:41 UTC",
+          completion: "2026-02-23"
+        },
+        "dead-signal": {
+          name: "Operation Dead Signal",
+          status: "Completed",
+          threat: "Red",
+          command: "Omega Command",
+          commander: "Nicholas Walker / OMEGA-0",
+          description: "Secure encrypted communications network and recover hostile signal data.",
+          enemy: "Encrypted relay operators.",
+          assets: "2.4 TB recovered intelligence.",
+          summary: "Network secured. Signal chain collapsed. No personnel lost.",
+          personnel: "5 deployed personnel",
+          sync: "13:42 UTC",
+          creation: "2026-01-11",
+          activation: "2026-01-19",
+          update: "2026-06-27 / 13:42 UTC",
+          completion: "2026-01-20"
+        },
+        "glass-falcon": {
+          name: "Operation Glass Falcon",
+          status: "Completed",
+          threat: "Yellow",
+          command: "Beta Command",
+          commander: "Quentin Ashford / BETA-0",
+          description: "Conduct long-term surveillance across a strategic watchline.",
+          enemy: "Potential threat group. Activity never escalated beyond surveillance threshold.",
+          assets: "147 days of surveillance logs.",
+          summary: "Operation completed. Threat behavior mapped and archived.",
+          personnel: "4 deployed personnel",
+          sync: "13:17 UTC",
+          creation: "2025-12-01",
+          activation: "2025-12-04",
+          update: "2026-06-27 / 13:17 UTC",
+          completion: "2026-04-29"
+        },
+        "specter-dawn": {
+          name: "Operation Specter Dawn",
+          status: "Active",
+          threat: "Red",
+          command: "Beta Command",
+          commander: "Quentin Ashford / BETA-0",
+          description: "Investigate unknown hostile activity originating from a northern blacksite.",
+          enemy: "Unknown hostile presence.",
+          assets: "No confirmed recovery. Signals intercepted.",
+          summary: "Operation remains under analysis. Further action requires directorate authorization.",
+          personnel: "3 deployed personnel",
+          sync: "14:18 UTC",
+          creation: "2026-06-09",
+          activation: "2026-06-13",
+          update: "2026-06-27 / 14:18 UTC",
+          completion: "Pending"
+        },
+        "stone-harbor": {
+          name: "Operation Stone Harbor",
+          status: "Prepared",
+          threat: "Black",
+          command: "Omega Command",
+          commander: "Nicholas Walker / OMEGA-0",
+          description: "Classified maritime contingency. Full operation file unavailable.",
+          enemy: "CLASSIFIED",
+          assets: "CLASSIFIED",
+          summary: "Placeholder file. Additional clearance required.",
+          personnel: "CLASSIFIED",
+          sync: "14:22 UTC",
+          creation: "CLASSIFIED",
+          activation: "Awaiting authorization",
+          update: "2026-06-27 / 14:22 UTC",
+          completion: "Unavailable"
+        }
+      };
+
+      const selectors = {
+        gate: document.querySelector("[data-login-gate]"),
+        terminalOutput: document.querySelector("[data-terminal-output]"),
+        bootBar: document.querySelector("[data-boot-bar]"),
+        bootFill: document.querySelector("[data-boot-fill]"),
+        bootPercent: document.querySelector("[data-boot-percent]"),
+        markers: [...document.querySelectorAll(".op-marker")],
+        mapInfo: document.querySelector("[data-map-info]"),
+        clearanceFilter: document.querySelector("[data-clearance-filter]"),
+        commandFilter: document.querySelector("[data-command-filter]"),
+        threatFilter: document.querySelector("[data-threat-filter]"),
+        timeline: document.querySelector("#operation-timeline"),
+        utcClock: document.querySelector("[data-utc-clock]"),
+        feedTrack: document.querySelector("[data-feed-track]"),
+        bars: [...document.querySelectorAll(".bar span")]
+      };
+
+      let lockedOperation = null;
+
+      function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      async function typeLines(lines, target, delay = 420) {
+        for (const line of lines) {
+          target.textContent += line + "\n";
+          await sleep(delay);
+        }
+      }
+
+      async function runLoginGate() {
+        if (!selectors.gate) return;
+
+        if (sessionStorage.getItem("cisrAccessSequenceComplete") === "true") {
+          selectors.gate.classList.add("hidden");
+          animateBars();
+          return;
+        }
+
+        const warningLines = [
+          "WARNING",
+          "",
+          "THIS SYSTEM IS PROPERTY OF THE",
+          "",
+          "CENTER FOR INTELLIGENCE",
+          "AND STRATEGIC RESPONSE",
+          "",
+          "UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED",
+          "",
+          "ALL ACTIVITY IS MONITORED",
+          "",
+          "Violators will be prosecuted under Directive ███████",
+          "",
+          "PRESS ANY KEY TO CONTINUE"
+        ];
+
+        await typeLines(warningLines, selectors.terminalOutput, 260);
+
+        const continueBoot = async () => {
+          window.removeEventListener("keydown", continueBoot);
+          window.removeEventListener("pointerdown", continueBoot);
+
+          selectors.terminalOutput.textContent = "";
+          selectors.bootBar.style.display = "block";
+          selectors.bootPercent.style.display = "block";
+
+          await typeLines([
+            "> Connecting...",
+            "> Establishing Secure Channel...",
+            "> Verifying Clearance...",
+            "> Synchronizing Intelligence Database...",
+            "> Decrypting Operational Records...",
+            "> Access Granted"
+          ], selectors.terminalOutput, 360);
+
+          const start = performance.now();
+          const duration = 4000;
+
+          function frame(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            const percent = Math.round(progress * 100);
+            selectors.bootFill.style.width = percent + "%";
+            selectors.bootPercent.textContent = percent + "%";
+
+            if (progress < 1) {
+              requestAnimationFrame(frame);
+            } else {
+              sessionStorage.setItem("cisrAccessSequenceComplete", "true");
+              setTimeout(() => {
+                selectors.gate.classList.add("hidden");
+                animateBars();
+              }, 450);
+            }
+          }
+
+          requestAnimationFrame(frame);
+        };
+
+        window.addEventListener("keydown", continueBoot, { once: true });
+        window.addEventListener("pointerdown", continueBoot, { once: true });
+      }
+
+      function getClearanceAllowed(markerValue, selectedValue) {
+        if (selectedValue === "omega") return true;
+        if (markerValue === "omega") return false;
+        return Number(markerValue) <= Number(selectedValue);
+      }
+
+      function applyFilters() {
+        const clearance = selectors.clearanceFilter?.value || "omega";
+        const command = selectors.commandFilter?.value || "all";
+        const threat = selectors.threatFilter?.value || "all";
+
+        selectors.markers.forEach(marker => {
+          const clearanceMatch = getClearanceAllowed(marker.dataset.clearance, clearance);
+          const commandMatch = command === "all" || marker.dataset.command === command;
+          const threatMatch = threat === "all" || marker.dataset.threat === threat;
+
+          marker.classList.toggle("hidden", !(clearanceMatch && commandMatch && threatMatch));
+        });
+      }
+
+      function renderOperation(id) {
+        const operation = operations[id];
+        if (!operation || !selectors.mapInfo) return;
+
+        selectors.mapInfo.innerHTML = `
+          <p class="label">${operation.name}</p>
+          <p>Status: ${operation.status}</p>
+          <p>Threat Level: ${operation.threat}</p>
+          <p>Commander: ${operation.commander}</p>
+          <p>Description: ${operation.description}</p>
+          <p>Last Update: ${operation.update}</p>
+        `;
+
+        const timelineValues = {
+          creation: operation.creation,
+          activation: operation.activation,
+          update: operation.update,
+          status: operation.status,
+          completion: operation.completion
+        };
+
+        Object.entries(timelineValues).forEach(([key, value]) => {
+          const node = document.querySelector(`[data-timeline="${key}"]`);
+          if (node) node.textContent = value;
+        });
+
+        const dossierValues = {
+          summary: operation.summary,
+          objectives: operation.description,
+          personnel: operation.personnel,
+          assets: operation.assets,
+          enemy: operation.enemy,
+          commander: operation.commander,
+          threat: operation.threat,
+          sync: operation.sync
+        };
+
+        Object.entries(dossierValues).forEach(([key, value]) => {
+          const node = document.querySelector(`[data-dossier="${key}"]`);
+          if (node) node.textContent = value;
+        });
+      }
+
+      function lockOperation(marker) {
+        lockedOperation = marker.dataset.id;
+        selectors.markers.forEach(item => item.classList.remove("highlight"));
+        marker.classList.add("highlight");
+        renderOperation(lockedOperation);
+
+        const archiveCard = document.querySelector(`[data-operation-card="${lockedOperation}"]`);
+        const target = archiveCard || selectors.timeline;
+
+        if (target) {
+          setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "center" }), 120);
+        }
+      }
+
+      function bindMap() {
+        selectors.markers.forEach(marker => {
+          marker.addEventListener("mouseenter", () => renderOperation(marker.dataset.id));
+          marker.addEventListener("focus", () => renderOperation(marker.dataset.id));
+          marker.addEventListener("mouseleave", () => {
+            if (lockedOperation) renderOperation(lockedOperation);
+          });
+          marker.addEventListener("click", () => lockOperation(marker));
+        });
+
+        [selectors.clearanceFilter, selectors.commandFilter, selectors.threatFilter]
+          .filter(Boolean)
+          .forEach(filter => filter.addEventListener("change", applyFilters));
+
+        applyFilters();
+        renderOperation("iron-veil");
+      }
+
+      function updateClock() {
+        if (!selectors.utcClock) return;
+
+        const now = new Date();
+        const date = now.toISOString().slice(0, 10);
+        const time = now.toISOString().slice(11, 19);
+        selectors.utcClock.textContent = `${date} ${time} UTC`;
+      }
+
+      function animateBars() {
+        selectors.bars.forEach(bar => {
+          const width = bar.dataset.width || bar.style.width.replace("%", "") || "0";
+          bar.style.width = "0%";
+          setTimeout(() => {
+            bar.style.width = `${width}%`;
+          }, 120);
+        });
+      }
+
+      function pushActivityLog() {
+        if (!selectors.feedTrack) return;
+
+        const messages = [
+          "Encrypted channel heartbeat confirmed.",
+          "Satellite pass completed.",
+          "Database shard synchronized.",
+          "Operation marker telemetry refreshed.",
+          "Recon package integrity verified.",
+          "Secure connection token rotated.",
+          "Threat matrix recalculated."
+        ];
+
+        const now = new Date().toISOString().slice(11, 16);
+        const message = messages[Math.floor(Math.random() * messages.length)];
+        const item = document.createElement("p");
+        item.innerHTML = `<span>[${now} UTC]</span><br />${message}`;
+
+        selectors.feedTrack.prepend(item);
+
+        while (selectors.feedTrack.children.length > 9) {
+          selectors.feedTrack.lastElementChild.remove();
+        }
+      }
+
+      function init() {
+        bindMap();
+        updateClock();
+        setInterval(updateClock, 1000);
+        setInterval(pushActivityLog, 4500);
+        runLoginGate();
+      }
+
+      init();
+    })();
+  </script>
 </body>
 </html>
-
