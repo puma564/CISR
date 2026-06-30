@@ -845,6 +845,154 @@
       from { transform: translate3d(-1%, -1%, 0); }
       to { transform: translate3d(1%, 1%, 0); }
     }
+    .hero-side {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-intel-grid,
+    .side-intel-grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .hero-intel-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hero-intel-panel {
+      border: 1px solid rgba(53, 255, 155, 0.22);
+      background: rgba(5, 10, 8, 0.72);
+      padding: 16px;
+      font-family: "Courier New", monospace;
+      box-shadow: 0 0 22px rgba(53, 255, 155, 0.055);
+      animation: intelFade 0.8s ease both;
+    }
+
+    .hero-intel-panel h3 {
+      margin-bottom: 12px;
+      color: var(--green);
+      font-size: 0.84rem;
+      letter-spacing: 0;
+    }
+
+    .terminal-lines {
+      display: grid;
+      gap: 7px;
+    }
+
+    .terminal-lines p,
+    .file-teasers p {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 0;
+      border-bottom: 1px dashed rgba(53, 255, 155, 0.16);
+      padding-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .terminal-lines strong,
+    .file-teasers strong,
+    .file-teasers span {
+      color: var(--green);
+      text-align: right;
+      text-transform: uppercase;
+    }
+
+    .diagnostics-log {
+      display: grid;
+      gap: 7px;
+      min-height: 112px;
+    }
+
+    .diagnostics-log p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.82rem;
+      opacity: 1;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .diagnostics-log p.updating {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+
+    .threat-panel {
+      text-align: center;
+    }
+
+    .threat-meter {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 4px;
+      margin: 10px 0 12px;
+    }
+
+    .threat-meter span,
+    .threat-meter i {
+      height: 10px;
+      border: 1px solid rgba(53, 255, 155, 0.35);
+      background: rgba(53, 255, 155, 0.16);
+    }
+
+    .threat-meter span {
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(53, 255, 155, 0.42);
+    }
+
+    .threat-meter i {
+      background: rgba(53, 255, 155, 0.04);
+    }
+
+    #threat-status {
+      display: block;
+      color: var(--green);
+      text-transform: uppercase;
+      animation: statusPulse 2.4s ease-in-out infinite;
+    }
+
+    #threat-note {
+      margin: 4px 0 0;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+    }
+
+    .file-teasers {
+      display: grid;
+      gap: 9px;
+    }
+
+    @keyframes intelFade {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes statusPulse {
+      0%, 100% {
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(53, 255, 155, 0.38);
+      }
+      50% {
+        opacity: 0.68;
+        text-shadow: 0 0 18px rgba(53, 255, 155, 0.65);
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero-intel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
@@ -921,14 +1069,66 @@
 
           <p class="motto">&ldquo;We see before we act. We act before we are seen.&rdquo;</p>
 
-          <div class="hero-actions">
-            <a href="#origin" class="button primary">Open File</a>
-            <a href="#divisions" class="button">Restricted Access</a>
+          <div class="hero-intel-grid">
+            <article class="hero-intel-panel">
+              <h3>System Status</h3>
+              <div class="terminal-lines">
+                <p><span>Public Network</span><strong>Online</strong></p>
+                <p><span>Encryption</span><strong>Active</strong></p>
+                <p><span>Command Link</span><strong>Verified</strong></p>
+                <p><span>Database</span><strong>Synchronized</strong></p>
+                <p><span>Last Update</span><strong>30 Jun 2026</strong></p>
+              </div>
+            </article>
+
+            <article class="hero-intel-panel">
+              <h3>Live System Diagnostics</h3>
+              <div id="hero-diagnostics" class="diagnostics-log">
+                <p>[OK] Secure Channel Established</p>
+                <p>[SYNC] Directorate Database Updated</p>
+                <p>[OK] Tactical Relay Stable</p>
+                <p>[WARN] Unauthorized Attempts: 0</p>
+              </div>
+            </article>
           </div>
         </div>
 
-        <div class="hero-logo">
-          <img src="CISR%20photo%20server.png" alt="CISR logo" />
+        <div class="hero-side">
+          <div class="hero-logo">
+            <img src="CISR%20photo%20server.png" alt="CISR logo" />
+          </div>
+
+          <div class="side-intel-grid">
+            <article class="hero-intel-panel threat-panel">
+              <h3>Current Threat Level</h3>
+              <div class="threat-meter">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <i></i><i></i><i></i><i></i>
+              </div>
+              <strong id="threat-status">Green</strong>
+              <p id="threat-note">Low Risk</p>
+            </article>
+
+            <article class="hero-intel-panel">
+              <h3>Global Operations</h3>
+              <div class="terminal-lines">
+                <p><span>Active Operations</span><strong>03</strong></p>
+                <p><span>Deployed Personnel</span><strong>21</strong></p>
+                <p><span>Satellites</span><strong>07</strong></p>
+                <p><span>Network</span><strong>Online</strong></p>
+              </div>
+            </article>
+
+            <article class="hero-intel-panel">
+              <h3>Latest CSOA Reports</h3>
+              <div class="file-teasers">
+                <p><strong>FILE-042</strong><span>Restricted</span></p>
+                <p><strong>FILE-061</strong><span>Archived</span></p>
+                <p><strong>FILE-018</strong><span>Pending Review</span></p>
+              </div>
+            </article>
+          </div>
         </div>
       </div>
     </section>
@@ -1453,7 +1653,64 @@
 
     initOperationsMap();
     syncUtcClock();
+    initHeroDiagnostics();
     window.addEventListener("load", runPublicIntro);
+    function initHeroDiagnostics() {
+      const diagnostics = document.getElementById("hero-diagnostics");
+      const threatStatus = document.getElementById("threat-status");
+      const threatNote = document.getElementById("threat-note");
+
+      const logPool = [
+        "[OK] Secure Channel Established",
+        "[SYNC] Directorate Database Updated",
+        "[OK] Tactical Relay Stable",
+        "[OK] Satellite Feed Updated",
+        "[SYNC] CSOA Archive Verified",
+        "[OK] Global Network Stable",
+        "[WARN] Unauthorized Attempts: 0",
+        "[INFO] Monitoring Active Operations",
+        "[OK] Intelligence Cache Updated",
+        "[SYNC] Encrypted Relay Online",
+        "[OK] Public Terminal Connected",
+        "[INFO] Command Network Stable"
+      ];
+
+      if (diagnostics) {
+        setInterval(() => {
+          const lines = diagnostics.querySelectorAll("p");
+          const firstLine = lines[0];
+
+          if (firstLine) {
+            firstLine.classList.add("updating");
+
+            setTimeout(() => {
+              firstLine.remove();
+
+              const nextLine = document.createElement("p");
+              nextLine.textContent = logPool[Math.floor(Math.random() * logPool.length)];
+              nextLine.classList.add("updating");
+              diagnostics.appendChild(nextLine);
+
+              requestAnimationFrame(() => {
+                nextLine.classList.remove("updating");
+              });
+            }, 350);
+          }
+        }, 5000);
+      }
+
+      if (threatStatus && threatNote) {
+        setInterval(() => {
+          threatStatus.textContent = "Scanning...";
+          threatNote.textContent = "Assessing Network";
+
+          setTimeout(() => {
+            threatStatus.textContent = "Green";
+            threatNote.textContent = "Low Risk";
+          }, 1100);
+        }, 6500);
+      }
+    }
     function runPublicIntro() {
       const intro = document.getElementById("public-intro");
       if (!intro) return;
@@ -1545,3 +1802,4 @@
     }
   </script>
 </body>
+
