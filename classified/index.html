@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -572,7 +572,7 @@
 </head>
 
 <body>
-  <div class="login-gate" data-login-gate>
+<div class="login-gate" data-login-gate>
     <div class="login-box">
       <div class="terminal-output" data-terminal-output></div>
       <div class="boot-bar" data-boot-bar><span data-boot-fill></span></div>
@@ -1189,6 +1189,9 @@
           return;
         }
 
+        const classifiedBootBeep = new Audio("../assets/audio/beep.mp3");
+        classifiedBootBeep.volume = 0.45;
+
         const warningLines = [
           "WARNING",
           "",
@@ -1201,7 +1204,7 @@
           "",
           "ALL ACTIVITY IS MONITORED",
           "",
-          "Violators will be prosecuted under Directive ███████",
+          "Violators will be prosecuted under Directive â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ",
           "",
           "PRESS ANY KEY TO CONTINUE"
         ];
@@ -1211,6 +1214,9 @@
         const continueBoot = async () => {
           window.removeEventListener("keydown", continueBoot);
           window.removeEventListener("pointerdown", continueBoot);
+
+          classifiedBootBeep.currentTime = 0;
+          classifiedBootBeep.play().catch(() => {});
 
           selectors.terminalOutput.textContent = "";
           selectors.bootBar.style.display = "block";
