@@ -993,6 +993,76 @@
         grid-template-columns: 1fr;
       }
     }
+    .hero-intel-panel.event-flash {
+      animation: panelFlash 0.9s ease;
+    }
+
+    .threat-panel.threat-green {
+      border-color: rgba(53, 255, 155, 0.34);
+      box-shadow: 0 0 26px rgba(53, 255, 155, 0.08);
+    }
+
+    .threat-panel.threat-yellow {
+      border-color: rgba(201, 162, 39, 0.48);
+      box-shadow: 0 0 32px rgba(201, 162, 39, 0.14);
+    }
+
+    .threat-panel.threat-orange {
+      border-color: rgba(249, 115, 22, 0.52);
+      box-shadow: 0 0 36px rgba(249, 115, 22, 0.18);
+    }
+
+    .threat-panel.threat-red {
+      border-color: rgba(239, 68, 68, 0.62);
+      box-shadow: 0 0 44px rgba(239, 68, 68, 0.24);
+    }
+
+    .threat-panel.threat-black {
+      border-color: rgba(232, 236, 239, 0.66);
+      box-shadow: 0 0 52px rgba(232, 236, 239, 0.2), 0 0 34px rgba(239, 68, 68, 0.22);
+    }
+
+    .threat-meter.alert span {
+      animation: meterAlertPulse 0.9s ease 2;
+    }
+
+    #world-status {
+      transition: color 0.35s ease, text-shadow 0.35s ease;
+    }
+
+    #world-status.status-green { color: var(--green); }
+    #world-status.status-yellow { color: var(--gold); text-shadow: 0 0 10px rgba(201, 162, 39, 0.35); }
+    #world-status.status-orange { color: var(--orange); text-shadow: 0 0 12px rgba(249, 115, 22, 0.42); }
+    #world-status.status-red { color: var(--red-soft); text-shadow: 0 0 14px rgba(239, 68, 68, 0.5); }
+    #world-status.status-black { color: var(--text); text-shadow: 0 0 16px rgba(232, 236, 239, 0.55); }
+
+    .op-marker.event-intensity::before {
+      animation-duration: 1.2s;
+      opacity: 0.55;
+    }
+
+    .op-marker.event-intensity {
+      box-shadow: 0 0 25px currentColor, 0 0 54px currentColor;
+    }
+
+    .op-marker.event-critical::before {
+      animation-duration: 0.85s;
+      opacity: 0.7;
+    }
+
+    .op-marker.event-critical {
+      box-shadow: 0 0 34px currentColor, 0 0 82px currentColor;
+    }
+
+    @keyframes panelFlash {
+      0%, 100% { box-shadow: 0 0 22px rgba(53, 255, 155, 0.055); }
+      35% { box-shadow: 0 0 34px rgba(53, 255, 155, 0.22); }
+    }
+
+    @keyframes meterAlertPulse {
+      0%, 100% { opacity: 1; transform: scaleY(1); }
+      45% { opacity: 0.62; transform: scaleY(1.35); }
+    }
   </style>
 </head>
 
@@ -1117,6 +1187,7 @@
                 <p><span>Deployed Personnel</span><strong>21</strong></p>
                 <p><span>Satellites</span><strong>07</strong></p>
                 <p><span>Network</span><strong>Online</strong></p>
+                <p><span>World Status</span><strong id="world-status">Normal</strong></p>
               </div>
             </article>
 
@@ -1659,57 +1730,218 @@
       const diagnostics = document.getElementById("hero-diagnostics");
       const threatStatus = document.getElementById("threat-status");
       const threatNote = document.getElementById("threat-note");
+      const worldStatus = document.getElementById("world-status");
+      const threatPanel = document.querySelector(".threat-panel");
+      const threatMeter = document.querySelector(".threat-meter");
+      const markers = Array.from(document.querySelectorAll(".op-marker"));
 
-      const logPool = [
-        "[OK] Secure Channel Established",
-        "[SYNC] Directorate Database Updated",
-        "[OK] Tactical Relay Stable",
-        "[OK] Satellite Feed Updated",
-        "[SYNC] CSOA Archive Verified",
-        "[OK] Global Network Stable",
-        "[WARN] Unauthorized Attempts: 0",
-        "[INFO] Monitoring Active Operations",
-        "[OK] Intelligence Cache Updated",
-        "[SYNC] Encrypted Relay Online",
-        "[OK] Public Terminal Connected",
-        "[INFO] Command Network Stable"
+      if (!diagnostics || !threatStatus || !threatNote) return;
+
+      const threatStates = {
+        green: {
+          label: "Green",
+          note: "Low Risk",
+          world: "Normal",
+          weight: 54,
+          logs: [
+            "[OK] Objective secured.",
+            "[OK] Sector clear.",
+            "[SYNC] Satellite sweep complete.",
+            "[OK] All commands operational."
+          ]
+        },
+        yellow: {
+          label: "Yellow",
+          note: "Potential Hostile Activity",
+          world: "Hostile Movement",
+          weight: 22,
+          logs: [
+            "[WARN] Unknown movement detected.",
+            "[INFO] Beta-0 dispatched.",
+            "[SYNC] Recon network activated.",
+            "[INFO] Monitoring suspicious activity."
+          ]
+        },
+        orange: {
+          label: "Orange",
+          note: "Operation In Progress",
+          world: "Active Operation",
+          weight: 16,
+          logs: [
+            "[INFO] Alpha-0 deployed.",
+            "[INFO] Operation Iron Veil active.",
+            "[SYNC] CSOA priority channel open.",
+            "[WARN] Tactical response authorized."
+          ]
+        },
+        red: {
+          label: "Red",
+          note: "High Priority Threat",
+          world: "Monitoring",
+          weight: 7,
+          logs: [
+            "[ALERT] Hostile contact confirmed.",
+            "[INFO] QRF dispatched.",
+            "[WARN] Force Commander notified.",
+            "[SYNC] Medical standby requested."
+          ]
+        },
+        black: {
+          label: "Black",
+          note: "Directorate Authorization",
+          world: "Directorate Authorization",
+          weight: 1,
+          logs: [
+            "[PRIORITY] BLACK PROTOCOL ACTIVE.",
+            "[INFO] Creator authorization verified.",
+            "[WARN] Directorate channel secured.",
+            "[ALERT] All commands mobilized."
+          ]
+        }
+      };
+
+      const personnelMessages = [
+        "Alpha-0 secured objective.",
+        "Omega-0 authorized logistics deployment.",
+        "Beta-0 established overwatch.",
+        "Shadow King reviewing intelligence.",
+        "Ghost updated operational roster.",
+        "Jait coordinating assault teams.",
+        "The Fallen approved deployment."
       ];
 
-      if (diagnostics) {
-        setInterval(() => {
-          const lines = diagnostics.querySelectorAll("p");
-          const firstLine = lines[0];
+      let activeThreat = "green";
+      let eventTimer = null;
+      let isScanning = false;
 
-          if (firstLine) {
-            firstLine.classList.add("updating");
+      const randomItem = (items) => items[Math.floor(Math.random() * items.length)];
 
-            setTimeout(() => {
-              firstLine.remove();
+      function setWorldStatus(text, state = activeThreat) {
+        if (!worldStatus) return;
+        worldStatus.textContent = text;
+        worldStatus.className = `status-${state}`;
+      }
 
-              const nextLine = document.createElement("p");
-              nextLine.textContent = logPool[Math.floor(Math.random() * logPool.length)];
-              nextLine.classList.add("updating");
-              diagnostics.appendChild(nextLine);
+      function setThreatVisual(state) {
+        if (!threatPanel) return;
+        threatPanel.classList.remove("threat-green", "threat-yellow", "threat-orange", "threat-red", "threat-black", "event-flash");
+        threatPanel.classList.add(`threat-${state}`);
+        void threatPanel.offsetWidth;
+        threatPanel.classList.add("event-flash");
 
-              requestAnimationFrame(() => {
-                nextLine.classList.remove("updating");
-              });
-            }, 350);
+        if (threatMeter) {
+          threatMeter.classList.remove("alert");
+          void threatMeter.offsetWidth;
+          threatMeter.classList.add("alert");
+        }
+
+        markers.forEach((marker) => {
+          marker.classList.remove("event-intensity", "event-critical");
+          if (state === "red" || state === "black") {
+            marker.classList.add("event-critical");
+          } else if (state !== "green") {
+            marker.classList.add("event-intensity");
           }
-        }, 5000);
+        });
       }
 
-      if (threatStatus && threatNote) {
-        setInterval(() => {
-          threatStatus.textContent = "Scanning...";
-          threatNote.textContent = "Assessing Network";
+      function pushLog(message) {
+        const firstLine = diagnostics.querySelector("p");
+        if (firstLine) {
+          firstLine.classList.add("updating");
+          setTimeout(() => firstLine.remove(), 300);
+        }
 
-          setTimeout(() => {
-            threatStatus.textContent = "Green";
-            threatNote.textContent = "Low Risk";
-          }, 1100);
-        }, 6500);
+        setTimeout(() => {
+          const nextLine = document.createElement("p");
+          nextLine.textContent = message;
+          nextLine.classList.add("updating");
+          diagnostics.appendChild(nextLine);
+
+          while (diagnostics.querySelectorAll("p").length > 4) {
+            diagnostics.querySelector("p")?.remove();
+          }
+
+          requestAnimationFrame(() => nextLine.classList.remove("updating"));
+          diagnostics.classList.remove("event-flash");
+          void diagnostics.offsetWidth;
+          diagnostics.classList.add("event-flash");
+        }, 320);
       }
+
+      function pushThreatLogs(state) {
+        const logs = [...threatStates[state].logs];
+        const includePersonnel = Math.random() > 0.35;
+        if (includePersonnel) logs[Math.floor(Math.random() * logs.length)] = `[INFO] ${randomItem(personnelMessages)}`;
+        logs.forEach((log, index) => setTimeout(() => pushLog(log), index * 220));
+      }
+
+      function chooseThreatState() {
+        const total = Object.values(threatStates).reduce((sum, state) => sum + state.weight, 0);
+        let roll = Math.random() * total;
+
+        for (const [key, state] of Object.entries(threatStates)) {
+          roll -= state.weight;
+          if (roll <= 0) return key;
+        }
+
+        return "green";
+      }
+
+      function applyThreatState(state) {
+        activeThreat = state;
+        const threat = threatStates[state];
+        threatStatus.textContent = threat.label;
+        threatNote.textContent = threat.note;
+        setWorldStatus(threat.world, state);
+        setThreatVisual(state);
+        pushThreatLogs(state);
+      }
+
+      function returnToNormal() {
+        if (activeThreat === "green") return;
+        applyThreatState("green");
+        setWorldStatus("Objective Secured", "green");
+        setTimeout(() => setWorldStatus("Normal", "green"), 3200);
+        markers.forEach((marker) => marker.classList.remove("event-intensity", "event-critical"));
+      }
+
+      function triggerEvent() {
+        if (isScanning) return;
+        isScanning = true;
+
+        threatStatus.textContent = "Scanning...";
+        threatNote.textContent = "Analyzing Tactical Network...";
+        setWorldStatus("Scanning", "yellow");
+        setThreatVisual("yellow");
+        pushLog("[SCAN] Analyzing tactical network...");
+
+        setTimeout(() => {
+          pushLog("[SYNC] Threat assessment updated.");
+          const nextThreat = chooseThreatState();
+          applyThreatState(nextThreat);
+          isScanning = false;
+
+          const eventDuration = nextThreat === "green" ? 9000 : 12000 + Math.floor(Math.random() * 10000);
+          setTimeout(returnToNormal, eventDuration);
+          scheduleNextEvent();
+        }, 2000);
+      }
+
+      function scheduleNextEvent() {
+        clearTimeout(eventTimer);
+        const delay = 20000 + Math.floor(Math.random() * 70000);
+        eventTimer = setTimeout(triggerEvent, delay);
+      }
+
+      setThreatVisual("green");
+      setWorldStatus("Normal", "green");
+      setInterval(() => {
+        const pool = threatStates[activeThreat]?.logs || threatStates.green.logs;
+        const message = Math.random() > 0.72 ? `[INFO] ${randomItem(personnelMessages)}` : randomItem(pool);
+        pushLog(message);
+      }, 5000);
+      scheduleNextEvent();
     }
     function runPublicIntro() {
       const intro = document.getElementById("public-intro");
@@ -1802,4 +2034,3 @@
     }
   </script>
 </body>
-
