@@ -1106,35 +1106,167 @@
       0%, 100% { opacity: 1; transform: scaleY(1); }
       45% { opacity: 0.62; transform: scaleY(1.35); }
     }
+    .global-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 1000000;
+      display: grid;
+      place-items: center;
+      background: #000;
+      color: #35ff9b;
+      font-family: "Courier New", monospace;
+      overflow: hidden;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    .global-intro.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .global-intro::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(53, 255, 155, 0.07),
+        rgba(53, 255, 155, 0.07) 1px,
+        transparent 1px,
+        transparent 5px
+      );
+      opacity: 0.18;
+      animation: globalIntroScanlines 5s linear infinite;
+      pointer-events: none;
+    }
+
+    .global-intro-noise {
+      position: absolute;
+      inset: -20%;
+      background:
+        radial-gradient(circle at 18% 28%, rgba(53, 255, 155, 0.05), transparent 17%),
+        radial-gradient(circle at 78% 62%, rgba(255, 255, 255, 0.035), transparent 15%);
+      opacity: 0.45;
+      animation: globalIntroNoise 4s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    .global-intro-shell {
+      position: relative;
+      z-index: 1;
+      width: min(760px, 90vw);
+      min-height: 430px;
+      display: grid;
+      place-items: center;
+      padding: 30px;
+      border: 1px solid rgba(53, 255, 155, 0.32);
+      background: rgba(0, 0, 0, 0.84);
+      box-shadow: 0 0 65px rgba(53, 255, 155, 0.11);
+    }
+
+    .global-intro-logo {
+      width: min(220px, 48vw);
+      height: auto;
+      opacity: 0;
+      filter: drop-shadow(0 0 24px rgba(53, 255, 155, 0.18));
+      animation: globalLogoFade 1s ease forwards;
+    }
+
+    .global-intro-terminal {
+      width: min(620px, 100%);
+      min-height: 235px;
+      display: none;
+      align-content: start;
+      gap: 8px;
+      color: #35ff9b;
+      text-align: left;
+      text-shadow: 0 0 12px rgba(53, 255, 155, 0.22);
+      font-size: clamp(0.88rem, 2vw, 1rem);
+      white-space: pre-wrap;
+    }
+
+    .global-intro-terminal.active {
+      display: grid;
+    }
+
+    .global-intro-terminal div::after {
+      content: "_";
+      margin-left: 4px;
+      animation: globalCursorBlink 0.9s steps(2, start) infinite;
+    }
+
+    .global-intro-final {
+      display: none;
+      text-align: center;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .global-intro-final.active {
+      display: block;
+      animation: globalFinalFade 0.45s ease forwards;
+    }
+
+    .global-intro-final p {
+      margin: 8px 0;
+      color: #8d98a3;
+    }
+
+    .global-intro-final strong {
+      display: block;
+      margin-bottom: 12px;
+      color: #35ff9b;
+      text-shadow: 0 0 14px rgba(53, 255, 155, 0.35);
+    }
+
+    .global-intro-final h2 {
+      margin: 12px 0;
+      color: #e8ecef;
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+    }
+
+    @keyframes globalLogoFade {
+      from { opacity: 0; transform: translateY(8px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes globalFinalFade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes globalCursorBlink {
+      0%, 45% { opacity: 1; }
+      46%, 100% { opacity: 0; }
+    }
+
+    @keyframes globalIntroScanlines {
+      from { background-position: 0 0; }
+      to { background-position: 0 80px; }
+    }
+
+    @keyframes globalIntroNoise {
+      from { transform: translate3d(-1%, -1%, 0); }
+      to { transform: translate3d(1%, 1%, 0); }
+    }
   </style>
 </head>
 
 <body>
-  <div id="public-intro" class="public-intro">
-    <div class="intro-noise"></div>
-
-    <div class="intro-stage intro-logo-stage">
-      <img src="CISR%20photo%20server.png" alt="CISR logo" class="intro-logo" />
-      <h1>CENTER FOR INTELLIGENCE<br />AND STRATEGIC RESPONSE</h1>
-      <p>PUBLIC INFORMATION NETWORK</p>
-    </div>
-
-    <div class="intro-stage intro-terminal-stage">
-      <div id="intro-terminal" class="intro-terminal"></div>
-    </div>
-
-    <div class="intro-stage intro-loading-stage">
-      <p>INITIALIZING...</p>
-      <div class="intro-loading-bar">
-        <div id="intro-loading-progress" class="intro-loading-progress"></div>
+  <div id="global-intro" class="global-intro">
+    <div class="global-intro-noise"></div>
+    <div class="global-intro-shell">
+      <img src="CISR%20photo%20server.png" alt="CISR logo" class="global-intro-logo" />
+      <div id="global-intro-terminal" class="global-intro-terminal"></div>
+      <div id="global-intro-final" class="global-intro-final">
+        <p>ACCESS LEVEL:</p>
+        <strong>████████████</strong>
+        <p>STATUS:</p>
+        <strong>VERIFIED</strong>
+        <h2>ACCESS GRANTED</h2>
+        <p>WELCOME, OPERATOR.</p>
       </div>
-      <span id="intro-loading-percent">0%</span>
-    </div>
-
-    <div class="intro-stage intro-final-stage">
-      <h2>WELCOME TO CISR</h2>
-      <p>PUBLIC INFORMATION NETWORK</p>
-      <strong>STATUS: ONLINE</strong>
     </div>
   </div>
 <!--
@@ -1770,7 +1902,6 @@
     initOperationsMap();
     syncUtcClock();
     initHeroDiagnostics();
-    window.addEventListener("load", runPublicIntro);
     function initHeroDiagnostics() {
       const diagnostics = document.getElementById("hero-diagnostics");
       const threatStatus = document.getElementById("threat-status");
@@ -2106,5 +2237,85 @@
         message.style.color = "#ef4444";
       }
     }
+    function runGlobalIntro() {
+      const overlay = document.getElementById("global-intro");
+      if (!overlay) return;
+
+      const logo = overlay.querySelector(".global-intro-logo");
+      const terminal = document.getElementById("global-intro-terminal");
+      const finalPanel = document.getElementById("global-intro-final");
+      const timers = [];
+      const wait = (ms) => new Promise((resolve) => {
+        const timer = setTimeout(resolve, ms);
+        timers.push(timer);
+      });
+
+      const beep = new Audio("assets/audio/beep.mp3");
+      const voice = new Audio("assets/audio/vozterminaliniciocisr.mp3");
+      beep.volume = 0.45;
+      voice.volume = 0.7;
+
+      const lines = [
+        "> INITIALIZING CISR TERMINAL...",
+        "[OK] Identity verified",
+        "[OK] Secure connection established",
+        "[OK] Encryption protocols active",
+        "[OK] Loading Personnel Database...",
+        "[OK] Loading Operations Archive...",
+        "[OK] Tactical Radar synchronized",
+        "[OK] Threat Monitoring active",
+        "[OK] Intelligence Network online"
+      ];
+
+      const playAudio = (audio) => new Promise((resolve) => {
+        const done = () => resolve();
+        audio.addEventListener("ended", done, { once: true });
+        audio.addEventListener("error", done, { once: true });
+        const playback = audio.play();
+        if (playback && typeof playback.catch === "function") {
+          playback.catch(done);
+        }
+      });
+
+      const typeLine = async (text) => {
+        if (!terminal) return;
+        const row = document.createElement("div");
+        terminal.appendChild(row);
+        for (const char of text) {
+          row.textContent += char;
+          await wait(18);
+        }
+      };
+
+      const typeTerminal = async () => {
+        if (logo) logo.style.display = "none";
+        if (terminal) terminal.classList.add("active");
+        for (const line of lines) {
+          await typeLine(line);
+          await wait(135);
+        }
+      };
+
+      const finishIntro = async () => {
+        if (terminal) terminal.classList.remove("active");
+        if (finalPanel) finalPanel.classList.add("active");
+        await wait(700);
+        overlay.classList.add("hidden");
+        await wait(850);
+        timers.forEach(clearTimeout);
+        overlay.remove();
+      };
+
+      (async () => {
+        await wait(900);
+        await playAudio(beep);
+        await wait(200);
+        const voicePlayback = playAudio(voice);
+        const terminalPlayback = typeTerminal();
+        await Promise.allSettled([voicePlayback, terminalPlayback]);
+        await finishIntro();
+      })();
+    }
+    window.addEventListener("load", runGlobalIntro);
   </script>
 </body>
