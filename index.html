@@ -705,11 +705,178 @@
         grid-template-columns: 1fr;
       }
     }
+    .public-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: grid;
+      place-items: center;
+      background: #000;
+      color: #35ff9b;
+      font-family: "Courier New", monospace;
+      overflow: hidden;
+      transition: opacity 0.75s ease, visibility 0.75s ease;
+    }
+
+    .public-intro.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .public-intro::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(53, 255, 155, 0.07),
+        rgba(53, 255, 155, 0.07) 1px,
+        transparent 1px,
+        transparent 5px
+      );
+      opacity: 0.18;
+      animation: publicScanlines 5s linear infinite;
+    }
+
+    .intro-noise {
+      position: absolute;
+      inset: -20%;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(53, 255, 155, 0.045), transparent 18%),
+        radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.035), transparent 14%);
+      opacity: 0.5;
+      animation: publicNoiseMove 4s ease-in-out infinite alternate;
+    }
+
+    .intro-stage {
+      position: absolute;
+      width: min(760px, 90vw);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .intro-stage.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .intro-logo {
+      width: min(240px, 52vw);
+      height: auto;
+      margin-bottom: 18px;
+      filter: drop-shadow(0 0 22px rgba(53, 255, 155, 0.16));
+    }
+
+    .intro-logo-stage h1 {
+      margin: 0;
+      color: #e8ecef;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      line-height: 1.15;
+      letter-spacing: 2px;
+    }
+
+    .intro-logo-stage p,
+    .intro-final-stage p {
+      margin-top: 12px;
+      color: #35ff9b;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+    }
+
+    .intro-terminal {
+      display: inline-grid;
+      gap: 7px;
+      text-align: left;
+      color: #35ff9b;
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      text-shadow: 0 0 12px rgba(53, 255, 155, 0.22);
+    }
+
+    .intro-loading-stage p {
+      color: #e8ecef;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+    }
+
+    .intro-loading-bar {
+      width: min(520px, 82vw);
+      height: 7px;
+      border: 1px solid rgba(53, 255, 155, 0.5);
+      background: rgba(53, 255, 155, 0.08);
+      overflow: hidden;
+      margin: 0 auto 10px;
+    }
+
+    .intro-loading-progress {
+      width: 0%;
+      height: 100%;
+      background: #35ff9b;
+      box-shadow: 0 0 18px rgba(53, 255, 155, 0.8);
+    }
+
+    #intro-loading-percent {
+      color: #8d98a3;
+      font-size: 0.86rem;
+    }
+
+    .intro-final-stage h2 {
+      margin: 0;
+      color: #e8ecef;
+      font-size: clamp(1.8rem, 5vw, 3.2rem);
+      letter-spacing: 2px;
+    }
+
+    .intro-final-stage strong {
+      display: inline-block;
+      margin-top: 10px;
+      color: #35ff9b;
+      letter-spacing: 2px;
+    }
+
+    @keyframes publicScanlines {
+      from { background-position: 0 0; }
+      to { background-position: 0 80px; }
+    }
+
+    @keyframes publicNoiseMove {
+      from { transform: translate3d(-1%, -1%, 0); }
+      to { transform: translate3d(1%, 1%, 0); }
+    }
   </style>
 </head>
 
 <body>
-  <!--
+  <div id="public-intro" class="public-intro">
+    <div class="intro-noise"></div>
+
+    <div class="intro-stage intro-logo-stage">
+      <img src="CISR%20photo%20server.png" alt="CISR logo" class="intro-logo" />
+      <h1>CENTER FOR INTELLIGENCE<br />AND STRATEGIC RESPONSE</h1>
+      <p>PUBLIC INFORMATION NETWORK</p>
+    </div>
+
+    <div class="intro-stage intro-terminal-stage">
+      <div id="intro-terminal" class="intro-terminal"></div>
+    </div>
+
+    <div class="intro-stage intro-loading-stage">
+      <p>INITIALIZING...</p>
+      <div class="intro-loading-bar">
+        <div id="intro-loading-progress" class="intro-loading-progress"></div>
+      </div>
+      <span id="intro-loading-percent">0%</span>
+    </div>
+
+    <div class="intro-stage intro-final-stage">
+      <h2>WELCOME TO CISR</h2>
+      <p>PUBLIC INFORMATION NETWORK</p>
+      <strong>STATUS: ONLINE</strong>
+    </div>
+  </div>
+<!--
   CLASSIFIED NOTICE
 
   If you found this message, you are looking in the right place.
@@ -985,7 +1152,7 @@
           <p>Threat Level: Orange</p>
           <div class="authorization-line">
             AUTHORIZATION REFERENCE:<br />
-            &#9608;&#9608;&#9608;&#9608;CISR-&#9608;&#9608;IRON&#9608;&#9608;VEIL&#9608;&#9608;73
+            &#9608;&#9608;&#9608;&#9608;-CISR-&#9608;&#9608;IRON&#9608;&#9608;VEIL-&#9608;&#9608;73
           </div>
         </article>
       </div>
@@ -1286,26 +1453,95 @@
 
     initOperationsMap();
     syncUtcClock();
+    window.addEventListener("load", runPublicIntro);
+    function runPublicIntro() {
+      const intro = document.getElementById("public-intro");
+      if (!intro) return;
 
+      const logoStage = intro.querySelector(".intro-logo-stage");
+      const terminalStage = intro.querySelector(".intro-terminal-stage");
+      const loadingStage = intro.querySelector(".intro-loading-stage");
+      const finalStage = intro.querySelector(".intro-final-stage");
+      const terminal = document.getElementById("intro-terminal");
+      const progress = document.getElementById("intro-loading-progress");
+      const percent = document.getElementById("intro-loading-percent");
+
+      const lines = [
+        "> Connecting...",
+        "> Establishing Secure Connection...",
+        "> Synchronizing Public Database...",
+        "> Loading Operational Records...",
+        "> Initializing Command Interface...",
+        "> Connection Established"
+      ];
+
+      const showStage = (stage) => {
+        [logoStage, terminalStage, loadingStage, finalStage].forEach((item) => {
+          if (item) item.classList.remove("active");
+        });
+        if (stage) stage.classList.add("active");
+      };
+
+      showStage(logoStage);
+
+      setTimeout(() => {
+        showStage(terminalStage);
+
+        let index = 0;
+        const terminalInterval = setInterval(() => {
+          if (!terminal || index >= lines.length) {
+            clearInterval(terminalInterval);
+
+            setTimeout(() => {
+              showStage(loadingStage);
+
+              let value = 0;
+              const loadingInterval = setInterval(() => {
+                value += 4;
+
+                if (progress) progress.style.width = `${Math.min(value, 100)}%`;
+                if (percent) percent.textContent = `${Math.min(value, 100)}%`;
+
+                if (value >= 100) {
+                  clearInterval(loadingInterval);
+
+                  setTimeout(() => {
+                    showStage(finalStage);
+
+                    setTimeout(() => {
+                      intro.classList.add("hidden");
+                      setTimeout(() => intro.remove(), 750);
+                    }, 650);
+                  }, 250);
+                }
+              }, 60);
+            }, 250);
+
+            return;
+          }
+
+          const line = document.createElement("div");
+          line.textContent = lines[index];
+          terminal.appendChild(line);
+          index++;
+        }, 230);
+      }, 900);
+    }
     function verifyClearance() {
       const input = document.getElementById("clearanceCode");
       const message = document.getElementById("terminalMessage");
       const code = input.value.trim().toUpperCase();
 
-     if (code === "CISR-IRONVEIL73") {
-  message.textContent = "AUTHORIZATION VERIFIED. REDIRECTING...";
-  message.style.color = "#35ff9b";
-
-  sessionStorage.removeItem("cisrAccessSequenceComplete");
-
-  setTimeout(() => {
-    window.location.href = "classified/";
-  }, 900);
-} else {
+      if (code === "CISR-IRONVEIL73") {
+        message.textContent = "AUTHORIZATION VERIFIED. REDIRECTING...";
+        message.style.color = "#35ff9b";
+        setTimeout(() => {
+          window.location.href = "https://puma564.github.io/CISR/classified/";
+        }, 900);
+      } else {
         message.textContent = "ACCESS DENIED. INVALID CLEARANCE REFERENCE.";
         message.style.color = "#ef4444";
       }
     }
   </script>
 </body>
-</html>
