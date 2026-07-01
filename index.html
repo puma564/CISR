@@ -2267,15 +2267,38 @@
         "[OK] Intelligence Network online"
       ];
 
-      const playAudio = (audio) => new Promise((resolve) => {
-        const done = () => resolve();
-        audio.addEventListener("ended", done, { once: true });
-        audio.addEventListener("error", done, { once: true });
-        const playback = audio.play();
-        if (playback && typeof playback.catch === "function") {
-          playback.catch(done);
-        }
+      const waitForUserInteraction = () => new Promise((resolve) => {
+        const resume = () => {
+          window.removeEventListener("click", resume);
+          window.removeEventListener("keydown", resume);
+          window.removeEventListener("touchstart", resume);
+          resolve();
+        };
+
+        window.addEventListener("click", resume, { once: true });
+        window.addEventListener("keydown", resume, { once: true });
+        window.addEventListener("touchstart", resume, { once: true });
       });
+
+      const playAudio = async (audio, options = {}) => {
+        const { waitUntilEnded = true } = options;
+
+        while (true) {
+          const finished = new Promise((resolve) => {
+            audio.addEventListener("ended", resolve, { once: true });
+            audio.addEventListener("error", resolve, { once: true });
+          });
+
+          try {
+            await audio.play();
+            if (waitUntilEnded) await finished;
+            return finished;
+          } catch (e) {
+            console.error("Audio playback failed:", e);
+            await waitForUserInteraction();
+          }
+        }  
+      };
 
       const typeLine = async (text) => {
         if (!terminal) return;
@@ -2310,7 +2333,7 @@
         await wait(900);
         await playAudio(beep);
         await wait(200);
-        const voicePlayback = playAudio(voice);
+        const voicePlayback = await playAudio(voice, { waitUntilEnded: false });
         const terminalPlayback = typeTerminal();
         await Promise.allSettled([voicePlayback, terminalPlayback]);
         await finishIntro();
