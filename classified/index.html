@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -61,6 +61,25 @@
       font-weight: 800;
       pointer-events: none;
       text-transform: uppercase;
+    }
+
+    .background-terminal {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0.055;
+      font-family: "Courier New", monospace;
+      color: var(--green);
+      text-transform: uppercase;
+    }
+
+    .background-terminal-track {
+      display: grid;
+      gap: 8px;
+      padding: 24px;
+      animation: backgroundTerminalScroll 34s linear infinite;
     }
 
     header,
@@ -275,34 +294,68 @@
       min-height: 540px;
       border: 1px solid var(--line);
       background:
-        radial-gradient(circle at 50% 50%, rgba(53, 255, 155, 0.07), transparent 42%),
+        linear-gradient(135deg, rgba(1, 12, 17, 0.94), rgba(2, 8, 7, 0.9)),
+        radial-gradient(circle at 48% 46%, rgba(53, 255, 155, 0.1), transparent 42%),
         rgba(11, 17, 16, 0.88);
       overflow: hidden;
+    }
+
+    .map-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(3, 29, 30, 0.66), rgba(0, 4, 7, 0.84)),
+        url("../worldmap.jpg") center / cover no-repeat;
+      opacity: 0.28;
+      filter: grayscale(1) contrast(1.28) brightness(0.7) sepia(0.18) hue-rotate(132deg);
+      pointer-events: none;
     }
 
     .map-shell::after {
       content: "";
       position: absolute;
-      inset: -40%;
-      background: conic-gradient(from 0deg, transparent 0deg, rgba(53, 255, 155, 0.2) 12deg, transparent 34deg);
-      animation: radarSweep 6.5s linear infinite;
-      opacity: 0.52;
+      inset: 0;
+      background:
+        radial-gradient(circle at 27% 41%, rgba(53, 255, 155, 0.18), transparent 10%),
+        linear-gradient(90deg, rgba(53, 255, 155, 0.04), rgba(59, 130, 246, 0.06));
+      opacity: 0.68;
       pointer-events: none;
     }
 
-    .world-map {
+    .network-routes {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      opacity: 0.54;
+      z-index: 1;
+      pointer-events: none;
     }
 
-    .world-map path,
-    .world-map ellipse {
-      fill: rgba(141, 152, 163, 0.18);
-      stroke: rgba(53, 255, 155, 0.16);
-      stroke-width: 1;
+    .network-route {
+      fill: none;
+      stroke: rgba(53, 255, 155, 0.28);
+      stroke-width: 0.38;
+      stroke-dasharray: 7 10;
+      opacity: 0.46;
+      animation: routeDrift 7s linear infinite;
+      transition: opacity 0.25s ease, stroke 0.25s ease, filter 0.25s ease;
+    }
+
+    .network-route:nth-child(even) {
+      animation-duration: 9s;
+      stroke: rgba(59, 130, 246, 0.28);
+    }
+
+    .network-route.is-highlighted,
+    .network-route.is-syncing {
+      stroke: rgba(53, 255, 155, 0.92);
+      opacity: 1;
+      filter: drop-shadow(0 0 7px rgba(53, 255, 155, 0.62));
+    }
+
+    .network-route.is-syncing {
+      animation: routeSignal 0.9s ease-in-out both;
     }
 
     .map-grid {
@@ -314,14 +367,16 @@
       background-size: 10% 10%;
       opacity: 0.38;
       animation: gridDrift 14s linear infinite;
+      z-index: 1;
+      pointer-events: none;
     }
 
     .op-marker {
       position: absolute;
       top: var(--y);
       left: var(--x);
-      width: 18px;
-      height: 18px;
+      width: clamp(12px, 1.32vw, 18px);
+      height: clamp(12px, 1.32vw, 18px);
       border: 1px solid currentColor;
       border-radius: 50%;
       background: rgba(3, 5, 5, 0.94);
@@ -329,7 +384,7 @@
       transform: translate(-50%, -50%);
       box-shadow: 0 0 18px currentColor;
       cursor: pointer;
-      z-index: 2;
+      z-index: 3;
       transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
     }
 
@@ -343,6 +398,17 @@
       animation: markerPulse 2.5s ease-out infinite;
     }
 
+    .op-marker::after {
+      content: "";
+      position: absolute;
+      inset: 34%;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+      opacity: 0.9;
+    }
+
+    .op-marker[data-threat="green"] { color: var(--green); }
     .op-marker[data-threat="yellow"] { color: var(--yellow); }
     .op-marker[data-threat="orange"] { color: var(--orange); }
     .op-marker[data-threat="red"] { color: var(--red); }
@@ -352,7 +418,26 @@
       transform: translate(-50%, -50%) scale(1.65);
       box-shadow: 0 0 30px currentColor, 0 0 65px currentColor;
     }
-    .op-marker:hover { transform: translate(-50%, -50%) scale(1.55); }
+    .op-marker:hover,
+    .op-marker.is-selected,
+    .op-marker.is-syncing {
+      transform: translate(-50%, -50%) scale(1.55);
+      box-shadow: 0 0 28px currentColor, 0 0 58px rgba(53, 255, 155, 0.18);
+    }
+
+    .hq-node {
+      width: clamp(22px, 2.35vw, 30px);
+      height: clamp(22px, 2.35vw, 30px);
+      border-width: 2px;
+      color: var(--green);
+      box-shadow: 0 0 36px rgba(53, 255, 155, 0.95), 0 0 80px rgba(59, 130, 246, 0.3);
+    }
+
+    .hq-node::before {
+      inset: -16px;
+      border-style: double;
+      animation: hqHeartbeat 3.8s ease-in-out infinite;
+    }
 
     .map-tooltip,
     .status-panel,
@@ -367,13 +452,198 @@
 
     .map-tooltip {
       position: absolute;
-      right: 18px;
-      bottom: 18px;
+      top: var(--tip-y, 18px);
+      left: var(--tip-x, 18px);
       width: min(430px, calc(100% - 36px));
       border-color: rgba(53, 255, 155, 0.3);
       background: rgba(2, 8, 7, 0.94);
       font-family: "Courier New", monospace;
-      z-index: 3;
+      z-index: 5;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .map-tooltip.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .map-focus {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      background: rgba(0, 0, 0, 0.56);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.24s ease;
+    }
+
+    .map-shell.dossier-open .map-focus {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .map-shell.dossier-open .op-marker:not(.is-selected) {
+      opacity: 0.36;
+      pointer-events: none;
+    }
+
+    .intel-dossier {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(680px, calc(100% - 28px));
+      max-height: calc(100% - 28px);
+      overflow: auto;
+      border: 1px solid rgba(53, 255, 155, 0.42);
+      background: rgba(1, 8, 7, 0.97);
+      box-shadow: 0 0 44px rgba(0, 0, 0, 0.78), inset 0 0 28px rgba(53, 255, 155, 0.07);
+      padding: 18px;
+      font-family: "Courier New", monospace;
+      z-index: 6;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -48%) scale(0.96);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .intel-dossier.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .intel-dossier header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: start;
+      border-bottom: 1px solid rgba(53, 255, 155, 0.24);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .intel-dossier h3 {
+      margin: 4px 0 0;
+      color: var(--text);
+    }
+
+    .dossier-close {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(53, 255, 155, 0.42);
+      background: rgba(3, 5, 5, 0.9);
+      color: var(--green);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .dossier-terminal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .dossier-terminal-grid div,
+    .dossier-wide {
+      border: 1px solid rgba(31, 51, 45, 0.84);
+      background: rgba(11, 17, 16, 0.72);
+      padding: 10px;
+      color: var(--muted);
+    }
+
+    .dossier-terminal-grid span,
+    .dossier-wide span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--green);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+    }
+
+    .dossier-wide {
+      margin-top: 10px;
+    }
+
+    .soc-widget {
+      border: 1px solid var(--line);
+      background: rgba(11, 17, 16, 0.9);
+      padding: 18px;
+      margin-top: 16px;
+      font-family: "Courier New", monospace;
+    }
+
+    .threat-condition strong {
+      color: var(--green);
+      text-shadow: 0 0 14px currentColor;
+    }
+
+    .signal-bars {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .signal-bars i {
+      display: block;
+      height: 18px;
+      border: 1px solid rgba(53, 255, 155, 0.35);
+      background: rgba(53, 255, 155, 0.14);
+      animation: signalBlink 2.8s ease-in-out infinite;
+    }
+
+    .signal-bars i:nth-child(2) { animation-delay: 0.18s; }
+    .signal-bars i:nth-child(3) { animation-delay: 0.36s; }
+    .signal-bars i:nth-child(4) { animation-delay: 0.54s; }
+    .signal-bars i:nth-child(5) { animation-delay: 0.72s; }
+
+    .secure-archives {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .archive-folder {
+      border: 1px solid var(--line);
+      background: rgba(11, 17, 16, 0.86);
+      color: var(--text);
+      padding: 18px;
+      min-height: 94px;
+      text-align: left;
+      font-family: "Courier New", monospace;
+      cursor: pointer;
+    }
+
+    .archive-folder strong {
+      display: block;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+
+    .world-event {
+      position: fixed;
+      right: 22px;
+      top: 92px;
+      z-index: 20;
+      width: min(380px, calc(100vw - 44px));
+      border: 1px solid rgba(53, 255, 155, 0.4);
+      background: rgba(1, 8, 7, 0.94);
+      color: var(--green);
+      padding: 14px;
+      font-family: "Courier New", monospace;
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .world-event.active {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .stats-list {
@@ -527,8 +797,28 @@
       to { transform: scale(1.9); opacity: 0; }
     }
 
-    @keyframes radarSweep {
-      to { transform: rotate(360deg); }
+    @keyframes hqHeartbeat {
+      0%, 100% { transform: scale(0.72); opacity: 0.7; }
+      50% { transform: scale(1.9); opacity: 0.08; }
+    }
+
+    @keyframes routeDrift {
+      to { stroke-dashoffset: -34; }
+    }
+
+    @keyframes routeSignal {
+      from { stroke-dashoffset: 30; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes signalBlink {
+      0%, 100% { opacity: 0.44; }
+      50% { opacity: 1; box-shadow: 0 0 12px rgba(53, 255, 155, 0.45); }
+    }
+
+    @keyframes backgroundTerminalScroll {
+      from { transform: translateY(0); }
+      to { transform: translateY(-50%); }
     }
 
     @keyframes gridDrift {
@@ -564,8 +854,14 @@
       .operations-system,
       .map-controls,
       .timeline-grid,
-      .dossier-grid {
+      .dossier-grid,
+      .dossier-terminal-grid,
+      .secure-archives {
         grid-template-columns: 1fr;
+      }
+
+      .map-shell {
+        min-height: 460px;
       }
     }
   </style>
