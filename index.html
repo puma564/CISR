@@ -518,34 +518,62 @@
       min-height: 520px;
       border: 1px solid var(--line);
       background:
-        radial-gradient(circle at 50% 50%, rgba(53, 255, 155, 0.06), transparent 40%),
+        linear-gradient(135deg, rgba(3, 14, 18, 0.94), rgba(5, 10, 13, 0.88)),
+        radial-gradient(circle at 52% 45%, rgba(53, 255, 155, 0.08), transparent 42%),
         rgba(13, 17, 20, 0.86);
       overflow: hidden;
+    }
+
+    .map-shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(rgba(4, 26, 28, 0.62), rgba(1, 5, 8, 0.82)),
+        url("worldmap.jpg") center / cover no-repeat;
+      opacity: 0.28;
+      filter: grayscale(1) contrast(1.24) brightness(0.72) sepia(0.22) hue-rotate(128deg);
+      pointer-events: none;
     }
 
     .map-shell::after {
       content: "";
       position: absolute;
-      inset: -40%;
-      background: conic-gradient(from 0deg, transparent 0deg, rgba(53, 255, 155, 0.14) 18deg, transparent 42deg);
-      animation: radarSweep 8s linear infinite;
-      opacity: 0.45;
+      inset: 0;
+      background:
+        radial-gradient(circle at 26% 40%, rgba(53, 255, 155, 0.12), transparent 12%),
+        linear-gradient(90deg, rgba(53, 255, 155, 0.03), rgba(36, 128, 255, 0.04));
+      opacity: 0.62;
       pointer-events: none;
     }
 
-    .world-map {
+    .network-routes {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      opacity: 0.52;
+      z-index: 1;
+      pointer-events: none;
     }
 
-    .world-map path,
-    .world-map ellipse {
-      fill: rgba(141, 152, 163, 0.18);
-      stroke: rgba(53, 255, 155, 0.16);
-      stroke-width: 1;
+    .network-route {
+      fill: none;
+      stroke: rgba(53, 255, 155, 0.26);
+      stroke-width: 0.38;
+      stroke-dasharray: 8 12;
+      opacity: 0.42;
+      transition: opacity 0.25s ease, stroke 0.25s ease, filter 0.25s ease;
+    }
+
+    .network-route.is-highlighted,
+    .network-route.is-syncing {
+      stroke: rgba(56, 189, 248, 0.82);
+      opacity: 0.95;
+      filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.58));
+    }
+
+    .network-route.is-syncing {
+      animation: routeSignal 0.85s ease-in-out both;
     }
 
     .map-grid {
@@ -556,14 +584,16 @@
         linear-gradient(90deg, rgba(53, 255, 155, 0.06) 1px, transparent 1px);
       background-size: 10% 10%;
       opacity: 0.38;
+      z-index: 1;
+      pointer-events: none;
     }
 
     .op-marker {
       position: absolute;
       top: var(--y);
       left: var(--x);
-      width: 18px;
-      height: 18px;
+      width: clamp(12px, 1.45vw, 18px);
+      height: clamp(12px, 1.45vw, 18px);
       border: 1px solid currentColor;
       border-radius: 50%;
       background: rgba(5, 6, 7, 0.94);
@@ -571,8 +601,8 @@
       transform: translate(-50%, -50%);
       box-shadow: 0 0 18px currentColor;
       cursor: pointer;
-      z-index: 2;
-      transition: transform 0.25s ease, opacity 0.25s ease;
+      z-index: 3;
+      transition: transform 0.25s ease, opacity 0.25s ease, box-shadow 0.25s ease;
     }
 
     .op-marker::before {
@@ -585,24 +615,161 @@
       animation: markerPulse 2.5s ease-out infinite;
     }
 
+    .op-marker::after {
+      content: "";
+      position: absolute;
+      inset: 35%;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+      opacity: 0.86;
+    }
+
     .op-marker[data-threat="yellow"] { color: var(--gold); }
     .op-marker[data-threat="orange"] { color: var(--orange); }
     .op-marker[data-threat="red"] { color: var(--red-soft); }
     .op-marker[data-threat="black"] { color: #c7c7c7; }
     .op-marker.hidden { opacity: 0; pointer-events: none; }
     .op-marker.highlight { transform: translate(-50%, -50%) scale(1.45); }
-    .op-marker:hover { transform: translate(-50%, -50%) scale(1.6); }
+    .op-marker:hover,
+    .op-marker.is-selected,
+    .op-marker.is-syncing {
+      transform: translate(-50%, -50%) scale(1.6);
+      box-shadow: 0 0 28px currentColor, 0 0 48px rgba(53, 255, 155, 0.16);
+    }
+
+    .hq-node {
+      width: clamp(20px, 2.2vw, 28px);
+      height: clamp(20px, 2.2vw, 28px);
+      border-width: 2px;
+      color: var(--green);
+      box-shadow: 0 0 34px rgba(53, 255, 155, 0.92), 0 0 72px rgba(56, 189, 248, 0.28);
+    }
+
+    .hq-node::before {
+      inset: -14px;
+      border-style: double;
+      animation-duration: 3.8s;
+    }
 
     .map-tooltip {
       position: absolute;
-      right: 18px;
-      bottom: 18px;
+      top: var(--tip-y, 18px);
+      left: var(--tip-x, 18px);
       width: min(360px, calc(100% - 36px));
       border: 1px solid rgba(53, 255, 155, 0.3);
       background: rgba(2, 8, 7, 0.92);
+      padding: 14px;
+      font-family: "Courier New", monospace;
+      z-index: 5;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .map-tooltip.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .map-focus {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      background: rgba(0, 0, 0, 0.48);
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .map-shell.popup-open .map-focus {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .map-shell.popup-open .op-marker:not(.is-selected) {
+      pointer-events: none;
+      opacity: 0.42;
+    }
+
+    .intel-popup {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(520px, calc(100% - 28px));
+      max-height: calc(100% - 28px);
+      overflow: auto;
+      box-sizing: border-box;
+      border: 1px solid rgba(53, 255, 155, 0.38);
+      background: rgba(2, 8, 7, 0.96);
+      box-shadow: 0 0 36px rgba(0, 0, 0, 0.72), inset 0 0 24px rgba(53, 255, 155, 0.06);
       padding: 18px;
       font-family: "Courier New", monospace;
-      z-index: 3;
+      z-index: 6;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, -48%) scale(0.96);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .intel-popup.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .intel-popup header {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: start;
+      border-bottom: 1px solid rgba(53, 255, 155, 0.2);
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+
+    .intel-popup h3 {
+      margin: 4px 0 0;
+      color: var(--text);
+    }
+
+    .intel-close {
+      border: 1px solid rgba(53, 255, 155, 0.36);
+      background: rgba(5, 6, 7, 0.85);
+      color: var(--green);
+      width: 34px;
+      height: 34px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .intel-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .intel-grid div,
+    .intel-summary {
+      border: 1px solid rgba(38, 49, 58, 0.74);
+      background: rgba(13, 17, 20, 0.7);
+      padding: 10px;
+      color: var(--muted);
+    }
+
+    .intel-grid span,
+    .intel-summary span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--green);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+    }
+
+    .intel-summary {
+      margin-top: 10px;
     }
 
     .status-panel,
@@ -688,8 +855,9 @@
       to { transform: scale(1.9); opacity: 0; }
     }
 
-    @keyframes radarSweep {
-      to { transform: rotate(360deg); }
+    @keyframes routeSignal {
+      from { stroke-dashoffset: 26; }
+      to { stroke-dashoffset: 0; }
     }
 
     @keyframes feedLoop {
@@ -701,8 +869,13 @@
       .operations-system,
       .map-controls,
       .timeline-grid,
-      .dossier-grid {
+      .dossier-grid,
+      .intel-grid {
         grid-template-columns: 1fr;
+      }
+
+      .map-shell {
+        min-height: 430px;
       }
     }
     .public-intro {
@@ -1669,25 +1842,47 @@
       <div class="operations-system reveal">
         <div>
           <div class="map-shell" data-map>
-            <svg class="world-map" viewBox="0 0 1000 520" aria-hidden="true">
-              <path d="M145 170L210 120L305 145L330 215L255 255L165 238Z"></path>
-              <path d="M265 295L335 310L355 395L300 475L240 410Z"></path>
-              <path d="M455 155L555 105L660 140L635 215L520 230L430 205Z"></path>
-              <path d="M610 245L710 235L780 300L745 390L645 370L585 305Z"></path>
-              <path d="M775 175L880 185L930 250L900 315L795 295L745 230Z"></path>
-              <ellipse cx="820" cy="420" rx="70" ry="38"></ellipse>
+            <svg class="network-routes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <path class="network-route" data-route="CISR-HQ OP-CISR-022" d="M27 41 C31 38, 34 38, 39 39"></path>
+              <path class="network-route" data-route="OP-CISR-022 OP-CISR-014" d="M39 39 C44 34, 49 33, 54 36"></path>
+              <path class="network-route" data-route="OP-CISR-014 OP-CISR-073" d="M54 36 C52 38, 50 39, 48 40"></path>
+              <path class="network-route" data-route="OP-CISR-073 OP-CISR-041" d="M48 40 C52 46, 56 49, 60 50"></path>
+              <path class="network-route" data-route="CISR-HQ OP-CISR-058" d="M27 41 C43 62, 64 63, 81 52"></path>
+              <path class="network-route" data-route="OP-CISR-041 OP-CISR-058" d="M60 50 C66 55, 74 56, 81 52"></path>
             </svg>
             <div class="map-grid"></div>
 
-            <button class="op-marker" style="--x: 49%; --y: 43%;" data-id="OP-CISR-073" data-operation="Operation Iron Veil" data-status="Active" data-threat="orange" data-clearance="1" data-region="NRM6" data-coordinates="43.263N / 2.935W" data-sync="14:03 UTC" data-command="alpha" data-commander="CLASSIFIED" data-ref="/operations/iron-veil" aria-label="Operation Iron Veil"></button>
-            <button class="op-marker" style="--x: 57%; --y: 34%;" data-id="OP-CISR-014" data-operation="Operation Nightfall" data-status="Completed" data-threat="orange" data-clearance="3" data-region="Eastern Corridor" data-coordinates="CLASSIFIED" data-sync="13:08 UTC" data-command="beta" data-commander="CLASSIFIED" data-ref="/operations/nightfall" aria-label="Operation Nightfall"></button>
-            <button class="op-marker" style="--x: 38%; --y: 55%;" data-id="OP-CISR-022" data-operation="Operation Black Tide" data-status="Completed" data-threat="red" data-clearance="5" data-region="Atlantic Grid" data-coordinates="CLASSIFIED" data-sync="12:41 UTC" data-command="alpha" data-commander="CLASSIFIED" data-ref="/operations/black-tide" aria-label="Operation Black Tide"></button>
-            <button class="op-marker" style="--x: 68%; --y: 50%;" data-id="OP-CISR-041" data-operation="Operation Dead Signal" data-status="Completed" data-threat="red" data-clearance="7" data-region="Black Relay" data-coordinates="CLASSIFIED" data-sync="13:42 UTC" data-command="omega" data-commander="CLASSIFIED" data-ref="/operations/dead-signal" aria-label="Operation Dead Signal"></button>
-            <button class="op-marker" style="--x: 74%; --y: 39%;" data-id="OP-CISR-058" data-operation="Operation Glass Falcon" data-status="Completed" data-threat="yellow" data-clearance="omega" data-region="Pacific Watchline" data-coordinates="CLASSIFIED" data-sync="13:17 UTC" data-command="beta" data-commander="CLASSIFIED" data-ref="/operations/glass-falcon" aria-label="Operation Glass Falcon"></button>
+            <button class="op-marker hq-node" style="--x: 27%; --y: 41%;" data-id="CISR-HQ" data-operation="CISR Headquarters" data-status="Operational" data-threat="green" data-clearance="1" data-region="Washington Node" data-location="Washington D.C." data-coordinates="38.907N / 77.037W" data-sync="LIVE UTC" data-command="omega" data-commander="DIRECTORATE" data-ref="/network/hq" data-signal="99.8%" data-encryption="AES-256 / QUANTUM HANDSHAKE" data-summary="Central synchronization authority for the public Global Intelligence Network." aria-label="CISR Headquarters"></button>
+            <button class="op-marker" style="--x: 48%; --y: 40%;" data-id="OP-CISR-073" data-operation="Operation Iron Veil" data-status="Active" data-threat="orange" data-clearance="1" data-region="NRM6" data-location="Europe" data-coordinates="43.263N / 2.935W" data-sync="14:03 UTC" data-command="alpha" data-commander="CLASSIFIED" data-ref="/operations/iron-veil" data-signal="96.7%" data-encryption="AES-256" data-summary="Establish operational influence within new strategic environments." aria-label="Operation Iron Veil"></button>
+            <button class="op-marker" style="--x: 54%; --y: 36%;" data-id="OP-CISR-014" data-operation="Operation Nightfall" data-status="Completed" data-threat="orange" data-clearance="3" data-region="Eastern Corridor" data-location="Eastern Europe" data-coordinates="CLASSIFIED" data-sync="13:08 UTC" data-command="beta" data-commander="CLASSIFIED" data-ref="/operations/nightfall" data-signal="93.1%" data-encryption="AES-256" data-summary="Recover strategic intelligence from hostile elements operating within a redacted corridor." aria-label="Operation Nightfall"></button>
+            <button class="op-marker" style="--x: 39%; --y: 39%;" data-id="OP-CISR-022" data-operation="Operation Black Tide" data-status="Completed" data-threat="red" data-clearance="5" data-region="Atlantic Grid" data-location="North Atlantic" data-coordinates="CLASSIFIED" data-sync="12:41 UTC" data-command="alpha" data-commander="CLASSIFIED" data-ref="/operations/black-tide" data-signal="89.4%" data-encryption="AES-256" data-summary="Neutralize an emerging threat before public identification." aria-label="Operation Black Tide"></button>
+            <button class="op-marker" style="--x: 60%; --y: 50%;" data-id="OP-CISR-041" data-operation="Operation Dead Signal" data-status="Completed" data-threat="red" data-clearance="7" data-region="Black Relay" data-location="Middle East" data-coordinates="CLASSIFIED" data-sync="13:42 UTC" data-command="omega" data-commander="CLASSIFIED" data-ref="/operations/dead-signal" data-signal="82.6%" data-encryption="AES-256 / BLACK RELAY" data-summary="Encrypted transmission recovered from a compromised relay network." aria-label="Operation Dead Signal"></button>
+            <button class="op-marker" style="--x: 81%; --y: 52%;" data-id="OP-CISR-058" data-operation="Operation Glass Falcon" data-status="Completed" data-threat="yellow" data-clearance="omega" data-region="Pacific Watchline" data-location="Pacific Watchline" data-coordinates="CLASSIFIED" data-sync="13:17 UTC" data-command="beta" data-commander="CLASSIFIED" data-ref="/operations/glass-falcon" data-signal="98.4%" data-encryption="AES-256" data-summary="Reconnaissance drone network maintained long-range Pacific surveillance." aria-label="Operation Glass Falcon"></button>
 
             <div class="map-tooltip" data-map-info>
               <p class="codename">SELECT OPERATION MARKER</p>
               <p>Awaiting tactical selection...</p>
+            </div>
+            <div class="map-focus" data-map-focus></div>
+            <div class="intel-popup" data-intel-popup aria-hidden="true">
+              <header>
+                <div>
+                  <p class="codename" data-popup-id>NODE-ID</p>
+                  <h3 data-popup-operation>Operation</h3>
+                </div>
+                <button class="intel-close" type="button" data-popup-close aria-label="Close intelligence popup">X</button>
+              </header>
+              <div class="intel-grid">
+                <div><span>Location</span><strong data-popup-location>Pending</strong></div>
+                <div><span>Status</span><strong data-popup-status>Pending</strong></div>
+                <div><span>Signal Strength</span><strong data-popup-signal>Pending</strong></div>
+                <div><span>Encryption</span><strong data-popup-encryption>Pending</strong></div>
+                <div><span>Current Operation</span><strong data-popup-current>Pending</strong></div>
+                <div><span>Commander</span><strong data-popup-commander>Pending</strong></div>
+                <div><span>Last Update</span><strong data-popup-update>Pending</strong></div>
+                <div><span>Node Region</span><strong data-popup-region>Pending</strong></div>
+              </div>
+              <div class="intel-summary"><span>Mission Summary</span><p data-popup-summary>Pending tactical selection.</p></div>
             </div>
           </div>
 
@@ -1818,9 +2013,35 @@
       const commandFilter = document.querySelector("[data-command-filter]");
       const threatFilter = document.querySelector("[data-threat-filter]");
       const info = document.querySelector("[data-map-info]");
+      const routes = Array.from(map.querySelectorAll(".network-route"));
+      const popup = map.querySelector("[data-intel-popup]");
+      const popupClose = map.querySelector("[data-popup-close]");
+      const popupFields = {
+        id: map.querySelector("[data-popup-id]"),
+        operation: map.querySelector("[data-popup-operation]"),
+        location: map.querySelector("[data-popup-location]"),
+        status: map.querySelector("[data-popup-status]"),
+        signal: map.querySelector("[data-popup-signal]"),
+        encryption: map.querySelector("[data-popup-encryption]"),
+        current: map.querySelector("[data-popup-current]"),
+        commander: map.querySelector("[data-popup-commander]"),
+        update: map.querySelector("[data-popup-update]"),
+        region: map.querySelector("[data-popup-region]"),
+        summary: map.querySelector("[data-popup-summary]")
+      };
+      const timelineFields = {
+        creation: document.querySelector('[data-timeline="creation"]'),
+        activation: document.querySelector('[data-timeline="activation"]'),
+        update: document.querySelector('[data-timeline="update"]'),
+        status: document.querySelector('[data-timeline="status"]'),
+        completion: document.querySelector('[data-timeline="completion"]')
+      };
       const clearanceRank = { "1": 1, "3": 3, "5": 5, "7": 7, omega: 10 };
+      let selectedMarker = null;
+      let syncTimer = null;
 
       const timeline = {
+        "CISR-HQ": ["01/01/2026", "01/01/2026", "LIVE UTC", "Operational", "Continuous"],
         "OP-CISR-073": ["14/06/2026", "19/06/2026", "27/06/2026", "Active", "Pending"],
         "OP-CISR-014": ["02/03/2026", "08/03/2026", "17/03/2026", "Completed", "17/03/2026"],
         "OP-CISR-022": ["11/04/2026", "14/04/2026", "15/04/2026", "Completed", "15/04/2026"],
@@ -1839,24 +2060,86 @@
       function renderInfo(marker) {
         info.innerHTML = `
           <p class="codename">${marker.dataset.id}</p>
-          <h3>${marker.dataset.operation}</h3>
+          <h3>${marker.dataset.location || marker.dataset.region}</h3>
           <p>Status: ${marker.dataset.status}</p>
-          <p>Threat Level: ${marker.dataset.threat.toUpperCase()}</p>
-          <p>Clearance Level: ${marker.dataset.clearance.toUpperCase()}</p>
-          <p>Region: ${marker.dataset.region}</p>
-          <p>Coordinates: ${marker.dataset.coordinates}</p>
-          <p>Last Sync: ${marker.dataset.sync}</p>
-          <p>Assigned Command: ${marker.dataset.command.toUpperCase()}</p>
-          <p>Assigned Commander: ${marker.dataset.commander}</p>
-          <p>Future File: ${marker.dataset.ref}</p>
+          <p>Signal: ${marker.dataset.signal || "CLASSIFIED"}</p>
+          <p>Encryption: ${marker.dataset.encryption || "AES-256"}</p>
         `;
 
         const entry = timeline[marker.dataset.id] || ["Prepared", "Prepared", marker.dataset.sync, marker.dataset.status, "Pending"];
-        document.querySelector('[data-timeline="creation"]').textContent = entry[0];
-        document.querySelector('[data-timeline="activation"]').textContent = entry[1];
-        document.querySelector('[data-timeline="update"]').textContent = entry[2];
-        document.querySelector('[data-timeline="status"]').textContent = entry[3];
-        document.querySelector('[data-timeline="completion"]').textContent = entry[4];
+        timelineFields.creation.textContent = entry[0];
+        timelineFields.activation.textContent = entry[1];
+        timelineFields.update.textContent = entry[2];
+        timelineFields.status.textContent = entry[3];
+        timelineFields.completion.textContent = entry[4];
+      }
+
+      function routeMatches(route, marker) {
+        return route.dataset.route.split(" ").includes(marker.dataset.id);
+      }
+
+      function setRouteHighlight(marker, active) {
+        routes.forEach((route) => {
+          if (routeMatches(route, marker)) {
+            route.classList.toggle("is-highlighted", active);
+          }
+        });
+      }
+
+      function positionTooltip(marker) {
+        const mapBox = map.getBoundingClientRect();
+        const markerBox = marker.getBoundingClientRect();
+        const nextX = Math.min(markerBox.left - mapBox.left + 18, mapBox.width - 378);
+        const nextY = Math.max(markerBox.top - mapBox.top - 18, 18);
+        info.style.setProperty("--tip-x", `${Math.max(18, nextX)}px`);
+        info.style.setProperty("--tip-y", `${nextY}px`);
+      }
+
+      function showTooltip(marker) {
+        renderInfo(marker);
+        positionTooltip(marker);
+        setRouteHighlight(marker, true);
+        info.classList.add("active");
+      }
+
+      function hideTooltip(marker) {
+        if (!map.classList.contains("popup-open")) {
+          info.classList.remove("active");
+        }
+        if (marker !== selectedMarker) {
+          setRouteHighlight(marker, false);
+        }
+      }
+
+      function openPopup(marker) {
+        selectedMarker = marker;
+        renderInfo(marker);
+        markers.forEach((item) => item.classList.toggle("is-selected", item === marker));
+        setRouteHighlight(marker, true);
+        popupFields.id.textContent = marker.dataset.id;
+        popupFields.operation.textContent = marker.dataset.operation;
+        popupFields.location.textContent = marker.dataset.location || marker.dataset.region;
+        popupFields.status.textContent = marker.dataset.status;
+        popupFields.signal.textContent = marker.dataset.signal || "CLASSIFIED";
+        popupFields.encryption.textContent = marker.dataset.encryption || "AES-256";
+        popupFields.current.textContent = marker.dataset.operation;
+        popupFields.commander.textContent = marker.dataset.commander;
+        popupFields.update.textContent = marker.dataset.sync;
+        popupFields.region.textContent = marker.dataset.region;
+        popupFields.summary.textContent = marker.dataset.summary || "Mission summary remains compartmentalized.";
+        map.classList.add("popup-open");
+        popup.classList.add("active");
+        popup.setAttribute("aria-hidden", "false");
+      }
+
+      function closePopup() {
+        map.classList.remove("popup-open");
+        popup.classList.remove("active");
+        popup.setAttribute("aria-hidden", "true");
+        info.classList.remove("active");
+        markers.forEach((item) => item.classList.remove("is-selected"));
+        routes.forEach((route) => route.classList.remove("is-highlighted"));
+        selectedMarker = null;
       }
 
       function applyFilters() {
@@ -1870,13 +2153,54 @@
           marker.classList.toggle("hidden", !(visibleByClearance && visibleByCommand));
           marker.classList.toggle("highlight", threat !== "all" && marker.dataset.threat === threat);
         });
+        closePopup();
+      }
+
+      function runHqSync() {
+        const hq = markers.find((marker) => marker.dataset.id === "CISR-HQ");
+        if (!hq || hq.classList.contains("hidden")) return;
+
+        const sequence = ["CISR-HQ", "OP-CISR-022", "OP-CISR-014", "OP-CISR-073", "OP-CISR-041", "OP-CISR-058"];
+        routes.forEach((route) => route.classList.remove("is-syncing"));
+        markers.forEach((marker) => marker.classList.remove("is-syncing"));
+
+        sequence.forEach((nodeId, index) => {
+          const node = markers.find((marker) => marker.dataset.id === nodeId);
+          window.setTimeout(() => {
+            if (node && !node.classList.contains("hidden")) node.classList.add("is-syncing");
+            routes.forEach((route) => {
+              if (route.dataset.route.includes(nodeId)) route.classList.add("is-syncing");
+            });
+          }, index * 360);
+        });
+
+        window.setTimeout(() => {
+          routes.forEach((route) => route.classList.remove("is-syncing"));
+          markers.forEach((marker) => marker.classList.remove("is-syncing"));
+        }, 2700);
+      }
+
+      function scheduleHqSync() {
+        const delay = 15000 + Math.round(Math.random() * 15000);
+        syncTimer = window.setTimeout(() => {
+          runHqSync();
+          scheduleHqSync();
+        }, delay);
       }
 
       markers.forEach((marker) => {
-        marker.addEventListener("mouseenter", () => renderInfo(marker));
-        marker.addEventListener("focus", () => renderInfo(marker));
-        marker.addEventListener("click", () => renderInfo(marker));
+        marker.addEventListener("mouseenter", () => showTooltip(marker));
+        marker.addEventListener("mouseleave", () => hideTooltip(marker));
+        marker.addEventListener("focus", () => showTooltip(marker));
+        marker.addEventListener("blur", () => hideTooltip(marker));
+        marker.addEventListener("click", (event) => {
+          event.preventDefault();
+          openPopup(marker);
+        });
       });
+
+      popupClose.addEventListener("click", closePopup);
+      map.querySelector("[data-map-focus]").addEventListener("click", closePopup);
 
       [clearanceFilter, commandFilter, threatFilter].forEach((filter) => {
         filter.addEventListener("change", applyFilters);
@@ -1884,6 +2208,8 @@
 
       applyFilters();
       if (markers[0]) renderInfo(markers[0]);
+      runHqSync();
+      scheduleHqSync();
     }
 
     function syncUtcClock() {
@@ -2267,37 +2593,22 @@
         "[OK] Intelligence Network online"
       ];
 
-      const waitForUserInteraction = () => new Promise((resolve) => {
-        const resume = () => {
-          window.removeEventListener("click", resume);
-          window.removeEventListener("keydown", resume);
-          window.removeEventListener("touchstart", resume);
-          resolve();
-        };
-
-        window.addEventListener("click", resume, { once: true });
-        window.addEventListener("keydown", resume, { once: true });
-        window.addEventListener("touchstart", resume, { once: true });
-      });
-
       const playAudio = async (audio, options = {}) => {
         const { waitUntilEnded = true } = options;
 
-        while (true) {
-          const finished = new Promise((resolve) => {
-            audio.addEventListener("ended", resolve, { once: true });
-            audio.addEventListener("error", resolve, { once: true });
-          });
+        const finished = new Promise((resolve) => {
+          audio.addEventListener("ended", resolve, { once: true });
+          audio.addEventListener("error", resolve, { once: true });
+        });
 
-          try {
-            await audio.play();
-            if (waitUntilEnded) await finished;
-            return finished;
-          } catch (e) {
-            console.error("Audio playback failed:", e);
-            await waitForUserInteraction();
-          }
-        }  
+        try {
+          await audio.play();
+          if (waitUntilEnded) await finished;
+          return finished;
+        } catch (e) {
+          console.warn("Intro audio blocked:", e);
+          return Promise.resolve();
+        }
       };
 
       const typeLine = async (text) => {
