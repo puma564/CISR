@@ -38,6 +38,8 @@
       position: fixed;
       top: calc(var(--lock-scroll-y, 0) * -1px);
       width: 100%;
+      left: 0;
+      right: 0;
     }
 
     body::before {
@@ -266,7 +268,7 @@
 
     .operations-system {
       display: grid;
-      grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.7fr);
+      grid-template-columns: 1fr;
       gap: 16px;
       align-items: stretch;
     }
@@ -298,7 +300,8 @@
 
     .map-shell {
       position: relative;
-      min-height: 540px;
+      min-height: 410px;
+      aspect-ratio: 2.55 / 1;
       border: 1px solid var(--line);
       background:
         linear-gradient(135deg, rgba(1, 12, 17, 0.94), rgba(2, 8, 7, 0.9)),
@@ -365,6 +368,21 @@
       animation: routeSignal 0.9s ease-in-out both;
     }
 
+    body.alert-green .network-route { stroke: rgba(53, 255, 155, 0.26); }
+    body.alert-yellow .network-route { stroke: rgba(234, 179, 8, 0.32); }
+    body.alert-orange .op-marker::before { animation-duration: 1.85s; }
+    body.alert-red .network-route {
+      stroke: rgba(239, 68, 68, 0.48);
+      opacity: 0.62;
+    }
+    body.alert-black .hq-node {
+      box-shadow: 0 0 48px rgba(199, 199, 199, 0.9), 0 0 90px rgba(239, 68, 68, 0.22);
+    }
+    body.alert-black .op-marker[data-threat="black"]::before,
+    body.alert-black .op-marker[data-threat="red"]::before {
+      animation-duration: 1.15s;
+    }
+
     .network-route.is-dimmed {
       opacity: 0.16;
     }
@@ -377,6 +395,12 @@
 
     .signal-dot.is-syncing {
       animation: signalTravel 1.6s ease-in-out both;
+    }
+
+    .packet-burst {
+      fill: rgba(53, 255, 155, 0.72);
+      filter: drop-shadow(0 0 4px rgba(53, 255, 155, 0.65));
+      opacity: 0.68;
     }
 
     .map-grid {
@@ -607,7 +631,7 @@
 
     .soc-dashboard {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 16px;
       margin-top: 16px;
     }
@@ -737,9 +761,8 @@
     }
 
     .activity-feed {
-      max-height: 260px;
+      max-height: 320px;
       overflow: hidden;
-      margin-top: 16px;
       font-family: "Courier New", monospace;
     }
 
@@ -766,6 +789,50 @@
       margin-top: 16px;
     }
 
+    .operations-system .timeline-shell,
+    .operations-system .activity-feed,
+    .operations-system .interface-strip,
+    .operations-system .soc-widget {
+      margin-top: 0;
+      min-height: 100%;
+    }
+
+    .mission-events {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      font-family: "Courier New", monospace;
+      font-size: 0.84rem;
+    }
+
+    .mission-events p {
+      margin: 0;
+      padding: 9px 0;
+      border-bottom: 1px dashed rgba(53, 255, 155, 0.18);
+      color: var(--muted);
+      animation: eventFade 0.35s ease;
+    }
+
+    .mission-events span {
+      color: var(--green);
+    }
+
+    .clock-widget {
+      border-color: rgba(59, 130, 246, 0.28);
+    }
+
+    .clock-readout {
+      display: grid;
+      gap: 4px;
+      margin: 12px 0;
+      font-family: "Courier New", monospace;
+    }
+
+    .clock-readout strong {
+      color: var(--green);
+      font-size: 1.12rem;
+    }
+
     .timeline-grid,
     .dossier-grid {
       display: grid;
@@ -779,6 +846,10 @@
 
     .dossier-grid {
       grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .operations-system .timeline-grid {
+      grid-template-columns: 1fr;
     }
 
     .timeline-grid span,
@@ -916,6 +987,11 @@
       52% { opacity: 0.95; }
     }
 
+    @keyframes eventFade {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     @keyframes threatFlash {
       0%, 100% { box-shadow: none; }
       45% { box-shadow: 0 0 26px rgba(53, 255, 155, 0.2); }
@@ -940,7 +1016,8 @@
       }
 
       .map-shell {
-        min-height: 460px;
+        min-height: 340px;
+        aspect-ratio: auto;
       }
     }
   </style>
@@ -1196,45 +1273,54 @@
       <div>
         <div class="map-shell" data-map>
           <svg class="network-routes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <path class="network-route" data-route="iron-veil" d="M50 46 C45 42 39 39 32 37"></path>
-            <path class="network-route" data-route="nightfall" d="M50 46 C48 35 50 26 52 18"></path>
-            <path class="network-route" data-route="black-tide" d="M50 46 C38 50 29 58 21 68"></path>
-            <path class="network-route" data-route="dead-signal" d="M50 46 C63 45 71 48 78 52"></path>
-            <path class="network-route" data-route="glass-falcon" d="M50 46 C66 36 78 32 86 35"></path>
-            <path class="network-route" data-route="specter-dawn" d="M50 46 C56 33 62 26 67 20"></path>
-            <path class="network-route" data-route="stone-harbor" d="M50 46 C51 58 50 70 47 82"></path>
+            <path class="network-route" data-route="iron-veil" d="M43 28 C43 33 44 37 46 39"></path>
+            <path class="network-route" data-route="nightfall" d="M43 28 C49 19 55 16 60 17"></path>
+            <path class="network-route" data-route="black-tide" d="M43 28 C33 41 24 58 18 72"></path>
+            <path class="network-route" data-route="dead-signal" d="M43 28 C58 36 70 45 75 57"></path>
+            <path class="network-route" data-route="glass-falcon" d="M43 28 C58 23 76 28 88 42"></path>
+            <path class="network-route" data-route="specter-dawn" d="M43 28 C51 22 59 21 66 24"></path>
+            <path class="network-route" data-route="stone-harbor" d="M43 28 C39 44 37 64 40 84"></path>
             <circle class="signal-dot" data-signal="iron-veil" r="0.9">
-              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C45 42 39 39 32 37"></animateMotion>
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M43 28 C43 33 44 37 46 39"></animateMotion>
             </circle>
             <circle class="signal-dot" data-signal="nightfall" r="0.9">
-              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C48 35 50 26 52 18"></animateMotion>
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M43 28 C49 19 55 16 60 17"></animateMotion>
             </circle>
             <circle class="signal-dot" data-signal="black-tide" r="0.9">
-              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C38 50 29 58 21 68"></animateMotion>
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M43 28 C33 41 24 58 18 72"></animateMotion>
             </circle>
             <circle class="signal-dot" data-signal="dead-signal" r="0.9">
-              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C63 45 71 48 78 52"></animateMotion>
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M43 28 C58 36 70 45 75 57"></animateMotion>
             </circle>
             <circle class="signal-dot" data-signal="glass-falcon" r="0.9">
-              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C66 36 78 32 86 35"></animateMotion>
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M43 28 C58 23 76 28 88 42"></animateMotion>
             </circle>
             <circle class="signal-dot" data-signal="specter-dawn" r="0.9">
-              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C56 33 62 26 67 20"></animateMotion>
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M43 28 C51 22 59 21 66 24"></animateMotion>
             </circle>
             <circle class="signal-dot" data-signal="stone-harbor" r="0.9">
-              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C51 58 50 70 47 82"></animateMotion>
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M43 28 C39 44 37 64 40 84"></animateMotion>
+            </circle>
+            <circle class="packet-burst" r="0.42">
+              <animateMotion dur="8.2s" begin="0s" repeatCount="indefinite" path="M43 28 C58 23 76 28 88 42"></animateMotion>
+            </circle>
+            <circle class="packet-burst" r="0.34">
+              <animateMotion dur="9.4s" begin="1.7s" repeatCount="indefinite" path="M43 28 C33 41 24 58 18 72"></animateMotion>
+            </circle>
+            <circle class="packet-burst" r="0.36">
+              <animateMotion dur="7.6s" begin="2.8s" repeatCount="indefinite" path="M43 28 C58 36 70 45 75 57"></animateMotion>
             </circle>
           </svg>
           <div class="map-grid"></div>
 
-          <button class="op-marker hq-node" style="--x: 50%; --y: 46%;" data-id="cisr-hq" data-threat="green" data-clearance="omega" data-command="alpha" aria-label="CISR Headquarters"></button>
-          <button class="op-marker" style="--x: 32%; --y: 37%;" data-id="iron-veil" data-threat="orange" data-clearance="1" data-command="alpha" data-location="Germany" aria-label="Operation Iron Veil"></button>
-          <button class="op-marker" style="--x: 52%; --y: 18%;" data-id="nightfall" data-threat="orange" data-clearance="3" data-command="beta" data-location="Northern Corridor" aria-label="Operation Nightfall"></button>
-          <button class="op-marker" style="--x: 21%; --y: 68%;" data-id="black-tide" data-threat="red" data-clearance="5" data-command="alpha" data-location="South Atlantic" aria-label="Operation Black Tide"></button>
-          <button class="op-marker" style="--x: 78%; --y: 52%;" data-id="dead-signal" data-threat="red" data-clearance="7" data-command="omega" data-location="East Asia Relay" aria-label="Operation Dead Signal"></button>
-          <button class="op-marker" style="--x: 86%; --y: 35%;" data-id="glass-falcon" data-threat="yellow" data-clearance="omega" data-command="beta" data-location="Pacific Watchline" aria-label="Operation Glass Falcon"></button>
-          <button class="op-marker" style="--x: 67%; --y: 20%;" data-id="specter-dawn" data-threat="red" data-clearance="omega" data-command="beta" data-location="Northern Blacksite" aria-label="Operation Specter Dawn"></button>
-          <button class="op-marker" style="--x: 47%; --y: 82%;" data-id="stone-harbor" data-threat="black" data-clearance="omega" data-command="omega" data-location="Classified Maritime Zone" aria-label="Operation Stone Harbor"></button>
+          <button class="op-marker hq-node" style="--x: 43%; --y: 28%;" data-id="cisr-hq" data-threat="green" data-clearance="omega" data-command="alpha" aria-label="CISR Headquarters"></button>
+          <button class="op-marker" style="--x: 46%; --y: 39%;" data-id="iron-veil" data-threat="orange" data-clearance="1" data-command="alpha" data-location="Alpine Corridor" aria-label="Operation Iron Veil"></button>
+          <button class="op-marker" style="--x: 60%; --y: 17%;" data-id="nightfall" data-threat="orange" data-clearance="3" data-command="beta" data-location="Arctic Corridor" aria-label="Operation Nightfall"></button>
+          <button class="op-marker" style="--x: 18%; --y: 72%;" data-id="black-tide" data-threat="red" data-clearance="5" data-command="alpha" data-location="Offshore South Atlantic" aria-label="Operation Black Tide"></button>
+          <button class="op-marker" style="--x: 75%; --y: 57%;" data-id="dead-signal" data-threat="red" data-clearance="7" data-command="omega" data-location="Desert Relay Zone" aria-label="Operation Dead Signal"></button>
+          <button class="op-marker" style="--x: 88%; --y: 42%;" data-id="glass-falcon" data-threat="yellow" data-clearance="omega" data-command="beta" data-location="Isolated Pacific Island" aria-label="Operation Glass Falcon"></button>
+          <button class="op-marker" style="--x: 66%; --y: 24%;" data-id="specter-dawn" data-threat="red" data-clearance="omega" data-command="beta" data-location="Mountain Blacksite" aria-label="Operation Specter Dawn"></button>
+          <button class="op-marker" style="--x: 40%; --y: 84%;" data-id="stone-harbor" data-threat="black" data-clearance="omega" data-command="omega" data-location="Classified Maritime Zone" aria-label="Operation Stone Harbor"></button>
 
           <div class="map-tooltip" data-map-info>
             <p class="label">SELECT OPERATION MARKER</p>
@@ -1244,14 +1330,90 @@
           <div class="intel-dossier" data-intel-dossier aria-hidden="true"></div>
         </div>
 
-        <div class="timeline-shell" id="operation-timeline">
-          <h3>Operation Timeline</h3>
-          <div class="timeline-grid">
-            <div>Creation Date<br /><span data-timeline="creation">Pending selection</span></div>
-            <div>Activation Date<br /><span data-timeline="activation">Pending selection</span></div>
-            <div>Last Update<br /><span data-timeline="update">Pending selection</span></div>
-            <div>Current Status<br /><span data-timeline="status">Pending selection</span></div>
-            <div>Completion Date<br /><span data-timeline="completion">Pending selection</span></div>
+        <div class="soc-dashboard">
+          <div class="timeline-shell" id="operation-timeline">
+            <h3>Mission Timeline</h3>
+            <div class="mission-events" data-mission-events>
+              <p><span>[14:18 UTC]</span> Target acquired.</p>
+              <p><span>[14:03 UTC]</span> Encryption keys rotated.</p>
+              <p><span>[13:42 UTC]</span> Communications restored.</p>
+              <p><span>[13:17 UTC]</span> Recon drone launched.</p>
+            </div>
+            <div class="timeline-grid">
+              <div>Creation Date<br /><span data-timeline="creation">Pending selection</span></div>
+              <div>Activation Date<br /><span data-timeline="activation">Pending selection</span></div>
+              <div>Last Update<br /><span data-timeline="update">Pending selection</span></div>
+              <div>Current Status<br /><span data-timeline="status">Pending selection</span></div>
+              <div>Completion Date<br /><span data-timeline="completion">Pending selection</span></div>
+            </div>
+          </div>
+
+          <div class="activity-feed">
+            <h3>Live Communications</h3>
+            <div class="feed-track" data-feed-track>
+              <p><span>[12:41 UTC] [HQ > ALPHA]</span><br />Satellite connection established.</p>
+              <p><span>[13:08 UTC] [ALPHA > BETA]</span><br />Operation Iron Veil updated.</p>
+              <p><span>[13:17 UTC] [BETA > ALPHA]</span><br />Recon drone online.</p>
+              <p><span>[13:42 UTC] [OMEGA > ALPHA]</span><br />Encrypted transmission received.</p>
+              <p><span>[14:03 UTC] [ALPHA > OMEGA]</span><br />Alpha Command deployed.</p>
+              <p><span>[14:18 UTC] [CSOA > ALPHA]</span><br />Beta overwatch package synchronized.</p>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Network Analytics</h3>
+            <p class="label">Global Strategic Status</p>
+            <div class="stats-list">
+              <div>Active Operations <strong data-soc-stat="activeOps">2</strong></div>
+              <div>Active Nodes <strong data-analytics="activeNodes">8</strong></div>
+              <div>Offline Nodes <strong data-analytics="offlineNodes">0</strong></div>
+              <div>Compromised Nodes <strong data-soc-stat="compromisedNodes">1</strong></div>
+              <div>Personnel Deployed <strong data-soc-stat="personnel">39</strong></div>
+              <div>Intercepted Signals <strong data-analytics="signals">128</strong></div>
+              <div>Encrypted Channels <strong data-analytics="channels">42</strong></div>
+              <div>Current Uplink <strong data-analytics="uplink">98.7%</strong></div>
+              <div>Packet Integrity <strong data-analytics="integrity">99.1%</strong></div>
+              <div>Satellites Online <strong data-soc-stat="satellites">12</strong></div>
+              <div>Encryption Status <strong data-soc-stat="encryption">AES-256</strong></div>
+              <div>Last Synchronization <strong data-analytics="lastSync">SYNCING</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="soc-dashboard">
+          <div class="soc-widget threat-condition" data-threat-condition>
+            <h3>World Alert System</h3>
+            <div>Threat Condition <strong data-world-threat>ORANGE</strong></div>
+            <div>DEFCON <strong data-defcon>III</strong></div>
+            <div class="signal-bars" data-signal-bars>
+              <i></i><i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+
+          <div class="soc-widget clock-widget">
+            <h3>Mission Time (UTC)</h3>
+            <div class="clock-readout">
+              <strong data-mission-date>SYNCING</strong>
+              <strong data-mission-time>SYNCING</strong>
+            </div>
+            <div class="stats-list">
+              <div>Next HQ Network Scan <strong data-scan-countdown>00:20</strong></div>
+              <div>UTC Clock <strong data-utc-clock>SYNCING</strong></div>
+              <div>GPS Signal <strong>LOCKED</strong></div>
+              <div>Satellite Link <strong>ONLINE</strong></div>
+              <div>Encrypted Channel <strong>ACTIVE</strong></div>
+              <div>Database Integrity <strong>VERIFIED</strong></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Current Operator</h3>
+            <p><span class="redacted"></span></p>
+            <div class="stats-list">
+              <div>Clearance <strong>OMEGA</strong></div>
+              <div>Authorization <strong>VALID</strong></div>
+              <div>Session <strong>ACTIVE</strong></div>
+            </div>
           </div>
         </div>
 
@@ -1269,77 +1431,6 @@
           </div>
         </div>
       </div>
-
-      <aside>
-        <div class="status-panel">
-          <h3>Live Status Panel</h3>
-          <div class="stats-list">
-            <div>Total Operations <strong>7</strong></div>
-            <div>Completed Operations <strong>4</strong></div>
-            <div>Active Operations <strong>2</strong></div>
-            <div>Personnel Deployed <strong>12</strong></div>
-            <div>Mission Success Rate <strong>94%</strong></div>
-            <div>Average Threat Level <strong>Orange</strong></div>
-            <div>Operational Readiness <strong>100%</strong></div>
-          </div>
-        </div>
-
-        <div class="activity-feed">
-          <h3>World Activity Feed</h3>
-          <div class="feed-track" data-feed-track>
-            <p><span>[12:41 UTC] [HQ] -> [ALPHA]</span><br />Satellite connection established.</p>
-            <p><span>[13:08 UTC] [ALPHA] -> [BETA]</span><br />Operation Iron Veil updated.</p>
-            <p><span>[13:17 UTC] [BETA] -> [ALPHA]</span><br />Recon drone online.</p>
-            <p><span>[13:42 UTC] [OMEGA] -> [ALPHA]</span><br />Encrypted transmission received.</p>
-            <p><span>[14:03 UTC] [ALPHA] -> [OMEGA]</span><br />Alpha Command deployed.</p>
-            <p><span>[14:18 UTC] [CSOA] -> [ALPHA]</span><br />Beta overwatch package synchronized.</p>
-          </div>
-        </div>
-
-        <div class="interface-strip">
-          <h3>Command Center Integrity</h3>
-          <div>GPS Signal <strong>LOCKED</strong></div>
-          <div>Satellite Link <strong>ONLINE</strong></div>
-          <div>Encrypted Channel <strong>ACTIVE</strong></div>
-          <div>Database Integrity <strong>VERIFIED</strong></div>
-          <div>Authentication Token <strong>VALID</strong></div>
-          <div>Network Status <strong>SECURE</strong></div>
-          <div>UTC Clock <strong data-utc-clock>SYNCING</strong></div>
-        </div>
-
-        <div class="soc-dashboard">
-          <div class="soc-widget">
-            <h3>Global Strategic Status</h3>
-            <div class="stats-list">
-              <div>Active Operations <strong data-soc-stat="activeOps">2</strong></div>
-              <div>Active Nodes <strong data-soc-stat="activeNodes">8</strong></div>
-              <div>Compromised Nodes <strong data-soc-stat="compromisedNodes">1</strong></div>
-              <div>Personnel Deployed <strong data-soc-stat="personnel">39</strong></div>
-              <div>Satellites Online <strong data-soc-stat="satellites">12</strong></div>
-              <div>Encryption Status <strong data-soc-stat="encryption">AES-256</strong></div>
-            </div>
-          </div>
-
-          <div class="soc-widget threat-condition" data-threat-condition>
-            <h3>World Alert System</h3>
-            <div>Threat Condition <strong data-world-threat>ORANGE</strong></div>
-            <div>DEFCON <strong data-defcon>III</strong></div>
-            <div class="signal-bars" data-signal-bars>
-              <i></i><i></i><i></i><i></i><i></i>
-            </div>
-          </div>
-
-          <div class="soc-widget">
-            <h3>Current Operator</h3>
-            <p><span class="redacted"></span></p>
-            <div class="stats-list">
-              <div>Clearance <strong>OMEGA</strong></div>
-              <div>Authorization <strong>VALID</strong></div>
-              <div>Session <strong>ACTIVE</strong></div>
-            </div>
-          </div>
-        </div>
-      </aside>
     </div>
   </section>
 
@@ -1492,9 +1583,13 @@
           activation: "ACTIVE",
           update: "LIVE / UTC",
           completion: "Never",
-          location: "CISR HQ",
+          location: "North Atlantic Grid / Exact site redacted",
           classification: "OMEGA / HQ EYES ONLY",
-          code: "CISR-HQ-AUTH-000"
+          code: "CISR-HQ-AUTH-000",
+          nodeType: "Black Command Relay",
+          commandOwner: "ALPHA",
+          priority: "ABSOLUTE",
+          operators: "18 active operators"
         },
         "iron-veil": {
           name: "Operation Iron Veil",
@@ -1512,9 +1607,13 @@
           activation: "2026-06-04",
           update: "2026-06-27 / 14:03 UTC",
           completion: "Pending",
-          location: "Germany",
+          location: "Alpine Corridor",
           classification: "OMEGA / ACTIVE FIELD DOSSIER",
-          code: "ALPHA-IV-730"
+          code: "ALPHA-IV-730",
+          nodeType: "Alpine influence node",
+          commandOwner: "ALPHA",
+          priority: "HIGH",
+          operators: "4 active operators"
         },
         "nightfall": {
           name: "Operation Nightfall",
@@ -1532,9 +1631,13 @@
           activation: "2026-04-02",
           update: "2026-06-27 / 13:08 UTC",
           completion: "2026-04-03",
-          location: "Northern Corridor",
+          location: "Arctic Corridor",
           classification: "LEVEL III / RECOVERY ARCHIVE",
-          code: "BETA-NF-417"
+          code: "BETA-NF-417",
+          nodeType: "Arctic recovery node",
+          commandOwner: "BETA",
+          priority: "MEDIUM",
+          operators: "2 archive operators"
         },
         "black-tide": {
           name: "Operation Black Tide",
@@ -1552,9 +1655,13 @@
           activation: "2026-02-22",
           update: "2026-06-27 / 12:41 UTC",
           completion: "2026-02-23",
-          location: "South Atlantic",
+          location: "Offshore South Atlantic",
           classification: "LEVEL V / RED ARCHIVE",
-          code: "ALPHA-BT-902"
+          code: "ALPHA-BT-902",
+          nodeType: "Offshore interdiction node",
+          commandOwner: "ALPHA",
+          priority: "CRITICAL",
+          operators: "3 active operators"
         },
         "dead-signal": {
           name: "Operation Dead Signal",
@@ -1572,9 +1679,13 @@
           activation: "2026-01-19",
           update: "2026-06-27 / 13:42 UTC",
           completion: "2026-01-20",
-          location: "East Asia Relay",
+          location: "Desert Relay Zone",
           classification: "LEVEL VII / SIGNAL WARFARE",
-          code: "OMEGA-DS-248"
+          code: "OMEGA-DS-248",
+          nodeType: "Signal capture relay",
+          commandOwner: "OMEGA",
+          priority: "HIGH",
+          operators: "5 signal operators"
         },
         "glass-falcon": {
           name: "Operation Glass Falcon",
@@ -1592,9 +1703,13 @@
           activation: "2025-12-04",
           update: "2026-06-27 / 13:17 UTC",
           completion: "2026-04-29",
-          location: "Pacific Watchline",
+          location: "Isolated Pacific Island",
           classification: "OMEGA / SURVEILLANCE",
-          code: "BETA-GF-147"
+          code: "BETA-GF-147",
+          nodeType: "Island surveillance node",
+          commandOwner: "BETA",
+          priority: "LOW",
+          operators: "2 watch officers"
         },
         "specter-dawn": {
           name: "Operation Specter Dawn",
@@ -1612,9 +1727,13 @@
           activation: "2026-06-13",
           update: "2026-06-27 / 14:18 UTC",
           completion: "Pending",
-          location: "Northern Blacksite",
+          location: "Mountain Blacksite",
           classification: "OMEGA / HOSTILE UNKNOWN",
-          code: "BETA-SD-618"
+          code: "BETA-SD-618",
+          nodeType: "Mountain blacksite sensor",
+          commandOwner: "BETA",
+          priority: "CRITICAL",
+          operators: "3 threat analysts"
         },
         "stone-harbor": {
           name: "Operation Stone Harbor",
@@ -1634,7 +1753,11 @@
           completion: "Unavailable",
           location: "Classified Maritime Zone",
           classification: "BLACK SITE / NEED TO KNOW",
-          code: "OMEGA-SH-000"
+          code: "OMEGA-SH-000",
+          nodeType: "Maritime contingency node",
+          commandOwner: "OMEGA",
+          priority: "BLACK",
+          operators: "CLASSIFIED"
         }
       };
 
@@ -1665,12 +1788,19 @@
         defcon: document.querySelector("[data-defcon]"),
         archiveStatus: document.querySelector("[data-archive-status]"),
         archiveFolders: [...document.querySelectorAll("[data-archive-folder]")],
-        socStats: [...document.querySelectorAll("[data-soc-stat]")]
+        socStats: [...document.querySelectorAll("[data-soc-stat]")],
+        analytics: [...document.querySelectorAll("[data-analytics]")],
+        missionEvents: document.querySelector("[data-mission-events]"),
+        missionDate: document.querySelector("[data-mission-date]"),
+        missionTime: document.querySelector("[data-mission-time]"),
+        scanCountdown: document.querySelector("[data-scan-countdown]")
       };
 
       let lockedOperation = null;
       let activeTooltip = null;
       let lockedScrollY = 0;
+      let nextScanAt = Date.now() + randomInt(20000, 30000);
+      let currentAlert = "orange";
 
       function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -1858,6 +1988,8 @@
       function openDossier(id) {
         const operation = operations[id];
         if (!operation || !selectors.dossier || !selectors.map) return;
+        const latency = id === "cisr-hq" ? "4 ms" : `${randomInt(18, 86)} ms`;
+        const ping = new Date().toISOString().slice(11, 19) + " UTC";
 
         selectors.dossier.innerHTML = `
           <header>
@@ -1877,6 +2009,12 @@
             <div><span>Commander</span>${operation.commander}</div>
             <div><span>Assigned Personnel</span>${operation.personnel}</div>
             <div><span>Authorization Code</span>${operation.code || "CISR-AUTH-LOCKED"}</div>
+            <div><span>Node Type</span>${operation.nodeType || "Intelligence Node"}</div>
+            <div><span>Last Ping</span>${ping}</div>
+            <div><span>Command Owner</span>${operation.commandOwner || operation.command}</div>
+            <div><span>Current Latency</span>${latency}</div>
+            <div><span>Active Operators</span>${operation.operators || operation.personnel}</div>
+            <div><span>Mission Priority</span>${operation.priority || "STANDARD"}</div>
           </div>
           <div class="dossier-wide"><span>Operational Objective</span>${operation.description}</div>
           <div class="dossier-wide"><span>Mission Summary</span>${operation.summary}</div>
@@ -1890,6 +2028,7 @@
         selectors.dossier.classList.add("active");
         selectors.dossier.setAttribute("aria-hidden", "false");
         lockedScrollY = window.scrollY;
+        document.documentElement.style.scrollBehavior = "auto";
         document.body.style.setProperty("--lock-scroll-y", String(lockedScrollY));
         document.body.classList.add("dossier-lock");
         selectors.dossier.querySelector("[data-dossier-close]")?.addEventListener("click", closeDossier);
@@ -1902,6 +2041,10 @@
         document.body.classList.remove("dossier-lock");
         document.body.style.removeProperty("--lock-scroll-y");
         window.scrollTo(0, lockedScrollY);
+        requestAnimationFrame(() => {
+          document.documentElement.style.scrollBehavior = "";
+          window.scrollTo(0, lockedScrollY);
+        });
       }
 
       function lockOperation(marker, event) {
@@ -1951,6 +2094,12 @@
         const date = now.toISOString().slice(0, 10);
         const time = now.toISOString().slice(11, 19);
         selectors.utcClock.textContent = `${date} ${time} UTC`;
+        if (selectors.missionDate) selectors.missionDate.textContent = date;
+        if (selectors.missionTime) selectors.missionTime.textContent = `${time} UTC`;
+        if (selectors.scanCountdown) {
+          const remaining = Math.max(0, Math.ceil((nextScanAt - Date.now()) / 1000));
+          selectors.scanCountdown.textContent = `00:${String(remaining).padStart(2, "0")}`;
+        }
       }
 
       function animateBars() {
@@ -1972,6 +2121,8 @@
           "Satellite imagery received.",
           "Forward medical unit deployed.",
           "Medical support authorized.",
+          "Medical evacuation authorized.",
+          "Supply convoy rerouted.",
           "Classified package transmitted.",
           "Archive synchronization completed.",
           "Strategic authorization confirmed.",
@@ -1985,7 +2136,7 @@
         const now = new Date().toISOString().slice(11, 16);
         const second = commands[Math.floor(Math.random() * commands.length)];
         const alphaFirst = Math.random() > 0.45;
-        const route = alphaFirst ? `[ALPHA] -> [${second}]` : `[${second}] -> [ALPHA]`;
+        const route = alphaFirst ? `[ALPHA > ${second}]` : `[${second} > ALPHA]`;
         const message = messageOverride || messages[Math.floor(Math.random() * messages.length)];
         const item = document.createElement("p");
         item.innerHTML = `<span>[${now} UTC] ${route}</span><br />${message}`;
@@ -2004,6 +2155,33 @@
       function scheduleFeed() {
         pushActivityLog();
         setTimeout(scheduleFeed, randomInt(4000, 8000));
+      }
+
+      function pushMissionEvent(messageOverride) {
+        if (!selectors.missionEvents) return;
+
+        const events = [
+          "Recon drone launched.",
+          "Encryption keys rotated.",
+          "Communications restored.",
+          "Medical support deployed.",
+          "Target acquired.",
+          "Node latency stabilized.",
+          "Packet integrity verified."
+        ];
+        const now = new Date().toISOString().slice(11, 16);
+        const item = document.createElement("p");
+        item.innerHTML = `<span>[${now} UTC]</span> ${messageOverride || events[Math.floor(Math.random() * events.length)]}`;
+        selectors.missionEvents.prepend(item);
+
+        while (selectors.missionEvents.children.length > 7) {
+          selectors.missionEvents.lastElementChild.remove();
+        }
+      }
+
+      function scheduleMissionEvents() {
+        pushMissionEvent();
+        setTimeout(scheduleMissionEvents, randomInt(5000, 9000));
       }
 
       function syncNetwork() {
@@ -2027,9 +2205,11 @@
       }
 
       function scheduleSync() {
+        nextScanAt = Date.now() + randomInt(20000, 30000);
         syncNetwork();
         pushActivityLog("HQ synchronization pulse transmitted. Network integrity confirmed.");
-        setTimeout(scheduleSync, randomInt(15000, 30000));
+        pushMissionEvent("HQ network scan completed.");
+        setTimeout(scheduleSync, Math.max(1000, nextScanAt - Date.now()));
       }
 
       function rotateThreat() {
@@ -2041,6 +2221,9 @@
           { label: "BLACK", defcon: "I", color: "#c7c7c7", message: "Global Threat Condition Updated. DEFCON I. Black protocol standby." }
         ];
         const state = states[Math.floor(Math.random() * states.length)];
+        currentAlert = state.label.toLowerCase();
+        document.body.classList.remove("alert-green", "alert-yellow", "alert-orange", "alert-red", "alert-black");
+        document.body.classList.add(`alert-${currentAlert}`);
         if (selectors.worldThreat) {
           selectors.worldThreat.textContent = state.label;
           selectors.worldThreat.style.color = state.color;
@@ -2049,6 +2232,7 @@
         selectors.threatCondition?.classList.add("is-changing");
         setTimeout(() => selectors.threatCondition?.classList.remove("is-changing"), 900);
         pushActivityLog(state.message);
+        pushMissionEvent(`World alert synchronized: ${state.label}.`);
       }
 
       function scheduleThreat() {
@@ -2072,7 +2256,7 @@
 
       function showWorldEvent() {
         const messages = [
-          "SATELLITE SIGMA-04 REPOSITIONED",
+          "SATELLITE ARGUS-04 REPOSITIONED",
           "ENCRYPTED TRANSMISSION RECEIVED",
           "BETA COMMAND REQUESTING SUPPORT",
           "CSOA DOCUMENT UPDATED",
@@ -2111,16 +2295,52 @@
         });
       }
 
+      function updateAnalytics() {
+        const values = {
+          activeNodes: selectors.markers.filter(marker => !marker.classList.contains("hidden")).length,
+          offlineNodes: currentAlert === "black" ? randomInt(1, 2) : currentAlert === "red" ? 1 : 0,
+          signals: randomInt(118, 184),
+          channels: randomInt(39, 47),
+          uplink: `${(98 + (Math.random() * 2 - 1)).toFixed(1)}%`,
+          integrity: `${(99 + (Math.random() * 1 - 0.5)).toFixed(1)}%`,
+          lastSync: new Date().toISOString().slice(11, 19) + " UTC"
+        };
+
+        selectors.analytics.forEach(node => {
+          node.textContent = values[node.dataset.analytics] ?? node.textContent;
+        });
+      }
+
+      function ambientNetworkActivity() {
+        const visibleMarkers = selectors.markers.filter(marker => !marker.classList.contains("hidden"));
+        const marker = visibleMarkers[Math.floor(Math.random() * visibleMarkers.length)];
+        marker?.classList.add("is-syncing");
+        const route = selectors.routes[Math.floor(Math.random() * selectors.routes.length)];
+        route?.classList.add("is-highlighted");
+
+        setTimeout(() => {
+          marker?.classList.remove("is-syncing");
+          if (!lockedOperation || route?.dataset.route !== lockedOperation) route?.classList.remove("is-highlighted");
+        }, 850);
+
+        setTimeout(ambientNetworkActivity, randomInt(2200, 4800));
+      }
+
       function init() {
+        document.body.classList.add("alert-orange");
         bindMap();
         bindArchives();
         updateClock();
+        updateAnalytics();
         setInterval(updateClock, 1000);
         setInterval(updateSocStats, 6000);
+        setInterval(updateAnalytics, 3500);
         scheduleFeed();
-        setTimeout(scheduleSync, 2500);
+        scheduleMissionEvents();
+        setTimeout(scheduleSync, nextScanAt - Date.now());
         setTimeout(scheduleThreat, 6000);
         setTimeout(scheduleWorldEvents, 10000);
+        setTimeout(ambientNetworkActivity, 1800);
         runLoginGate();
       }
 
