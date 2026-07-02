@@ -647,6 +647,132 @@
       font-size: 1rem;
     }
 
+    .living-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .living-grid .soc-widget {
+      min-height: 100%;
+    }
+
+    .module-feed,
+    .module-list {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+      font-family: "Courier New", monospace;
+      font-size: 0.82rem;
+    }
+
+    .module-feed {
+      max-height: 250px;
+      overflow: hidden;
+    }
+
+    .module-feed p,
+    .module-list div {
+      margin: 0;
+      border-bottom: 1px dashed rgba(53, 255, 155, 0.18);
+      padding-bottom: 7px;
+      color: var(--muted);
+      animation: eventFade 0.35s ease;
+    }
+
+    .module-feed span,
+    .module-list span {
+      color: var(--green);
+    }
+
+    .matrix-bars {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+      font-family: "Courier New", monospace;
+    }
+
+    .matrix-bars div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+    }
+
+    .matrix-bars strong {
+      color: var(--green);
+      letter-spacing: 1px;
+    }
+
+    .typewriter::after {
+      content: "_";
+      color: var(--green);
+      animation: blink 0.9s infinite;
+    }
+
+    .director-message,
+    .system-notifications,
+    .presence-toast {
+      position: fixed;
+      z-index: 22;
+      border: 1px solid rgba(53, 255, 155, 0.4);
+      background: rgba(1, 8, 7, 0.94);
+      color: var(--green);
+      font-family: "Courier New", monospace;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .director-message.active,
+    .system-notifications.active,
+    .presence-toast.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .director-message {
+      left: 22px;
+      bottom: 22px;
+      padding: 12px 14px;
+    }
+
+    .system-notifications,
+    .presence-toast {
+      right: 22px;
+      bottom: 22px;
+      width: min(390px, calc(100vw - 44px));
+      padding: 14px;
+    }
+
+    .presence-toast {
+      bottom: 92px;
+    }
+
+    .redacted-blocks {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+      font-family: "Courier New", monospace;
+    }
+
+    .redacted-blocks div {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+    }
+
+    .redacted-blocks strong {
+      min-width: 120px;
+      color: #000;
+      background: #000;
+      border: 1px solid #111;
+      box-shadow: 0 0 10px rgba(53, 255, 155, 0.08);
+    }
+
     .threat-condition strong {
       color: var(--green);
       text-shadow: 0 0 14px currentColor;
@@ -1011,6 +1137,7 @@
       .dossier-grid,
       .dossier-terminal-grid,
       .soc-dashboard,
+      .living-grid,
       .secure-archives {
         grid-template-columns: 1fr;
       }
@@ -1417,6 +1544,161 @@
           </div>
         </div>
 
+        <div class="living-grid">
+          <div class="soc-widget">
+            <h3>Live Global Incident Feed</h3>
+            <div class="module-feed" data-incident-feed>
+              <p><span>09:18 UTC</span><br />ARGUS-02 detected thermal anomaly.</p>
+              <p><span>09:22 UTC</span><br />Encrypted transmission received.</p>
+              <p><span>09:24 UTC</span><br />Operation Black Tide updated.</p>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>ARGUS Constellation</h3>
+            <div class="module-list">
+              <div>ARGUS-01 <span data-argus="0">ONLINE</span></div>
+              <div>ARGUS-02 <span data-argus="1">TRACKING</span></div>
+              <div>ARGUS-03 <span data-argus="2">REPOSITIONING</span></div>
+              <div>ARGUS-04 <span data-argus="3">MAINTENANCE</span></div>
+              <div>NEXT PASS <span data-argus-pass>00:18:41 UTC</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Threat Matrix</h3>
+            <div class="matrix-bars">
+              <div>CYBER <strong data-matrix="cyber">████░</strong></div>
+              <div>FIELD <strong data-matrix="field">███░░</strong></div>
+              <div>SPACE <strong data-matrix="space">█████</strong></div>
+              <div>BIO <strong data-matrix="bio">█░░░░</strong></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Director Console</h3>
+            <div class="module-list">
+              <div>DIRECTOR <span>ONLINE</span></div>
+              <div>LAST DIRECTIVE <span data-directive-time>09:14 UTC</span></div>
+              <div>CHANNEL <span>SEALED</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Network Health</h3>
+            <div class="module-list">
+              <div>Integrity <span data-health="integrity">99.84%</span></div>
+              <div>Secure Channels <span data-health="channels">14</span></div>
+              <div>Offline Nodes <span data-health="offline">01</span></div>
+              <div>Packet Loss <span data-health="loss">0.02%</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Mission Success</h3>
+            <div class="module-list">
+              <div>Mission Success <span data-success-rate>97.84%</span></div>
+              <div>Operations Completed <span>154</span></div>
+              <div>Last Failure <span>218 days ago</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Encryption Status</h3>
+            <div class="module-list">
+              <div>AES-256 <span>ACTIVE</span></div>
+              <div>Key Rotation <span data-key-rotation>02:14</span></div>
+              <div>Integrity <span data-encryption-integrity>99.97%</span></div>
+              <div>Quantum Backup <span>ACTIVE</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Current Session</h3>
+            <div class="module-list">
+              <div>Operator <span>ALPHA</span></div>
+              <div>Clearance <span>OMEGA</span></div>
+              <div>Session Time <span data-session-time>00:00:00</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Daily Brief</h3>
+            <div class="module-list">
+              <div>Primary Objective <span data-brief-primary>Maintain surveillance.</span></div>
+              <div>Secondary Objective <span data-brief-secondary>Protect ARGUS.</span></div>
+              <div>Priority <span data-brief-priority>HIGH</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Server Status</h3>
+            <div class="module-list">
+              <div>CPU <span data-server="cpu">24%</span></div>
+              <div>RAM <span data-server="ram">58%</span></div>
+              <div>NETWORK <span data-server="network">13%</span></div>
+              <div>UPTIME <span>218 DAYS</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Global Latency</h3>
+            <div class="module-list">
+              <div>GLOBAL LATENCY <span data-latency="global">13 ms</span></div>
+              <div>EU <span data-latency="eu">9 ms</span></div>
+              <div>NA <span data-latency="na">16 ms</span></div>
+              <div>ASIA <span data-latency="asia">28 ms</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>File Database</h3>
+            <div class="module-list">
+              <div>AVAILABLE <span data-files="available">28</span></div>
+              <div>RESTRICTED <span data-files="restricted">143</span></div>
+              <div>PURGED <span data-files="purged">07</span></div>
+              <div>UNKNOWN <span data-files="unknown">18</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Redacted Files</h3>
+            <div class="redacted-blocks" data-redacted-files>
+              <div>PROJECT <strong>██████████</strong></div>
+              <div>STATUS <strong>██████████</strong></div>
+              <div>LOCATION <strong>██████████</strong></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Signal Strength</h3>
+            <div class="module-list">
+              <div>SIGNAL <span data-signal-blocks>██████████</span></div>
+              <div>STRENGTH <span data-signal-strength>99.8%</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>System Uptime</h3>
+            <div class="module-list">
+              <div>SYSTEM UPTIME <span>218 DAYS</span></div>
+              <div>RUNTIME <span data-system-runtime>03:17:42</span></div>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Global Sector Status</h3>
+            <div class="module-list">
+              <div>EUROPE <span data-sector="europe">ACTIVE</span></div>
+              <div>ATLANTIC <span data-sector="atlantic">MONITORING</span></div>
+              <div>PACIFIC <span data-sector="pacific">LOW ACTIVITY</span></div>
+              <div>ARCTIC <span data-sector="arctic">UNKNOWN</span></div>
+              <div>AUTHORIZED <span data-logins="authorized">487</span></div>
+              <div>FAILED <span data-logins="failed">03</span></div>
+            </div>
+          </div>
+        </div>
+
         <div class="dossier-shell">
           <h3>Mission Intelligence Panel</h3>
           <div class="dossier-grid">
@@ -1793,7 +2075,28 @@
         missionEvents: document.querySelector("[data-mission-events]"),
         missionDate: document.querySelector("[data-mission-date]"),
         missionTime: document.querySelector("[data-mission-time]"),
-        scanCountdown: document.querySelector("[data-scan-countdown]")
+        scanCountdown: document.querySelector("[data-scan-countdown]"),
+        incidentFeed: document.querySelector("[data-incident-feed]"),
+        argusNodes: [...document.querySelectorAll("[data-argus]")],
+        argusPass: document.querySelector("[data-argus-pass]"),
+        matrix: [...document.querySelectorAll("[data-matrix]")],
+        directiveTime: document.querySelector("[data-directive-time]"),
+        health: [...document.querySelectorAll("[data-health]")],
+        successRate: document.querySelector("[data-success-rate]"),
+        keyRotation: document.querySelector("[data-key-rotation]"),
+        encryptionIntegrity: document.querySelector("[data-encryption-integrity]"),
+        sessionTime: document.querySelector("[data-session-time]"),
+        briefPrimary: document.querySelector("[data-brief-primary]"),
+        briefSecondary: document.querySelector("[data-brief-secondary]"),
+        briefPriority: document.querySelector("[data-brief-priority]"),
+        server: [...document.querySelectorAll("[data-server]")],
+        latency: [...document.querySelectorAll("[data-latency]")],
+        files: [...document.querySelectorAll("[data-files]")],
+        signalBlocks: document.querySelector("[data-signal-blocks]"),
+        signalStrength: document.querySelector("[data-signal-strength]"),
+        systemRuntime: document.querySelector("[data-system-runtime]"),
+        sectors: [...document.querySelectorAll("[data-sector]")],
+        logins: [...document.querySelectorAll("[data-logins]")]
       };
 
       let lockedOperation = null;
@@ -1801,6 +2104,10 @@
       let lockedScrollY = 0;
       let nextScanAt = Date.now() + randomInt(20000, 30000);
       let currentAlert = "orange";
+      const sessionStartedAt = Date.now();
+      const uptimeStartedAt = Date.now() - ((3 * 3600 + 17 * 60 + 42) * 1000);
+      let keyRotationRemaining = 134;
+      let argusPassRemaining = 1121;
 
       function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -2139,9 +2446,10 @@
         const route = alphaFirst ? `[ALPHA > ${second}]` : `[${second} > ALPHA]`;
         const message = messageOverride || messages[Math.floor(Math.random() * messages.length)];
         const item = document.createElement("p");
-        item.innerHTML = `<span>[${now} UTC] ${route}</span><br />${message}`;
+        item.innerHTML = `<span>[${now} UTC] ${route}</span><br /><span class="typewriter" data-typewriter></span>`;
 
         selectors.feedTrack.prepend(item);
+        typeInline(item.querySelector("[data-typewriter]"), message);
 
         while (selectors.feedTrack.children.length > 9) {
           selectors.feedTrack.lastElementChild.remove();
@@ -2150,6 +2458,23 @@
 
       function randomInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function formatDuration(totalSeconds) {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      }
+
+      function typeInline(node, text, index = 0) {
+        if (!node) return;
+        node.textContent = text.slice(0, index);
+        if (index <= text.length) {
+          setTimeout(() => typeInline(node, text, index + 1), 18);
+        } else {
+          node.classList.remove("typewriter");
+        }
       }
 
       function scheduleFeed() {
@@ -2184,6 +2509,60 @@
         setTimeout(scheduleMissionEvents, randomInt(5000, 9000));
       }
 
+      function pushIncident(messageOverride) {
+        if (!selectors.incidentFeed) return;
+
+        const incidents = [
+          "ARGUS-02 detected thermal anomaly.",
+          "Encrypted transmission received.",
+          "Operation Black Tide updated.",
+          "Unknown aircraft detected.",
+          "Signal integrity restored.",
+          "Arctic relay reported low visibility.",
+          "CISR archive checksum verified."
+        ];
+        const time = new Date().toISOString().slice(11, 16);
+        const item = document.createElement("p");
+        item.innerHTML = `<span>${time} UTC</span><br />${messageOverride || incidents[Math.floor(Math.random() * incidents.length)]}`;
+        selectors.incidentFeed.prepend(item);
+
+        while (selectors.incidentFeed.children.length > 10) {
+          selectors.incidentFeed.lastElementChild.remove();
+        }
+      }
+
+      function scheduleIncidents() {
+        pushIncident();
+        setTimeout(scheduleIncidents, randomInt(20000, 40000));
+      }
+
+      function notifySystem(message) {
+        let panel = document.querySelector("[data-system-notifications]");
+        if (!panel) {
+          panel = document.createElement("div");
+          panel.className = "system-notifications";
+          panel.dataset.systemNotifications = "true";
+          document.body.appendChild(panel);
+        }
+        panel.textContent = message;
+        panel.classList.add("active");
+        setTimeout(() => panel.classList.remove("active"), 4200);
+      }
+
+      function showDirectorMessage() {
+        let panel = document.querySelector("[data-director-message]");
+        if (!panel) {
+          panel = document.createElement("div");
+          panel.className = "director-message";
+          panel.dataset.directorMessage = "true";
+          document.body.appendChild(panel);
+        }
+        panel.textContent = "DIRECTOR MESSAGE RECEIVED";
+        panel.classList.add("active");
+        if (selectors.directiveTime) selectors.directiveTime.textContent = `${new Date().toISOString().slice(11, 16)} UTC`;
+        setTimeout(() => panel.classList.remove("active"), 5000);
+      }
+
       function syncNetwork() {
         selectors.markers.find(marker => marker.dataset.id === "cisr-hq")?.classList.add("is-syncing");
         selectors.routes.forEach((route, index) => {
@@ -2209,6 +2588,9 @@
         syncNetwork();
         pushActivityLog("HQ synchronization pulse transmitted. Network integrity confirmed.");
         pushMissionEvent("HQ network scan completed.");
+        pushIncident("HQ synchronization completed across connected nodes.");
+        updateNetworkHealth();
+        notifySystem("ARGUS synchronized.");
         setTimeout(scheduleSync, Math.max(1000, nextScanAt - Date.now()));
       }
 
@@ -2256,7 +2638,7 @@
 
       function showWorldEvent() {
         const messages = [
-          "SATELLITE ARGUS-04 REPOSITIONED",
+          "SATELLITE SIGMA-04 REPOSITIONED",
           "ENCRYPTED TRANSMISSION RECEIVED",
           "BETA COMMAND REQUESTING SUPPORT",
           "CSOA DOCUMENT UPDATED",
@@ -2311,6 +2693,157 @@
         });
       }
 
+      function updateNetworkHealth() {
+        const values = {
+          integrity: `${(99.65 + Math.random() * 0.3).toFixed(2)}%`,
+          channels: String(randomInt(13, 16)),
+          offline: String(currentAlert === "black" ? randomInt(1, 2) : currentAlert === "red" ? 1 : 0).padStart(2, "0"),
+          loss: `${(Math.random() * 0.06).toFixed(2)}%`
+        };
+        selectors.health.forEach(node => {
+          node.textContent = values[node.dataset.health] ?? node.textContent;
+        });
+      }
+
+      function updateLivingMetrics() {
+        const argusStatuses = ["ONLINE", "TRACKING", "REPOSITIONING", "MAINTENANCE", "STANDBY"];
+        selectors.argusNodes.forEach((node, index) => {
+          if (Math.random() > 0.72) node.textContent = argusStatuses[(index + randomInt(0, argusStatuses.length - 1)) % argusStatuses.length];
+        });
+
+        const matrixLevels = {
+          cyber: randomInt(3, 5),
+          field: randomInt(2, 4),
+          space: randomInt(4, 5),
+          bio: randomInt(1, 3)
+        };
+        selectors.matrix.forEach(node => {
+          const level = matrixLevels[node.dataset.matrix] || 3;
+          node.textContent = "█".repeat(level) + "░".repeat(5 - level);
+        });
+
+        const serverValues = {
+          cpu: `${randomInt(18, 34)}%`,
+          ram: `${randomInt(52, 64)}%`,
+          network: `${randomInt(9, 18)}%`
+        };
+        selectors.server.forEach(node => {
+          node.textContent = serverValues[node.dataset.server] ?? node.textContent;
+        });
+
+        const latencyValues = {
+          global: `${randomInt(11, 16)} ms`,
+          eu: `${randomInt(7, 11)} ms`,
+          na: `${randomInt(14, 19)} ms`,
+          asia: `${randomInt(24, 32)} ms`
+        };
+        selectors.latency.forEach(node => {
+          node.textContent = latencyValues[node.dataset.latency] ?? node.textContent;
+        });
+
+        const fileValues = {
+          available: String(randomInt(27, 31)).padStart(2, "0"),
+          restricted: String(randomInt(141, 146)),
+          purged: "07",
+          unknown: String(randomInt(16, 21)).padStart(2, "0")
+        };
+        selectors.files.forEach(node => {
+          node.textContent = fileValues[node.dataset.files] ?? node.textContent;
+        });
+
+        const loginValues = {
+          authorized: String(randomInt(487, 492)),
+          failed: String(randomInt(2, 5)).padStart(2, "0")
+        };
+        selectors.logins.forEach(node => {
+          node.textContent = loginValues[node.dataset.logins] ?? node.textContent;
+        });
+
+        if (selectors.successRate) selectors.successRate.textContent = `${(97.6 + Math.random() * 0.5).toFixed(2)}%`;
+        if (selectors.encryptionIntegrity) selectors.encryptionIntegrity.textContent = `${(99.9 + Math.random() * 0.09).toFixed(2)}%`;
+        const signal = 98 + Math.random() * 2;
+        if (selectors.signalStrength) selectors.signalStrength.textContent = `${signal.toFixed(1)}%`;
+        if (selectors.signalBlocks) selectors.signalBlocks.textContent = "█".repeat(Math.round(signal / 10)).slice(0, 10).padEnd(10, "░");
+        updateNetworkHealth();
+      }
+
+      function updateContinuousTimers() {
+        const sessionSeconds = Math.floor((Date.now() - sessionStartedAt) / 1000);
+        if (selectors.sessionTime) selectors.sessionTime.textContent = formatDuration(sessionSeconds);
+
+        const uptimeSeconds = Math.floor((Date.now() - uptimeStartedAt) / 1000);
+        if (selectors.systemRuntime) selectors.systemRuntime.textContent = formatDuration(uptimeSeconds % 86400);
+
+        keyRotationRemaining = Math.max(0, keyRotationRemaining - 1);
+        if (selectors.keyRotation) {
+          const minutes = Math.floor(keyRotationRemaining / 60);
+          const seconds = keyRotationRemaining % 60;
+          selectors.keyRotation.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+        }
+        if (keyRotationRemaining === 0) {
+          keyRotationRemaining = 134;
+          notifySystem("Encryption keys rotated.");
+        }
+
+        argusPassRemaining = Math.max(0, argusPassRemaining - 1);
+        if (selectors.argusPass) selectors.argusPass.textContent = `${formatDuration(argusPassRemaining)} UTC`;
+        if (argusPassRemaining === 0) {
+          argusPassRemaining = randomInt(900, 1400);
+          notifySystem("ARGUS pass completed.");
+        }
+      }
+
+      function setDailyBrief() {
+        const briefs = [
+          ["Maintain surveillance.", "Protect ARGUS.", "HIGH"],
+          ["Monitor Arctic corridor.", "Rotate encryption keys.", "MEDIUM"],
+          ["Audit black archive.", "Verify packet integrity.", "HIGH"],
+          ["Track anomalous signals.", "Preserve command secrecy.", "CRITICAL"]
+        ];
+        const day = new Date().getUTCDate() % briefs.length;
+        const brief = briefs[day];
+        if (selectors.briefPrimary) selectors.briefPrimary.textContent = brief[0];
+        if (selectors.briefSecondary) selectors.briefSecondary.textContent = brief[1];
+        if (selectors.briefPriority) selectors.briefPriority.textContent = brief[2];
+      }
+
+      function rotateSectors() {
+        const states = ["ACTIVE", "MONITORING", "LOW ACTIVITY", "UNKNOWN", "TRACKING"];
+        selectors.sectors.forEach(node => {
+          if (Math.random() > 0.68) node.textContent = states[randomInt(0, states.length - 1)];
+        });
+      }
+
+      function scheduleDirector() {
+        if (Math.random() > 0.5) showDirectorMessage();
+        setTimeout(scheduleDirector, randomInt(45000, 85000));
+      }
+
+      function scheduleNotifications() {
+        const messages = [
+          "ARGUS synchronized.",
+          "Encrypted transmission received.",
+          "Unknown signal detected.",
+          "Signal integrity restored.",
+          "Node telemetry refreshed."
+        ];
+        notifySystem(messages[Math.floor(Math.random() * messages.length)]);
+        setTimeout(scheduleNotifications, randomInt(26000, 52000));
+      }
+
+      function schedulePresenceCheck() {
+        let panel = document.querySelector("[data-presence-toast]");
+        if (!panel) {
+          panel = document.createElement("div");
+          panel.className = "presence-toast";
+          panel.dataset.presenceToast = "true";
+          document.body.appendChild(panel);
+        }
+        panel.innerHTML = "ALPHA<br />Operator presence confirmed.<br />Continue monitoring.<br />Session secured.";
+        panel.classList.add("active");
+        setTimeout(() => panel.classList.remove("active"), 8000);
+      }
+
       function ambientNetworkActivity() {
         const visibleMarkers = selectors.markers.filter(marker => !marker.classList.contains("hidden"));
         const marker = visibleMarkers[Math.floor(Math.random() * visibleMarkers.length)];
@@ -2332,14 +2865,22 @@
         bindArchives();
         updateClock();
         updateAnalytics();
+        setDailyBrief();
         setInterval(updateClock, 1000);
+        setInterval(updateContinuousTimers, 1000);
         setInterval(updateSocStats, 6000);
         setInterval(updateAnalytics, 3500);
+        setInterval(updateLivingMetrics, 6500);
+        setInterval(rotateSectors, 12000);
         scheduleFeed();
         scheduleMissionEvents();
+        setTimeout(scheduleIncidents, randomInt(20000, 40000));
         setTimeout(scheduleSync, nextScanAt - Date.now());
         setTimeout(scheduleThreat, 6000);
         setTimeout(scheduleWorldEvents, 10000);
+        setTimeout(scheduleDirector, randomInt(35000, 65000));
+        setTimeout(scheduleNotifications, 18000);
+        setTimeout(schedulePresenceCheck, 900000);
         setTimeout(ambientNetworkActivity, 1800);
         runLoginGate();
       }
