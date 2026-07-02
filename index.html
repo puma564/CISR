@@ -562,7 +562,13 @@
       stroke-width: 0.38;
       stroke-dasharray: 8 12;
       opacity: 0.42;
+      animation: networkPacketDrift 8s linear infinite;
       transition: opacity 0.25s ease, stroke 0.25s ease, filter 0.25s ease;
+    }
+
+    .network-route:nth-child(even) {
+      animation-duration: 10s;
+      animation-direction: reverse;
     }
 
     .network-route.is-highlighted,
@@ -858,6 +864,10 @@
     @keyframes routeSignal {
       from { stroke-dashoffset: 26; }
       to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes networkPacketDrift {
+      to { stroke-dashoffset: -40; }
     }
 
     @keyframes feedLoop {
@@ -1289,7 +1299,7 @@
       color: #35ff9b;
       font-family: "Courier New", monospace;
       overflow: hidden;
-      transition: opacity 0.8s ease, visibility 0.8s ease;
+      transition: opacity 0.45s ease, visibility 0.45s ease;
     }
 
     .global-intro.hidden {
@@ -1376,6 +1386,32 @@
       text-transform: uppercase;
     }
 
+    .global-intro-continue {
+      display: none;
+      text-align: center;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .global-intro-continue.active {
+      display: grid;
+      gap: 16px;
+      animation: globalFinalFade 0.45s ease forwards;
+    }
+
+    .global-intro-continue button {
+      border: 1px solid rgba(53, 255, 155, 0.46);
+      background: rgba(0, 0, 0, 0.74);
+      color: #35ff9b;
+      padding: 14px 18px;
+      font: inherit;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      animation: globalCursorBlink 1.1s steps(2, start) infinite;
+      box-shadow: 0 0 20px rgba(53, 255, 155, 0.12);
+    }
+
     .global-intro-final.active {
       display: block;
       animation: globalFinalFade 0.45s ease forwards;
@@ -1397,6 +1433,34 @@
       margin: 12px 0;
       color: #e8ecef;
       font-size: clamp(1.8rem, 5vw, 3.2rem);
+    }
+
+    body.system-standby .threat-panel,
+    body.system-standby #global-map .operations-system,
+    body.system-standby #global-map .timeline-shell,
+    body.system-standby #global-map .dossier-shell,
+    body.system-standby #global-map aside,
+    body.system-standby .hero-intel-grid,
+    body.system-standby .side-intel-grid {
+      opacity: 0.28;
+      filter: saturate(0.45);
+      transition: opacity 0.6s ease, filter 0.6s ease, transform 0.6s ease;
+    }
+
+    body.voice-sync-active .hero-intel-grid,
+    body.voice-sync-active .side-intel-grid {
+      opacity: 1;
+      filter: none;
+    }
+
+    body.voice-sync-threat .threat-panel,
+    body.voice-sync-map #global-map .operations-system,
+    body.voice-sync-stats #global-map aside,
+    body.voice-sync-stats #global-map .timeline-shell,
+    body.voice-sync-stats #global-map .dossier-shell {
+      opacity: 1;
+      filter: none;
+      transform: none;
     }
 
     @keyframes globalLogoFade {
@@ -1432,6 +1496,10 @@
     <div class="global-intro-shell">
       <img src="CISR%20photo%20server.png" alt="CISR logo" class="global-intro-logo" />
       <div id="global-intro-terminal" class="global-intro-terminal"></div>
+      <div id="global-intro-continue" class="global-intro-continue">
+        <p>AUTHENTICATION SEQUENCE READY</p>
+        <button type="button" id="global-intro-continue-button">CLICK TO CONTINUE</button>
+      </div>
       <div id="global-intro-final" class="global-intro-final">
         <p>ACCESS LEVEL:</p>
         <strong>████████████</strong>
@@ -1646,7 +1714,7 @@
       </div>
 
       <div class="panel reveal">
-        <p>CISR conducts military operations through two specialized commands working together.</p>
+        <p>CISR conducts military operations through three specialized commands working together.</p>
       </div>
 
       <div class="grid" style="margin-top: 18px;">
@@ -1676,13 +1744,32 @@
             <li>Reconnaissance</li>
             <li>Long Range Surveillance</li>
             <li>Overwatch</li>
-            <li>Logistics</li>
             <li>Target Marking</li>
             <li>Extraction Coordination</li>
           </ul>
           <p style="margin-top: 18px;">Beta Command prepares every battlefield before Alpha deploys.</p>
           <p>Information is their primary weapon.</p>
           <p class="motto">"The battle is won long before the first shot is fired."</p>
+        </article>
+
+        <article class="command-card reveal">
+          <h3>&#128994; Omega Command</h3>
+          <p class="codename">Combat Support & Tactical Sustainment</p>
+          <h3>Primary Responsibilities</h3>
+          <ul>
+            <li>Combat Medicine</li>
+            <li>Tactical Medical Evacuation</li>
+            <li>Battlefield Engineering</li>
+            <li>Tactical Fortifications</li>
+            <li>Logistics</li>
+            <li>Vehicle Operations</li>
+            <li>Ammunition Distribution</li>
+            <li>Field Maintenance</li>
+          </ul>
+          <p style="margin-top: 18px;">Omega Command ensures every operational unit remains combat effective.</p>
+          <p>Responsible for battlefield medical support, logistics, engineering and tactical sustainment.</p>
+          <p>Without Omega, operations cannot continue.</p>
+          <p class="motto">"They keep the mission alive."</p>
         </article>
       </div>
 
@@ -1843,21 +1930,21 @@
         <div>
           <div class="map-shell" data-map>
             <svg class="network-routes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-              <path class="network-route" data-route="CISR-HQ OP-CISR-022" d="M27 41 C31 38, 34 38, 39 39"></path>
-              <path class="network-route" data-route="OP-CISR-022 OP-CISR-014" d="M39 39 C44 34, 49 33, 54 36"></path>
-              <path class="network-route" data-route="OP-CISR-014 OP-CISR-073" d="M54 36 C52 38, 50 39, 48 40"></path>
-              <path class="network-route" data-route="OP-CISR-073 OP-CISR-041" d="M48 40 C52 46, 56 49, 60 50"></path>
-              <path class="network-route" data-route="CISR-HQ OP-CISR-058" d="M27 41 C43 62, 64 63, 81 52"></path>
-              <path class="network-route" data-route="OP-CISR-041 OP-CISR-058" d="M60 50 C66 55, 74 56, 81 52"></path>
+              <path class="network-route" data-route="CISR-HQ OP-CISR-014" d="M45 24 C48 29, 51 33, 55 37"></path>
+              <path class="network-route" data-route="CISR-HQ OP-CISR-073" d="M45 24 C45 31, 46 37, 48 43"></path>
+              <path class="network-route" data-route="OP-CISR-014 OP-CISR-022" d="M55 37 C49 39, 43 41, 36 43"></path>
+              <path class="network-route" data-route="OP-CISR-073 OP-CISR-041" d="M48 43 C53 50, 57 53, 62 50"></path>
+              <path class="network-route" data-route="CISR-HQ OP-CISR-058" d="M45 24 C58 38, 73 45, 83 54"></path>
+              <path class="network-route" data-route="OP-CISR-041 OP-CISR-058" d="M62 50 C68 57, 76 59, 83 54"></path>
             </svg>
             <div class="map-grid"></div>
 
-            <button class="op-marker hq-node" style="--x: 27%; --y: 41%;" data-id="CISR-HQ" data-operation="CISR Headquarters" data-status="Operational" data-threat="green" data-clearance="1" data-region="Washington Node" data-location="Washington D.C." data-coordinates="38.907N / 77.037W" data-sync="LIVE UTC" data-command="omega" data-commander="DIRECTORATE" data-ref="/network/hq" data-signal="99.8%" data-encryption="AES-256 / QUANTUM HANDSHAKE" data-summary="Central synchronization authority for the public Global Intelligence Network." aria-label="CISR Headquarters"></button>
-            <button class="op-marker" style="--x: 48%; --y: 40%;" data-id="OP-CISR-073" data-operation="Operation Iron Veil" data-status="Active" data-threat="orange" data-clearance="1" data-region="NRM6" data-location="Europe" data-coordinates="43.263N / 2.935W" data-sync="14:03 UTC" data-command="alpha" data-commander="CLASSIFIED" data-ref="/operations/iron-veil" data-signal="96.7%" data-encryption="AES-256" data-summary="Establish operational influence within new strategic environments." aria-label="Operation Iron Veil"></button>
-            <button class="op-marker" style="--x: 54%; --y: 36%;" data-id="OP-CISR-014" data-operation="Operation Nightfall" data-status="Completed" data-threat="orange" data-clearance="3" data-region="Eastern Corridor" data-location="Eastern Europe" data-coordinates="CLASSIFIED" data-sync="13:08 UTC" data-command="beta" data-commander="CLASSIFIED" data-ref="/operations/nightfall" data-signal="93.1%" data-encryption="AES-256" data-summary="Recover strategic intelligence from hostile elements operating within a redacted corridor." aria-label="Operation Nightfall"></button>
-            <button class="op-marker" style="--x: 39%; --y: 39%;" data-id="OP-CISR-022" data-operation="Operation Black Tide" data-status="Completed" data-threat="red" data-clearance="5" data-region="Atlantic Grid" data-location="North Atlantic" data-coordinates="CLASSIFIED" data-sync="12:41 UTC" data-command="alpha" data-commander="CLASSIFIED" data-ref="/operations/black-tide" data-signal="89.4%" data-encryption="AES-256" data-summary="Neutralize an emerging threat before public identification." aria-label="Operation Black Tide"></button>
-            <button class="op-marker" style="--x: 60%; --y: 50%;" data-id="OP-CISR-041" data-operation="Operation Dead Signal" data-status="Completed" data-threat="red" data-clearance="7" data-region="Black Relay" data-location="Middle East" data-coordinates="CLASSIFIED" data-sync="13:42 UTC" data-command="omega" data-commander="CLASSIFIED" data-ref="/operations/dead-signal" data-signal="82.6%" data-encryption="AES-256 / BLACK RELAY" data-summary="Encrypted transmission recovered from a compromised relay network." aria-label="Operation Dead Signal"></button>
-            <button class="op-marker" style="--x: 81%; --y: 52%;" data-id="OP-CISR-058" data-operation="Operation Glass Falcon" data-status="Completed" data-threat="yellow" data-clearance="omega" data-region="Pacific Watchline" data-location="Pacific Watchline" data-coordinates="CLASSIFIED" data-sync="13:17 UTC" data-command="beta" data-commander="CLASSIFIED" data-ref="/operations/glass-falcon" data-signal="98.4%" data-encryption="AES-256" data-summary="Reconnaissance drone network maintained long-range Pacific surveillance." aria-label="Operation Glass Falcon"></button>
+            <button class="op-marker hq-node" style="--x: 45%; --y: 24%;" data-id="CISR-HQ" data-operation="CISR Headquarters" data-status="Operational" data-threat="green" data-clearance="1" data-region="Arctic Relay" data-location="Norwegian Sea / Classified Facility" data-coordinates="CLASSIFIED" data-sync="LIVE UTC" data-command="omega" data-commander="DIRECTORATE" data-ref="/network/hq" data-signal="99.8%" data-encryption="AES-256 / QUANTUM HANDSHAKE" data-summary="Central synchronization authority for the public Global Intelligence Network." aria-label="CISR Headquarters"></button>
+            <button class="op-marker" style="--x: 48%; --y: 43%;" data-id="OP-CISR-073" data-operation="Operation Iron Veil" data-status="Active" data-threat="orange" data-clearance="1" data-region="NRM6" data-location="Western Europe" data-coordinates="43.263N / 2.935W" data-sync="14:03 UTC" data-command="alpha" data-commander="CLASSIFIED" data-ref="/operations/iron-veil" data-signal="96.7%" data-encryption="AES-256" data-summary="Establish operational influence within new strategic environments." aria-label="Operation Iron Veil"></button>
+            <button class="op-marker" style="--x: 55%; --y: 37%;" data-id="OP-CISR-014" data-operation="Operation Nightfall" data-status="Completed" data-threat="orange" data-clearance="3" data-region="Eastern Corridor" data-location="Eastern Europe" data-coordinates="CLASSIFIED" data-sync="13:08 UTC" data-command="beta" data-commander="CLASSIFIED" data-ref="/operations/nightfall" data-signal="93.1%" data-encryption="AES-256" data-summary="Recover strategic intelligence from hostile elements operating within a redacted corridor." aria-label="Operation Nightfall"></button>
+            <button class="op-marker" style="--x: 36%; --y: 43%;" data-id="OP-CISR-022" data-operation="Operation Black Tide" data-status="Completed" data-threat="red" data-clearance="5" data-region="Atlantic Grid" data-location="North Atlantic" data-coordinates="CLASSIFIED" data-sync="12:41 UTC" data-command="alpha" data-commander="CLASSIFIED" data-ref="/operations/black-tide" data-signal="89.4%" data-encryption="AES-256" data-summary="Neutralize an emerging threat before public identification." aria-label="Operation Black Tide"></button>
+            <button class="op-marker" style="--x: 62%; --y: 50%;" data-id="OP-CISR-041" data-operation="Operation Dead Signal" data-status="Completed" data-threat="red" data-clearance="7" data-region="Black Relay" data-location="Middle East" data-coordinates="CLASSIFIED" data-sync="13:42 UTC" data-command="omega" data-commander="CLASSIFIED" data-ref="/operations/dead-signal" data-signal="82.6%" data-encryption="AES-256 / BLACK RELAY" data-summary="Encrypted transmission recovered from a compromised relay network." aria-label="Operation Dead Signal"></button>
+            <button class="op-marker" style="--x: 83%; --y: 54%;" data-id="OP-CISR-058" data-operation="Operation Glass Falcon" data-status="Completed" data-threat="yellow" data-clearance="omega" data-region="Pacific Watchline" data-location="South Pacific Watchline" data-coordinates="CLASSIFIED" data-sync="13:17 UTC" data-command="beta" data-commander="CLASSIFIED" data-ref="/operations/glass-falcon" data-signal="98.4%" data-encryption="AES-256" data-summary="Reconnaissance drone network maintained long-range Pacific surveillance." aria-label="Operation Glass Falcon"></button>
 
             <div class="map-tooltip" data-map-info>
               <p class="codename">SELECT OPERATION MARKER</p>
@@ -1925,13 +2012,13 @@
           <div class="activity-feed">
             <h3>World Activity Feed</h3>
             <div class="feed-track">
-              <p><span>[12:41 UTC]</span><br />Satellite connection established.</p>
-              <p><span>[13:08 UTC]</span><br />Operation Iron Veil updated.</p>
-              <p><span>[13:17 UTC]</span><br />Recon Drone Online.</p>
-              <p><span>[13:42 UTC]</span><br />Encrypted transmission received.</p>
-              <p><span>[14:03 UTC]</span><br />Alpha Command deployed.</p>
-              <p><span>[12:41 UTC]</span><br />Satellite connection established.</p>
-              <p><span>[13:08 UTC]</span><br />Operation Iron Veil updated.</p>
+              <p><span>[12:41 UTC]</span><br />[BETA &gt; ALPHA] Satellite connection established.</p>
+              <p><span>[13:08 UTC]</span><br />[ALPHA &gt; BETA] Operation Iron Veil updated.</p>
+              <p><span>[13:17 UTC]</span><br />[BETA &gt; ALPHA] Recon drone online.</p>
+              <p><span>[13:42 UTC]</span><br />[OMEGA &gt; ALPHA] Forward medical unit deployed.</p>
+              <p><span>[14:03 UTC]</span><br />[ALPHA &gt; OMEGA] Supply convoy authorized.</p>
+              <p><span>[12:41 UTC]</span><br />[BETA &gt; ALPHA] Satellite connection established.</p>
+              <p><span>[13:08 UTC]</span><br />[ALPHA &gt; BETA] Operation Iron Veil updated.</p>
             </div>
           </div>
 
@@ -2226,6 +2313,7 @@
     }
 
     initOperationsMap();
+    document.body.classList.add("system-standby");
     syncUtcClock();
     initHeroDiagnostics();
     function initHeroDiagnostics() {
@@ -2248,10 +2336,10 @@
           level: 1,
           weight: 54,
           logs: [
-            "[OK] Objective secured.",
-            "[OK] Sector clear.",
-            "[SYNC] Satellite sweep complete.",
-            "[OK] All commands operational."
+            "[ALPHA > BETA] Objective secured.",
+            "[BETA > ALPHA] Sector clear.",
+            "[ALPHA > OMEGA] All commands operational.",
+            "[BETA > ALPHA] Satellite sweep complete."
           ]
         },
         yellow: {
@@ -2261,10 +2349,10 @@
           level: 2,
           weight: 22,
           logs: [
-            "[WARN] Unknown movement detected.",
-            "[INFO] Beta-0 dispatched.",
-            "[SYNC] Recon network activated.",
-            "[INFO] Monitoring suspicious activity."
+            "[BETA > ALPHA] Unknown movement detected.",
+            "[ALPHA > BETA] Recon network activated.",
+            "[BETA > ALPHA] Recon package received.",
+            "[ALPHA > OMEGA] Standby medical channel opened."
           ]
         },
         orange: {
@@ -2274,10 +2362,10 @@
           level: 3,
           weight: 16,
           logs: [
-            "[INFO] Alpha-0 deployed.",
-            "[INFO] Operation Iron Veil active.",
-            "[SYNC] CSOA priority channel open.",
-            "[WARN] Tactical response authorized."
+            "[ALPHA > BETA] Operation Iron Veil updated.",
+            "[ALPHA > OMEGA] Supply convoy authorized.",
+            "[BETA > ALPHA] Satellite imagery received.",
+            "[OMEGA > ALPHA] Forward medical station established."
           ]
         },
         red: {
@@ -2287,10 +2375,10 @@
           level: 4,
           weight: 7,
           logs: [
-            "[ALERT] Hostile contact confirmed.",
-            "[INFO] QRF dispatched.",
-            "[WARN] Force Commander notified.",
-            "[SYNC] Medical standby requested."
+            "[BETA > ALPHA] Hostile contact confirmed.",
+            "[ALPHA > BETA] QRF dispatched.",
+            "[ALPHA > OMEGA] Medical standby requested.",
+            "[OMEGA > ALPHA] Casualty evacuation route prepared."
           ]
         },
         black: {
@@ -2300,27 +2388,28 @@
           level: 5,
           weight: 1,
           logs: [
-            "[PRIORITY] BLACK PROTOCOL ACTIVE.",
-            "[INFO] Creator authorization verified.",
-            "[WARN] Directorate channel secured.",
-            "[ALERT] All commands mobilized."
+            "[ALPHA > OMEGA] BLACK PROTOCOL ACTIVE.",
+            "[BETA > ALPHA] Directorate channel secured.",
+            "[OMEGA > ALPHA] Strategic sustainment locked.",
+            "[ALPHA > BETA] All commands mobilized."
           ]
         }
       };
 
       const personnelMessages = [
-        "Alpha-0 secured objective.",
-        "Omega-0 authorized logistics deployment.",
-        "Beta-0 established overwatch.",
-        "Shadow King reviewing intelligence.",
-        "Ghost updated operational roster.",
-        "Jait coordinating assault teams.",
-        "The Fallen approved deployment."
+        "[ALPHA > BETA] Alpha-0 secured objective.",
+        "[OMEGA > ALPHA] Logistics deployment authorized.",
+        "[BETA > ALPHA] Overwatch established.",
+        "[ALPHA > OMEGA] Resupply convoy approved.",
+        "[BETA > ALPHA] Operational roster updated.",
+        "[ALPHA > BETA] Assault teams coordinated.",
+        "[OMEGA > ALPHA] Engineering route confirmed."
       ];
 
       let activeThreat = "green";
       let eventTimer = null;
       let isScanning = false;
+      let diagnosticsStarted = false;
 
       const randomItem = (items) => items[Math.floor(Math.random() * items.length)];
 
@@ -2399,7 +2488,7 @@
       function pushThreatLogs(state) {
         const logs = [...threatStates[state].logs];
         const includePersonnel = Math.random() > 0.35;
-        if (includePersonnel) logs[Math.floor(Math.random() * logs.length)] = `[INFO] ${randomItem(personnelMessages)}`;
+        if (includePersonnel) logs[Math.floor(Math.random() * logs.length)] = randomItem(personnelMessages);
         logs.forEach((log, index) => setTimeout(() => pushLog(log), index * 220));
       }
 
@@ -2444,10 +2533,10 @@
         threatNote.textContent = "Analyzing Tactical Network...";
         setWorldStatus("Scanning", "yellow");
         setThreatVisual("yellow");
-        pushLog("[SCAN] Analyzing tactical network...");
+        pushLog("[ALPHA > BETA] Analyzing tactical network...");
 
         setTimeout(() => {
-          pushLog("[SYNC] Threat assessment updated.");
+          pushLog("[BETA > ALPHA] Threat assessment updated.");
           const nextThreat = chooseThreatState();
           applyThreatState(nextThreat, true);
           isScanning = false;
@@ -2464,14 +2553,30 @@
         eventTimer = setTimeout(triggerEvent, delay);
       }
 
-      setThreatVisual("green", false);
-      setWorldStatus("Normal", "green");
-      setInterval(() => {
+      function startDiagnostics() {
+        if (diagnosticsStarted) return;
+        diagnosticsStarted = true;
+        document.body.classList.add("voice-sync-active");
+        setTimeout(() => document.body.classList.add("voice-sync-threat"), 1200);
+        setTimeout(() => document.body.classList.add("voice-sync-map"), 2200);
+        setTimeout(() => document.body.classList.add("voice-sync-stats"), 3200);
+        setThreatVisual("green", true);
+        setWorldStatus("Normal", "green");
+        pushLog("[ALPHA > BETA] Secure channel established.");
+        pushLog("[OMEGA > ALPHA] Sustainment network standing by.");
+        setInterval(() => {
         const pool = threatStates[activeThreat]?.logs || threatStates.green.logs;
-        const message = Math.random() > 0.72 ? `[INFO] ${randomItem(personnelMessages)}` : randomItem(pool);
+        const message = Math.random() > 0.72 ? randomItem(personnelMessages) : randomItem(pool);
         pushLog(message);
-      }, 5000);
-      scheduleNextEvent();
+        }, 5000);
+        scheduleNextEvent();
+      }
+
+      threatStatus.textContent = "Idle";
+      threatNote.textContent = "Awaiting Voice Authentication";
+      setWorldStatus("Standby", "green");
+      threatStages.forEach((stage) => stage.classList.remove("active"));
+      window.addEventListener("cisr:voice-start", startDiagnostics, { once: true });
     }
     function runPublicIntro() {
       const intro = document.getElementById("public-intro");
@@ -2569,6 +2674,8 @@
 
       const logo = overlay.querySelector(".global-intro-logo");
       const terminal = document.getElementById("global-intro-terminal");
+      const continuePanel = document.getElementById("global-intro-continue");
+      const continueButton = document.getElementById("global-intro-continue-button");
       const finalPanel = document.getElementById("global-intro-final");
       const timers = [];
       const wait = (ms) => new Promise((resolve) => {
@@ -2588,7 +2695,7 @@
         "[OK] Encryption protocols active",
         "[OK] Loading Personnel Database...",
         "[OK] Loading Operations Archive...",
-        "[OK] Tactical Radar synchronized",
+        "[OK] Global Intelligence Network synchronized",
         "[OK] Threat Monitoring active",
         "[OK] Intelligence Network online"
       ];
@@ -2632,22 +2739,38 @@
 
       const finishIntro = async () => {
         if (terminal) terminal.classList.remove("active");
+        if (continuePanel) continuePanel.classList.remove("active");
         if (finalPanel) finalPanel.classList.add("active");
-        await wait(700);
+        await wait(520);
         overlay.classList.add("hidden");
-        await wait(850);
+        await wait(480);
         timers.forEach(clearTimeout);
         overlay.remove();
       };
 
+      const waitForContinue = () => new Promise((resolve) => {
+        if (!continueButton) {
+          resolve();
+          return;
+        }
+
+        continueButton.addEventListener("click", resolve, { once: true });
+      });
+
       (async () => {
-        await wait(900);
+        await wait(2000);
+        await typeTerminal();
+        if (terminal) terminal.classList.remove("active");
+        if (continuePanel) continuePanel.classList.add("active");
+        await waitForContinue();
         await playAudio(beep);
-        await wait(200);
-        const voicePlayback = await playAudio(voice, { waitUntilEnded: false });
-        const terminalPlayback = typeTerminal();
-        await Promise.allSettled([voicePlayback, terminalPlayback]);
         await finishIntro();
+        document.body.classList.remove("system-standby");
+        await wait(300);
+        const voicePlayback = await playAudio(voice, { waitUntilEnded: false });
+        window.dispatchEvent(new CustomEvent("cisr:voice-start"));
+        await voicePlayback;
+        document.body.classList.add("voice-sync-complete");
       })();
     }
     window.addEventListener("load", runGlobalIntro);
