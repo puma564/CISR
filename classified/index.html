@@ -33,6 +33,13 @@
       line-height: 1.7;
     }
 
+    body.dossier-lock {
+      overflow: hidden;
+      position: fixed;
+      top: calc(var(--lock-scroll-y, 0) * -1px);
+      width: 100%;
+    }
+
     body::before {
       content: "";
       position: fixed;
@@ -358,6 +365,20 @@
       animation: routeSignal 0.9s ease-in-out both;
     }
 
+    .network-route.is-dimmed {
+      opacity: 0.16;
+    }
+
+    .signal-dot {
+      fill: var(--green);
+      filter: drop-shadow(0 0 5px rgba(53, 255, 155, 0.8));
+      opacity: 0;
+    }
+
+    .signal-dot.is-syncing {
+      animation: signalTravel 1.6s ease-in-out both;
+    }
+
     .map-grid {
       position: absolute;
       inset: 0;
@@ -433,6 +454,10 @@
       box-shadow: 0 0 36px rgba(53, 255, 155, 0.95), 0 0 80px rgba(59, 130, 246, 0.3);
     }
 
+    .hq-node::after {
+      inset: 28%;
+    }
+
     .hq-node::before {
       inset: -16px;
       border-style: double;
@@ -468,6 +493,10 @@
     .map-tooltip.active {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    .map-tooltip p {
+      margin-bottom: 6px;
     }
 
     .map-focus {
@@ -522,7 +551,8 @@
       gap: 14px;
       align-items: start;
       border-bottom: 1px solid rgba(53, 255, 155, 0.24);
-      padding-bottom: 12px;
+      background: transparent;
+      padding: 0 0 12px;
       margin-bottom: 12px;
     }
 
@@ -568,17 +598,38 @@
       margin-top: 10px;
     }
 
+    .dossier-divider {
+      color: rgba(53, 255, 155, 0.54);
+      overflow: hidden;
+      white-space: nowrap;
+      margin: 8px 0 12px;
+    }
+
+    .soc-dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
     .soc-widget {
       border: 1px solid var(--line);
       background: rgba(11, 17, 16, 0.9);
       padding: 18px;
-      margin-top: 16px;
       font-family: "Courier New", monospace;
+    }
+
+    .soc-widget h3 {
+      font-size: 1rem;
     }
 
     .threat-condition strong {
       color: var(--green);
       text-shadow: 0 0 14px currentColor;
+    }
+
+    .threat-condition.is-changing {
+      animation: threatFlash 0.8s ease;
     }
 
     .signal-bars {
@@ -605,6 +656,7 @@
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 12px;
+      margin-top: 16px;
     }
 
     .archive-folder {
@@ -622,6 +674,21 @@
       display: block;
       color: var(--green);
       margin-bottom: 8px;
+    }
+
+    .archive-folder:hover {
+      border-color: rgba(53, 255, 155, 0.56);
+      box-shadow: inset 0 0 18px rgba(53, 255, 155, 0.06);
+    }
+
+    .archive-restricted {
+      margin-top: 12px;
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      background: rgba(18, 3, 3, 0.74);
+      color: var(--red);
+      padding: 14px;
+      font-family: "Courier New", monospace;
+      min-height: 84px;
     }
 
     .world-event {
@@ -811,6 +878,12 @@
       to { stroke-dashoffset: 0; }
     }
 
+    @keyframes signalTravel {
+      0% { opacity: 0; transform: scale(0.7); }
+      15%, 80% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.7); }
+    }
+
     @keyframes signalBlink {
       0%, 100% { opacity: 0.44; }
       50% { opacity: 1; box-shadow: 0 0 12px rgba(53, 255, 155, 0.45); }
@@ -843,6 +916,11 @@
       52% { opacity: 0.95; }
     }
 
+    @keyframes threatFlash {
+      0%, 100% { box-shadow: none; }
+      45% { box-shadow: 0 0 26px rgba(53, 255, 155, 0.2); }
+    }
+
     @media (max-width: 980px) {
       .database-grid,
       .threat-grid,
@@ -856,6 +934,7 @@
       .timeline-grid,
       .dossier-grid,
       .dossier-terminal-grid,
+      .soc-dashboard,
       .secure-archives {
         grid-template-columns: 1fr;
       }
@@ -1116,28 +1195,53 @@
     <div class="operations-system">
       <div>
         <div class="map-shell" data-map>
-          <svg class="world-map" viewBox="0 0 1000 520" aria-hidden="true">
-            <path d="M145 170L210 120L305 145L330 215L255 255L165 238Z"></path>
-            <path d="M265 295L335 310L355 395L300 475L240 410Z"></path>
-            <path d="M455 155L555 105L660 140L635 215L520 230L430 205Z"></path>
-            <path d="M610 245L710 235L780 300L745 390L645 370L585 305Z"></path>
-            <path d="M775 175L880 185L930 250L900 315L795 295L745 230Z"></path>
-            <ellipse cx="820" cy="420" rx="70" ry="38"></ellipse>
+          <svg class="network-routes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path class="network-route" data-route="iron-veil" d="M50 46 C45 42 39 39 32 37"></path>
+            <path class="network-route" data-route="nightfall" d="M50 46 C48 35 50 26 52 18"></path>
+            <path class="network-route" data-route="black-tide" d="M50 46 C38 50 29 58 21 68"></path>
+            <path class="network-route" data-route="dead-signal" d="M50 46 C63 45 71 48 78 52"></path>
+            <path class="network-route" data-route="glass-falcon" d="M50 46 C66 36 78 32 86 35"></path>
+            <path class="network-route" data-route="specter-dawn" d="M50 46 C56 33 62 26 67 20"></path>
+            <path class="network-route" data-route="stone-harbor" d="M50 46 C51 58 50 70 47 82"></path>
+            <circle class="signal-dot" data-signal="iron-veil" r="0.9">
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C45 42 39 39 32 37"></animateMotion>
+            </circle>
+            <circle class="signal-dot" data-signal="nightfall" r="0.9">
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C48 35 50 26 52 18"></animateMotion>
+            </circle>
+            <circle class="signal-dot" data-signal="black-tide" r="0.9">
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C38 50 29 58 21 68"></animateMotion>
+            </circle>
+            <circle class="signal-dot" data-signal="dead-signal" r="0.9">
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C63 45 71 48 78 52"></animateMotion>
+            </circle>
+            <circle class="signal-dot" data-signal="glass-falcon" r="0.9">
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C66 36 78 32 86 35"></animateMotion>
+            </circle>
+            <circle class="signal-dot" data-signal="specter-dawn" r="0.9">
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C56 33 62 26 67 20"></animateMotion>
+            </circle>
+            <circle class="signal-dot" data-signal="stone-harbor" r="0.9">
+              <animateMotion dur="1.7s" begin="indefinite" fill="freeze" path="M50 46 C51 58 50 70 47 82"></animateMotion>
+            </circle>
           </svg>
           <div class="map-grid"></div>
 
-          <button class="op-marker" style="--x: 49%; --y: 43%;" data-id="iron-veil" data-threat="orange" data-clearance="1" data-command="alpha" aria-label="Operation Iron Veil"></button>
-          <button class="op-marker" style="--x: 57%; --y: 34%;" data-id="nightfall" data-threat="orange" data-clearance="3" data-command="beta" aria-label="Operation Nightfall"></button>
-          <button class="op-marker" style="--x: 38%; --y: 55%;" data-id="black-tide" data-threat="red" data-clearance="5" data-command="alpha" aria-label="Operation Black Tide"></button>
-          <button class="op-marker" style="--x: 68%; --y: 50%;" data-id="dead-signal" data-threat="red" data-clearance="7" data-command="omega" aria-label="Operation Dead Signal"></button>
-          <button class="op-marker" style="--x: 74%; --y: 39%;" data-id="glass-falcon" data-threat="yellow" data-clearance="omega" data-command="beta" aria-label="Operation Glass Falcon"></button>
-          <button class="op-marker" style="--x: 62%; --y: 29%;" data-id="specter-dawn" data-threat="red" data-clearance="omega" data-command="beta" aria-label="Operation Specter Dawn"></button>
-          <button class="op-marker" style="--x: 52%; --y: 58%;" data-id="stone-harbor" data-threat="black" data-clearance="omega" data-command="omega" aria-label="Operation Stone Harbor"></button>
+          <button class="op-marker hq-node" style="--x: 50%; --y: 46%;" data-id="cisr-hq" data-threat="green" data-clearance="omega" data-command="alpha" aria-label="CISR Headquarters"></button>
+          <button class="op-marker" style="--x: 32%; --y: 37%;" data-id="iron-veil" data-threat="orange" data-clearance="1" data-command="alpha" data-location="Germany" aria-label="Operation Iron Veil"></button>
+          <button class="op-marker" style="--x: 52%; --y: 18%;" data-id="nightfall" data-threat="orange" data-clearance="3" data-command="beta" data-location="Northern Corridor" aria-label="Operation Nightfall"></button>
+          <button class="op-marker" style="--x: 21%; --y: 68%;" data-id="black-tide" data-threat="red" data-clearance="5" data-command="alpha" data-location="South Atlantic" aria-label="Operation Black Tide"></button>
+          <button class="op-marker" style="--x: 78%; --y: 52%;" data-id="dead-signal" data-threat="red" data-clearance="7" data-command="omega" data-location="East Asia Relay" aria-label="Operation Dead Signal"></button>
+          <button class="op-marker" style="--x: 86%; --y: 35%;" data-id="glass-falcon" data-threat="yellow" data-clearance="omega" data-command="beta" data-location="Pacific Watchline" aria-label="Operation Glass Falcon"></button>
+          <button class="op-marker" style="--x: 67%; --y: 20%;" data-id="specter-dawn" data-threat="red" data-clearance="omega" data-command="beta" data-location="Northern Blacksite" aria-label="Operation Specter Dawn"></button>
+          <button class="op-marker" style="--x: 47%; --y: 82%;" data-id="stone-harbor" data-threat="black" data-clearance="omega" data-command="omega" data-location="Classified Maritime Zone" aria-label="Operation Stone Harbor"></button>
 
           <div class="map-tooltip" data-map-info>
             <p class="label">SELECT OPERATION MARKER</p>
             <p>Awaiting classified tactical selection...</p>
           </div>
+          <div class="map-focus" data-map-focus></div>
+          <div class="intel-dossier" data-intel-dossier aria-hidden="true"></div>
         </div>
 
         <div class="timeline-shell" id="operation-timeline">
@@ -1183,12 +1287,12 @@
         <div class="activity-feed">
           <h3>World Activity Feed</h3>
           <div class="feed-track" data-feed-track>
-            <p><span>[12:41 UTC]</span><br />Satellite connection established.</p>
-            <p><span>[13:08 UTC]</span><br />Operation Iron Veil updated.</p>
-            <p><span>[13:17 UTC]</span><br />Recon drone online.</p>
-            <p><span>[13:42 UTC]</span><br />Encrypted transmission received.</p>
-            <p><span>[14:03 UTC]</span><br />Alpha Command deployed.</p>
-            <p><span>[14:18 UTC]</span><br />Beta overwatch package synchronized.</p>
+            <p><span>[12:41 UTC] [HQ] -> [ALPHA]</span><br />Satellite connection established.</p>
+            <p><span>[13:08 UTC] [ALPHA] -> [BETA]</span><br />Operation Iron Veil updated.</p>
+            <p><span>[13:17 UTC] [BETA] -> [ALPHA]</span><br />Recon drone online.</p>
+            <p><span>[13:42 UTC] [OMEGA] -> [ALPHA]</span><br />Encrypted transmission received.</p>
+            <p><span>[14:03 UTC] [ALPHA] -> [OMEGA]</span><br />Alpha Command deployed.</p>
+            <p><span>[14:18 UTC] [CSOA] -> [ALPHA]</span><br />Beta overwatch package synchronized.</p>
           </div>
         </div>
 
@@ -1202,7 +1306,54 @@
           <div>Network Status <strong>SECURE</strong></div>
           <div>UTC Clock <strong data-utc-clock>SYNCING</strong></div>
         </div>
+
+        <div class="soc-dashboard">
+          <div class="soc-widget">
+            <h3>Global Strategic Status</h3>
+            <div class="stats-list">
+              <div>Active Operations <strong data-soc-stat="activeOps">2</strong></div>
+              <div>Active Nodes <strong data-soc-stat="activeNodes">8</strong></div>
+              <div>Compromised Nodes <strong data-soc-stat="compromisedNodes">1</strong></div>
+              <div>Personnel Deployed <strong data-soc-stat="personnel">39</strong></div>
+              <div>Satellites Online <strong data-soc-stat="satellites">12</strong></div>
+              <div>Encryption Status <strong data-soc-stat="encryption">AES-256</strong></div>
+            </div>
+          </div>
+
+          <div class="soc-widget threat-condition" data-threat-condition>
+            <h3>World Alert System</h3>
+            <div>Threat Condition <strong data-world-threat>ORANGE</strong></div>
+            <div>DEFCON <strong data-defcon>III</strong></div>
+            <div class="signal-bars" data-signal-bars>
+              <i></i><i></i><i></i><i></i><i></i>
+            </div>
+          </div>
+
+          <div class="soc-widget">
+            <h3>Current Operator</h3>
+            <p><span class="redacted"></span></p>
+            <div class="stats-list">
+              <div>Clearance <strong>OMEGA</strong></div>
+              <div>Authorization <strong>VALID</strong></div>
+              <div>Session <strong>ACTIVE</strong></div>
+            </div>
+          </div>
+        </div>
       </aside>
+    </div>
+  </section>
+
+  <section>
+    <h2>Secure Archives</h2>
+    <div class="secure-archives">
+      <button class="archive-folder" data-archive-folder="CSOA REPORTS"><strong>CSOA REPORTS</strong>DIRECTORATE PACKETS</button>
+      <button class="archive-folder" data-archive-folder="BLACK OPERATIONS"><strong>BLACK OPERATIONS</strong>OMEGA CLEARANCE</button>
+      <button class="archive-folder" data-archive-folder="SATELLITE IMAGERY"><strong>SATELLITE IMAGERY</strong>ORBITAL CAPTURE</button>
+      <button class="archive-folder" data-archive-folder="PERSONNEL FILES"><strong>PERSONNEL FILES</strong>ACTIVE ROSTERS</button>
+      <button class="archive-folder" data-archive-folder="ENCRYPTED DOCUMENTS"><strong>ENCRYPTED DOCUMENTS</strong>LOCKED VAULT</button>
+    </div>
+    <div class="archive-restricted" data-archive-status>
+      SELECT CLASSIFIED FOLDER
     </div>
   </section>
 
@@ -1325,6 +1476,26 @@
   <script>
     (() => {
       const operations = {
+        "cisr-hq": {
+          name: "CISR Headquarters",
+          status: "Operational",
+          threat: "Green",
+          command: "Alpha Command",
+          commander: "Directorate Authority / ALPHA",
+          description: "Primary strategic command infrastructure and encrypted synchronization authority.",
+          enemy: "No confirmed hostile access. Counter-intrusion systems active.",
+          assets: "Global Intelligence Network, CSOA archive bridge, satellite relay authorization.",
+          summary: "HQ is coordinating global command traffic and route synchronization across all active nodes.",
+          personnel: "CLASSIFIED",
+          sync: "LIVE",
+          creation: "CLASSIFIED",
+          activation: "ACTIVE",
+          update: "LIVE / UTC",
+          completion: "Never",
+          location: "CISR HQ",
+          classification: "OMEGA / HQ EYES ONLY",
+          code: "CISR-HQ-AUTH-000"
+        },
         "iron-veil": {
           name: "Operation Iron Veil",
           status: "Active",
@@ -1340,7 +1511,10 @@
           creation: "2026-05-12",
           activation: "2026-06-04",
           update: "2026-06-27 / 14:03 UTC",
-          completion: "Pending"
+          completion: "Pending",
+          location: "Germany",
+          classification: "OMEGA / ACTIVE FIELD DOSSIER",
+          code: "ALPHA-IV-730"
         },
         "nightfall": {
           name: "Operation Nightfall",
@@ -1357,7 +1531,10 @@
           creation: "2026-03-18",
           activation: "2026-04-02",
           update: "2026-06-27 / 13:08 UTC",
-          completion: "2026-04-03"
+          completion: "2026-04-03",
+          location: "Northern Corridor",
+          classification: "LEVEL III / RECOVERY ARCHIVE",
+          code: "BETA-NF-417"
         },
         "black-tide": {
           name: "Operation Black Tide",
@@ -1374,7 +1551,10 @@
           creation: "2026-02-09",
           activation: "2026-02-22",
           update: "2026-06-27 / 12:41 UTC",
-          completion: "2026-02-23"
+          completion: "2026-02-23",
+          location: "South Atlantic",
+          classification: "LEVEL V / RED ARCHIVE",
+          code: "ALPHA-BT-902"
         },
         "dead-signal": {
           name: "Operation Dead Signal",
@@ -1391,7 +1571,10 @@
           creation: "2026-01-11",
           activation: "2026-01-19",
           update: "2026-06-27 / 13:42 UTC",
-          completion: "2026-01-20"
+          completion: "2026-01-20",
+          location: "East Asia Relay",
+          classification: "LEVEL VII / SIGNAL WARFARE",
+          code: "OMEGA-DS-248"
         },
         "glass-falcon": {
           name: "Operation Glass Falcon",
@@ -1408,7 +1591,10 @@
           creation: "2025-12-01",
           activation: "2025-12-04",
           update: "2026-06-27 / 13:17 UTC",
-          completion: "2026-04-29"
+          completion: "2026-04-29",
+          location: "Pacific Watchline",
+          classification: "OMEGA / SURVEILLANCE",
+          code: "BETA-GF-147"
         },
         "specter-dawn": {
           name: "Operation Specter Dawn",
@@ -1425,7 +1611,10 @@
           creation: "2026-06-09",
           activation: "2026-06-13",
           update: "2026-06-27 / 14:18 UTC",
-          completion: "Pending"
+          completion: "Pending",
+          location: "Northern Blacksite",
+          classification: "OMEGA / HOSTILE UNKNOWN",
+          code: "BETA-SD-618"
         },
         "stone-harbor": {
           name: "Operation Stone Harbor",
@@ -1442,7 +1631,10 @@
           creation: "CLASSIFIED",
           activation: "Awaiting authorization",
           update: "2026-06-27 / 14:22 UTC",
-          completion: "Unavailable"
+          completion: "Unavailable",
+          location: "Classified Maritime Zone",
+          classification: "BLACK SITE / NEED TO KNOW",
+          code: "OMEGA-SH-000"
         }
       };
 
@@ -1460,10 +1652,25 @@
         timeline: document.querySelector("#operation-timeline"),
         utcClock: document.querySelector("[data-utc-clock]"),
         feedTrack: document.querySelector("[data-feed-track]"),
-        bars: [...document.querySelectorAll(".bar span")]
+        bars: [...document.querySelectorAll(".bar span")],
+        map: document.querySelector("[data-map]"),
+        dossier: document.querySelector("[data-intel-dossier]"),
+        mapFocus: document.querySelector("[data-map-focus]"),
+        routes: [...document.querySelectorAll("[data-route]")],
+        signals: [...document.querySelectorAll("[data-signal]")],
+        timelineNodes: [...document.querySelectorAll("[data-timeline]")],
+        dossierNodes: [...document.querySelectorAll("[data-dossier]")],
+        threatCondition: document.querySelector("[data-threat-condition]"),
+        worldThreat: document.querySelector("[data-world-threat]"),
+        defcon: document.querySelector("[data-defcon]"),
+        archiveStatus: document.querySelector("[data-archive-status]"),
+        archiveFolders: [...document.querySelectorAll("[data-archive-folder]")],
+        socStats: [...document.querySelectorAll("[data-soc-stat]")]
       };
 
       let lockedOperation = null;
+      let activeTooltip = null;
+      let lockedScrollY = 0;
 
       function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -1566,6 +1773,7 @@
         const threat = selectors.threatFilter?.value || "all";
 
         selectors.markers.forEach(marker => {
+          if (marker.dataset.id === "cisr-hq") return;
           const clearanceMatch = getClearanceAllowed(marker.dataset.clearance, clearance);
           const commandMatch = command === "all" || marker.dataset.command === command;
           const threatMatch = threat === "all" || marker.dataset.threat === threat;
@@ -1574,18 +1782,40 @@
         });
       }
 
+      function getThreatLabel(operation) {
+        const statusMap = {
+          Green: "Operational",
+          Yellow: "Under Surveillance",
+          Orange: "High Activity",
+          Red: "Compromised",
+          Black: "Black Site"
+        };
+
+        return statusMap[operation.threat] || operation.status;
+      }
+
       function renderOperation(id) {
         const operation = operations[id];
         if (!operation || !selectors.mapInfo) return;
 
         selectors.mapInfo.innerHTML = `
-          <p class="label">${operation.name}</p>
-          <p>Status: ${operation.status}</p>
-          <p>Threat Level: ${operation.threat}</p>
-          <p>Commander: ${operation.commander}</p>
-          <p>Description: ${operation.description}</p>
-          <p>Last Update: ${operation.update}</p>
+          <p class="label">NODE-${id === "cisr-hq" ? "HQ" : id.toUpperCase()}</p>
+          <p>LOCATION<br />${operation.location || "CLASSIFIED"}</p>
+          <p>STATUS<br />${getThreatLabel(operation)}</p>
+          <p>SIGNAL<br />${id === "cisr-hq" ? "100.0%" : (92 + Math.random() * 7).toFixed(1) + "%"}</p>
+          <p>ENCRYPTION<br />AES-256</p>
         `;
+
+        const marker = selectors.markers.find(item => item.dataset.id === id);
+        if (marker) {
+          const mapRect = selectors.map.getBoundingClientRect();
+          const markerRect = marker.getBoundingClientRect();
+          const x = Math.min(Math.max(markerRect.left - mapRect.left + 18, 18), mapRect.width - 250);
+          const y = Math.min(Math.max(markerRect.top - mapRect.top + 18, 18), mapRect.height - 150);
+          selectors.mapInfo.style.setProperty("--tip-x", `${x}px`);
+          selectors.mapInfo.style.setProperty("--tip-y", `${y}px`);
+        }
+        selectors.mapInfo.classList.add("active");
 
         const timelineValues = {
           creation: operation.creation,
@@ -1596,7 +1826,7 @@
         };
 
         Object.entries(timelineValues).forEach(([key, value]) => {
-          const node = document.querySelector(`[data-timeline="${key}"]`);
+          const node = selectors.timelineNodes.find(item => item.dataset.timeline === key);
           if (node) node.textContent = value;
         });
 
@@ -1612,33 +1842,98 @@
         };
 
         Object.entries(dossierValues).forEach(([key, value]) => {
-          const node = document.querySelector(`[data-dossier="${key}"]`);
+          const node = selectors.dossierNodes.find(item => item.dataset.dossier === key);
           if (node) node.textContent = value;
         });
       }
 
-      function lockOperation(marker) {
+      function highlightRoute(id, enabled = true) {
+        selectors.routes.forEach(route => {
+          const connected = route.dataset.route === id;
+          route.classList.toggle("is-highlighted", enabled && connected);
+          route.classList.toggle("is-dimmed", enabled && !connected && id !== "cisr-hq");
+        });
+      }
+
+      function openDossier(id) {
+        const operation = operations[id];
+        if (!operation || !selectors.dossier || !selectors.map) return;
+
+        selectors.dossier.innerHTML = `
+          <header>
+            <div>
+              <p class="label">MISSION DOSSIER</p>
+              <h3>${operation.name}</h3>
+            </div>
+            <button class="dossier-close" type="button" data-dossier-close aria-label="Close dossier">X</button>
+          </header>
+          <div class="dossier-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+          <div class="dossier-terminal-grid">
+            <div><span>Mission ID</span>${id.toUpperCase()}</div>
+            <div><span>Mission Name</span>${operation.name}</div>
+            <div><span>Classification</span>${operation.classification || "OMEGA"}</div>
+            <div><span>Operational Status</span>${operation.status}</div>
+            <div><span>Threat Level</span>${operation.threat}</div>
+            <div><span>Commander</span>${operation.commander}</div>
+            <div><span>Assigned Personnel</span>${operation.personnel}</div>
+            <div><span>Authorization Code</span>${operation.code || "CISR-AUTH-LOCKED"}</div>
+          </div>
+          <div class="dossier-wide"><span>Operational Objective</span>${operation.description}</div>
+          <div class="dossier-wide"><span>Mission Summary</span>${operation.summary}</div>
+          <div class="dossier-wide"><span>Known Enemy Assets</span>${operation.enemy}</div>
+          <div class="dossier-wide"><span>Operational Timeline</span>Created ${operation.creation} / Activated ${operation.activation} / Completion ${operation.completion}</div>
+          <div class="dossier-wide"><span>Last Update</span>${operation.update}</div>
+          <div class="dossier-divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+        `;
+
+        selectors.map.classList.add("dossier-open");
+        selectors.dossier.classList.add("active");
+        selectors.dossier.setAttribute("aria-hidden", "false");
+        lockedScrollY = window.scrollY;
+        document.body.style.setProperty("--lock-scroll-y", String(lockedScrollY));
+        document.body.classList.add("dossier-lock");
+        selectors.dossier.querySelector("[data-dossier-close]")?.addEventListener("click", closeDossier);
+      }
+
+      function closeDossier() {
+        selectors.map?.classList.remove("dossier-open");
+        selectors.dossier?.classList.remove("active");
+        selectors.dossier?.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("dossier-lock");
+        document.body.style.removeProperty("--lock-scroll-y");
+        window.scrollTo(0, lockedScrollY);
+      }
+
+      function lockOperation(marker, event) {
+        event?.preventDefault();
         lockedOperation = marker.dataset.id;
-        selectors.markers.forEach(item => item.classList.remove("highlight"));
-        marker.classList.add("highlight");
+        selectors.markers.forEach(item => item.classList.remove("highlight", "is-selected"));
+        marker.classList.add("highlight", "is-selected");
         renderOperation(lockedOperation);
-
-        const archiveCard = document.querySelector(`[data-operation-card="${lockedOperation}"]`);
-        const target = archiveCard || selectors.timeline;
-
-        if (target) {
-          setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "center" }), 120);
-        }
+        highlightRoute(lockedOperation);
+        openDossier(lockedOperation);
       }
 
       function bindMap() {
         selectors.markers.forEach(marker => {
-          marker.addEventListener("mouseenter", () => renderOperation(marker.dataset.id));
+          marker.addEventListener("mouseenter", () => {
+            activeTooltip = marker.dataset.id;
+            renderOperation(marker.dataset.id);
+            highlightRoute(marker.dataset.id);
+          });
           marker.addEventListener("focus", () => renderOperation(marker.dataset.id));
           marker.addEventListener("mouseleave", () => {
+            activeTooltip = null;
+            selectors.mapInfo?.classList.remove("active");
             if (lockedOperation) renderOperation(lockedOperation);
+            if (!selectors.map?.classList.contains("dossier-open")) highlightRoute(lockedOperation, Boolean(lockedOperation));
           });
-          marker.addEventListener("click", () => lockOperation(marker));
+          marker.addEventListener("click", event => lockOperation(marker, event));
+        });
+
+        selectors.mapFocus?.addEventListener("click", closeDossier);
+        window.addEventListener("keydown", event => {
+          if (event.key === "Escape") closeDossier();
         });
 
         [selectors.clearanceFilter, selectors.commandFilter, selectors.threatFilter]
@@ -1668,23 +1963,32 @@
         });
       }
 
-      function pushActivityLog() {
+      function pushActivityLog(messageOverride) {
         if (!selectors.feedTrack) return;
 
+        const commands = ["BETA", "OMEGA", "HQ", "CSOA"];
         const messages = [
+          "Operation Iron Veil updated.",
+          "Satellite imagery received.",
+          "Forward medical unit deployed.",
+          "Medical support authorized.",
+          "Classified package transmitted.",
+          "Archive synchronization completed.",
+          "Strategic authorization confirmed.",
           "Encrypted channel heartbeat confirmed.",
-          "Satellite pass completed.",
           "Database shard synchronized.",
-          "Operation marker telemetry refreshed.",
           "Recon package integrity verified.",
           "Secure connection token rotated.",
           "Threat matrix recalculated."
         ];
 
         const now = new Date().toISOString().slice(11, 16);
-        const message = messages[Math.floor(Math.random() * messages.length)];
+        const second = commands[Math.floor(Math.random() * commands.length)];
+        const alphaFirst = Math.random() > 0.45;
+        const route = alphaFirst ? `[ALPHA] -> [${second}]` : `[${second}] -> [ALPHA]`;
+        const message = messageOverride || messages[Math.floor(Math.random() * messages.length)];
         const item = document.createElement("p");
-        item.innerHTML = `<span>[${now} UTC]</span><br />${message}`;
+        item.innerHTML = `<span>[${now} UTC] ${route}</span><br />${message}`;
 
         selectors.feedTrack.prepend(item);
 
@@ -1693,11 +1997,130 @@
         }
       }
 
+      function randomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function scheduleFeed() {
+        pushActivityLog();
+        setTimeout(scheduleFeed, randomInt(4000, 8000));
+      }
+
+      function syncNetwork() {
+        selectors.markers.find(marker => marker.dataset.id === "cisr-hq")?.classList.add("is-syncing");
+        selectors.routes.forEach((route, index) => {
+          setTimeout(() => {
+            route.classList.add("is-syncing");
+            const id = route.dataset.route;
+            selectors.markers.find(marker => marker.dataset.id === id)?.classList.add("is-syncing");
+            const signal = selectors.signals.find(item => item.dataset.signal === id);
+            signal?.classList.add("is-syncing");
+            signal?.querySelector("animateMotion")?.beginElement();
+          }, index * 170);
+        });
+
+        setTimeout(() => {
+          selectors.routes.forEach(route => route.classList.remove("is-syncing"));
+          selectors.signals.forEach(signal => signal.classList.remove("is-syncing"));
+          selectors.markers.forEach(marker => marker.classList.remove("is-syncing"));
+        }, 3000);
+      }
+
+      function scheduleSync() {
+        syncNetwork();
+        pushActivityLog("HQ synchronization pulse transmitted. Network integrity confirmed.");
+        setTimeout(scheduleSync, randomInt(15000, 30000));
+      }
+
+      function rotateThreat() {
+        const states = [
+          { label: "GREEN", defcon: "V", color: "var(--green)", message: "Global Threat Condition Updated. DEFCON V. Signal integrity maintained." },
+          { label: "YELLOW", defcon: "IV", color: "var(--yellow)", message: "Global Threat Condition Updated. DEFCON IV. Surveillance posture expanded." },
+          { label: "ORANGE", defcon: "III", color: "var(--orange)", message: "Global Threat Condition Updated. DEFCON III. Active nodes monitoring." },
+          { label: "RED", defcon: "II", color: "var(--red)", message: "Global Threat Condition Updated. DEFCON II. Rapid response authorized." },
+          { label: "BLACK", defcon: "I", color: "#c7c7c7", message: "Global Threat Condition Updated. DEFCON I. Black protocol standby." }
+        ];
+        const state = states[Math.floor(Math.random() * states.length)];
+        if (selectors.worldThreat) {
+          selectors.worldThreat.textContent = state.label;
+          selectors.worldThreat.style.color = state.color;
+        }
+        if (selectors.defcon) selectors.defcon.textContent = state.defcon;
+        selectors.threatCondition?.classList.add("is-changing");
+        setTimeout(() => selectors.threatCondition?.classList.remove("is-changing"), 900);
+        pushActivityLog(state.message);
+      }
+
+      function scheduleThreat() {
+        rotateThreat();
+        setTimeout(scheduleThreat, randomInt(12000, 22000));
+      }
+
+      function bindArchives() {
+        selectors.archiveFolders.forEach(folder => {
+          folder.addEventListener("click", () => {
+            if (!selectors.archiveStatus) return;
+            selectors.archiveStatus.innerHTML = `
+              <strong>${folder.dataset.archiveFolder}</strong><br />
+              ACCESS RESTRICTED<br />
+              CLEARANCE REQUIRED
+            `;
+            pushActivityLog(`${folder.dataset.archiveFolder} access request denied. ALPHA authorization required.`);
+          });
+        });
+      }
+
+      function showWorldEvent() {
+        const messages = [
+          "SATELLITE SIGMA-04 REPOSITIONED",
+          "ENCRYPTED TRANSMISSION RECEIVED",
+          "BETA COMMAND REQUESTING SUPPORT",
+          "CSOA DOCUMENT UPDATED",
+          "NODE-17 LOST CONNECTION",
+          "GLOBAL ENCRYPTION KEYS ROTATED"
+        ];
+        let panel = document.querySelector("[data-world-event]");
+        if (!panel) {
+          panel = document.createElement("div");
+          panel.className = "world-event";
+          panel.dataset.worldEvent = "true";
+          document.body.appendChild(panel);
+        }
+        panel.textContent = messages[Math.floor(Math.random() * messages.length)];
+        panel.classList.add("active");
+        setTimeout(() => panel.classList.remove("active"), 5000);
+      }
+
+      function scheduleWorldEvents() {
+        showWorldEvent();
+        setTimeout(scheduleWorldEvents, randomInt(20000, 40000));
+      }
+
+      function updateSocStats() {
+        const stats = {
+          activeOps: Object.values(operations).filter(operation => operation.status === "Active").length,
+          activeNodes: selectors.markers.filter(marker => !marker.classList.contains("hidden")).length,
+          compromisedNodes: Object.values(operations).filter(operation => ["Red", "Black"].includes(operation.threat)).length,
+          personnel: "39",
+          satellites: String(randomInt(10, 14)),
+          encryption: "AES-256"
+        };
+
+        selectors.socStats.forEach(node => {
+          node.textContent = stats[node.dataset.socStat] || node.textContent;
+        });
+      }
+
       function init() {
         bindMap();
+        bindArchives();
         updateClock();
         setInterval(updateClock, 1000);
-        setInterval(pushActivityLog, 4500);
+        setInterval(updateSocStats, 6000);
+        scheduleFeed();
+        setTimeout(scheduleSync, 2500);
+        setTimeout(scheduleThreat, 6000);
+        setTimeout(scheduleWorldEvents, 10000);
         runLoginGate();
       }
 
